@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { FaCamera, FaImage } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import LoginPageOverLap from '../assets/LoginPageOverLap.png'
 
 const UploadProfilePage = () => {
     const [imagePreview, setImagePreview] = useState(null);
@@ -40,7 +41,12 @@ const UploadProfilePage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-white via-[#f7f1ec] to-white flex flex-col items-center justify-center relative overflow-hidden px-4">
+        <div className="relative min-h-screen bg-gradient-to-br from-white via-[#f7f1ec] to-white flex flex-col items-center justify-center relative overflow-hidden px-4">
+
+            <div className='absolute bottom-0 right-0'>
+                <img src={LoginPageOverLap} alt="OverlapIMG" />
+            </div>
+
             {/* Top Nav */}
             <div className="absolute top-0 left-0 w-full flex justify-between items-center px-8 py-6">
                 <div className="text-xl font-semibold text-[#2c2c2c] flex items-center gap-2">
@@ -102,14 +108,14 @@ const UploadProfilePage = () => {
                 </button>
             </div>
 
-            {/* Decorative Flower Illustration */}
+            {/* Decorative Flower Illustration
             <div className="absolute bottom-0 right-4 opacity-10 pointer-events-none">
                 <img
                     src="https://static.thenounproject.com/png/124207-200.png"
                     alt="Flower Illustration"
                     className="w-40 md:w-60"
                 />
-            </div>
+            </div> */}
         </div>
     );
 };

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebookF, FaEye, FaEyeSlash } from 'react-icons/fa';
 import login from '../assets/loginPageIMG.png';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import LoginPageOverLap from '../assets/LoginPageOverLap.png'
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -14,19 +15,27 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="h-screen flex flex-col md:flex-row border-15 border-white rounded-3xl shadow-2xl">
+        <div className=" h-screen flex flex-col md:flex-row border-15 border-white rounded-3xl shadow-2xl">
 
             {/* Left Side Image */}
-            <div className="md:w-1/2 w-full h-96 md:h-auto hidden sm:block">
+            <div className="md:w-1/2 w-full h-96 md:h-auto hidden sm:block ">
                 <img
                     src={login}
                     alt="Beauty Woman"
-                    className="w-full h-full object-cover rounded-l-3xl"
+                    className="w-full h-full object-cover rounded-l-3xl "
                 />
+
+
+
             </div>
 
             {/* Right Side Login Form */}
-            <div className="md:w-1/2 w-full flex items-center justify-center bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] px-6 py-10 rounded-r-3xl">
+            <div className="relative md:w-1/2 w-full flex items-center justify-center bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] px-6 py-10 rounded-r-3xl">
+
+                <div className='absolute bottom-0 right-0'>
+                    <img src={LoginPageOverLap} alt="OverlapIMG" />
+                </div>
+
                 <div className="max-w-md w-full space-y-6">
                     <div className="text-center">
                         <div className="text-3xl font-semibold text-gray-800">YOURSELF BEAUTY</div>
@@ -90,14 +99,9 @@ const LoginPage = () => {
                         <a href="#" className="hover:underline">
                             Forgot my password
                         </a>
-                        <a href="#"
-                            className="hover:underline"
-                            onClick={
-                                navigate('/registration_page')
-                            }
-                        >
+                        <Link to="/registration_page" className="hover:underline z-10">
                             Sign up
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { MdPerson, MdEmail, MdLock, MdCalendarToday } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import LoginPageOverLap from '../assets/LoginPageOverLap.png'
 
 const SimpleRegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -20,8 +21,11 @@ const SimpleRegisterPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#fdfbf8] to-[#f8f5f2] relative font-sans text-gray-800">
+        <div className=" relative min-h-screen bg-gradient-to-br from-[#fdfbf8] to-[#f8f5f2 font-sans text-gray-800">
 
+            <div className='absolute bottom-0 right-0'>
+                <img src={LoginPageOverLap} alt="OverlapIMG" />
+            </div>
             {/* Top Navigation */}
             <div className="flex justify-between items-center px-6 py-4">
                 <div className="font-bold text-xl flex items-center gap-2">

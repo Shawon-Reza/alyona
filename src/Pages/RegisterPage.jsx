@@ -3,6 +3,11 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaFacebookF, FaEye, FaEyeSlash } from 'react-icons/fa';
 import registerImg from '../assets/registration.png'; // Use your actual path
 import { useNavigate } from 'react-router-dom';
+import LoginPageOverLap from '../assets/LoginPageOverLap.png'
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -26,27 +31,63 @@ const RegisterPage = () => {
 
     };
 
-
+    const slides = [
+        {
+            img: registerImg,
+            title: "Your Skin Journey Starts Here",
+            subtitle: "Discover personalized skincare powered by AI technology"
+        },
+        {
+            img: '/path/to/second-image.jpg',
+            title: "Feel Confident in Your Skin",
+            subtitle: "AI-driven solutions for your unique needs"
+        },
+        {
+            img: '/path/to/third-image.jpg',
+            title: "Join Thousands of Happy Users",
+            subtitle: "Skin health powered by smart technology"
+        }
+    ];
 
 
     return (
-        <div className="min-h-screen flex flex-col md:flex-row font-sans overflow-hidden">
+        <div className="h-screen flex flex-col md:flex-row font-sans overflow-hidden">
 
             {/* Left Side */}
             <div className="md:w-1/2 w-full relative hidden sm:block">
-                <img
-                    src={registerImg}
-                    alt="Skin Beauty"
-                    className="w-full h-full object-cover rounded-l-3xl"
-                />
-                <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-white/60 via-white/10 to-transparent px-8 py-6 text-left rounded-bl-3xl">
-                    <h2 className="text-xl md:text-2xl font-semibold text-gray-800">Your Skin Journey Starts Here</h2>
-                    <p className="text-sm text-gray-700">Discover personalized skincare powered by AI technology</p>
-                </div>
+                <Swiper
+                    pagination={{ clickable: true }}
+                    // autoplay={{ delay: 3000 }}
+                    // loop={true}
+                    modules={[Pagination, Autoplay]}
+                    className="w-full h-full"
+                >
+                    {slides.map((slide, index) => (
+                        <SwiperSlide key={index}>
+                            <div className="relative w-full h-full">
+                                <img
+                                    src={slide.img}
+                                    alt={slide.title}
+                                    className="w-full h-full object-cover rounded-l-3xl"
+                                />
+                                <div className="pb-20 pt-20 absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#BB9777] via-[#EDDBCB] to-transparent px-8 py-6 text-left rounded-bl-3xl">
+                                    <h2 className="text-xl md:text-2xl font-semibold text-gray-800">{slide.title}</h2>
+                                    <p className="text-sm text-gray-700">{slide.subtitle}</p>
+                                </div>
+                            </div>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
             </div>
 
+
             {/* Right Side Form */}
-            <div className="md:w-1/2 w-full flex items-center justify-center bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] px-6 py-10">
+            <div className="relative md:w-1/2 w-full flex items-center justify-center bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] px-6 py-10">
+
+                <div className='absolute bottom-0 right-0'>
+                    <img src={LoginPageOverLap} alt="OverlapIMG" />
+                </div>
+
                 <div className="max-w-md w-full space-y-6">
                     <div className="text-left space-y-1">
                         <h2 className="text-2xl font-semibold text-gray-800">Hi Anna,</h2>

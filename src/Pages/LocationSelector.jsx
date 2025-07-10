@@ -1,13 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+// Custom marker icon
 const markerIcon = new L.Icon({
     iconUrl: 'https://cdn-icons-png.flaticon.com/512/64/64113.png',
     iconSize: [32, 32],
 });
 
+// Click handler inside the map
+const ClickHandler = ({ setPosition, fetchAddress }) => {
+    useMapEvents({
+        click(e) {
+            const { lat, lng } = e.latlng;
+            const newPos = [lat, lng];
+            setPosition(newPos);
+            fetchAddress(lat, lng);
+        }
+    });
+    return null;
+};
+
+// Marker Component
 const LocationMarker = ({ position }) => {
     return position ? <Marker position={position} icon={markerIcon} /> : null;
 };
@@ -18,38 +33,51 @@ const LocationSelector = () => {
     const [searchInput, setSearchInput] = useState('');
     const mapRef = useRef();
 
+    // Fetch human-readable address from lat/lng
     const fetchAddress = async (lat, lon) => {
-        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-        const data = await res.json();
-        setAddress({
-            street: data.address.road || '',
-            city: data.address.city || data.address.town || data.address.village || '',
-            country: data.address.country || '',
-        });
-    };
-
-    const handleSearchLocation = async () => {
-        if (!searchInput) return;
-        const res = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchInput)}`
-        );
-        const data = await res.json();
-        if (data && data.length > 0) {
-            const { lat, lon } = data[0];
-            const newPos = [parseFloat(lat), parseFloat(lon)];
-            setPosition(newPos);
-            mapRef.current.setView(newPos, 13);
-            fetchAddress(lat, lon);
-        } else {
-            alert("Location not found.");
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+            const data = await res.json();
+            setAddress({
+                street: data.address.road || '',
+                city: data.address.city || data.address.town || data.address.village || '',
+                country: data.address.country || '',
+            });
+        } catch (err) {
+            console.error("Error fetching address:", err);
         }
     };
 
+    // Search location by input
+    const handleSearchLocation = async () => {
+        if (!searchInput) return;
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchInput)}`);
+            const data = await res.json();
+            if (data && data.length > 0) {
+                const { lat, lon } = data[0];
+                const newPos = [parseFloat(lat), parseFloat(lon)];
+                setPosition(newPos);
+                fetchAddress(lat, lon);
+
+                if (mapRef.current) {
+                    mapRef.current.setView(newPos, 13);
+                }
+            } else {
+                alert("Location not found.");
+            }
+        } catch (err) {
+            console.error("Search error:", err);
+        }
+    };
+
+    // Get user location on load
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 const { latitude, longitude } = pos.coords;
-                setPosition([latitude, longitude]);
+                const newPos = [latitude, longitude];
+                setPosition(newPos);
                 fetchAddress(latitude, longitude);
             },
             () => {
@@ -74,6 +102,26 @@ const LocationSelector = () => {
 
             <h2 className="text-xl font-semibold text-gray-800 mt-28 mb-4">Write your location</h2>
 
+            {/* Map */}
+            <div className="w-full max-w-4xl h-[400px] mb-6 rounded-xl overflow-hidden shadow">
+                <MapContainer
+                    center={position || [48.8566, 2.3522]}
+                    zoom={13}
+                    scrollWheelZoom={true}
+                    ref={(mapInstance) => {
+                        if (mapInstance) mapRef.current = mapInstance;
+                    }}
+                    className="h-full w-full"
+                >
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    {position && <LocationMarker position={position} />}
+                    <ClickHandler setPosition={setPosition} fetchAddress={fetchAddress} />
+                </MapContainer>
+            </div>
+
             {/* Search Input */}
             <div className="mb-4 flex gap-2 w-full max-w-md">
                 <input
@@ -91,24 +139,7 @@ const LocationSelector = () => {
                 </button>
             </div>
 
-            {/* Map */}
-            <div className="w-full max-w-4xl h-[400px] mb-6 rounded-xl overflow-hidden shadow">
-                <MapContainer
-                    center={position || [48.8566, 2.3522]}
-                    zoom={13}
-                    scrollWheelZoom={false}
-                    ref={mapRef}
-                    className="h-full w-full"
-                >
-                    <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    {position && <LocationMarker position={position} />}
-                </MapContainer>
-            </div>
-
-            {/* Address Box */}
+            {/* Address Display */}
             <div className="bg-[#efdfcf] p-4 rounded-md text-left max-w-sm w-full mb-6">
                 <p><strong>Dirección:</strong> {address.street}</p>
                 <p><strong>City:</strong> {address.city}</p>
@@ -122,15 +153,6 @@ const LocationSelector = () => {
             >
                 Save my location
             </button>
-
-            {/* Decorative Flower */}
-            <div className="absolute bottom-0 right-4 opacity-10 pointer-events-none">
-                <img
-                    src="https://static.thenounproject.com/png/124207-200.png"
-                    alt="Flower Illustration"
-                    className="w-40 md:w-60"
-                />
-            </div>
         </div>
     );
 };
