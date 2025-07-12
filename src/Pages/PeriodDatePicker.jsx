@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import AuthNav from '../Components/AuthNav';
 import { useNavigate } from 'react-router-dom';
+import RowButton from '../Components/RowButton';
 
 const getMonthData = (baseDate) => {
     const prevMonth = new Date(baseDate.getFullYear(), baseDate.getMonth() - 1);
@@ -125,21 +126,45 @@ const PeriodDatePicker = () => {
                 </div>
             )}
 
-            <div className="flex flex-col sm:flex-row flex-wrap justify-between items-center mt-4 gap-3">
+            <div className="flex flex-col sm:flex-row  justify-between items-center mt-4 gap-3 ">
+                <div className=''></div>
+
                 <div></div>
-                <div></div>
-                <button className="text-sm text-gray-500 underline">Skip this question</button>
-                <button className="px-15 xl:px-20 text-sm bg-[#BB9777] text-white py-2 rounded-md">I don’t remember</button>
+
+                <button className="lg:col-span-1 text-sm text-gray-500 underline">Skip this question</button>
+                <button className="px-15 lg:col-span-1  xl:px-20 text-sm bg-[#BB9777] text-white py-2 rounded-md">I don’t remember</button>
+
+
+
+
+                {/* <div className=" mx-auto lg:col-span-1" >
+                    <RowButton text="Let's get started"
+
+                        onClick={() => {
+                            navigate('/SkinAnalysis')
+                            console.log("Started!")
+                        }} />
+                </div> */}
                 <button
                     onClick={() => {
-                        navigate('/QuizGreetings');
-                        console.log("Selected Period Dates:", allSelectedDates);
+                        navigate('/QuizGreetings')
+                        console.log("Started!")
                     }}
-                    className="bg-[#090642] text-white px-5 pr-25 xl:pr-36 py-2 rounded-md flex gap-2"
+                    className="z-1 cursor-pointer px-15 lg:col-span-1  xl:px-20 text-sm text-white py-2 rounded-md flex items-center justify-between gap-2 bg-[#0b0540]  font-semibold  hover:bg-[#1c1664] transition duration-200"
                 >
                     Continue
-                    <span className="inline-block">→</span>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                        stroke="currentColor"
+                        className="w-4 h-4"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
                 </button>
+
             </div>
         </div>
     );

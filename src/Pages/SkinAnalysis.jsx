@@ -3,8 +3,10 @@ import SkinAnalysisPageIMG from "../assets/SkinAnalysisPageIMG.png";
 import AuthNav from "../Components/AuthNav";
 import RowButton from "../Components/RowButton";
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
+import { useNavigate } from "react-router-dom";
 
 export default function SkinAnalysis() {
+    const navigate = useNavigate()
     return (
         <div className="relative min-h-screen bg-gradient-to-br from-[#fdf8f3] to-[#e8e3de] p-4 md:p-6 pb-32 md:pb-24">
             <div className=" mx-auto  p-4 md:p-8">
@@ -41,7 +43,7 @@ export default function SkinAnalysis() {
                     {/* Right Panel */}
                     <div className="lg:w-2/3">
                         <div className="text-lg font-medium mb-4">About your skin</div>
-
+                        {/* ProgressBar 1  */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                             {[
                                 { label: "Current level of stress", value: 79 },
@@ -67,7 +69,7 @@ export default function SkinAnalysis() {
                             ))}
                         </div>
 
-
+                        {/* Recomendation 1*/}
                         <div className="my-10">
                             <div className="text-sm font-medium text-gray-700 mb-2">Recommendations</div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -79,7 +81,7 @@ export default function SkinAnalysis() {
                                 ].map((rec, idx) => (
                                     <div
                                         key={idx}
-                                        className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm text-sm flex items-start gap-2"
+                                        className="bg-[#EFEBEB] border border-gray-200 p-4 rounded-xl shadow-sm text-sm flex items-start gap-2"
                                     >
                                         <span className="text-yellow-500">💡</span> {rec}
                                     </div>
@@ -97,7 +99,7 @@ export default function SkinAnalysis() {
                         ></div>
 
 
-
+                        {/* ProgressBar 2 */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                             {[
                                 { label: "Water intake", value: 79 },
@@ -119,12 +121,32 @@ export default function SkinAnalysis() {
                                 </div>
                             ))}
                         </div>
+                        {/* Recomendation 2 */}
+                        <div className="my-10">
+                            <div className="text-sm font-medium text-gray-700 mb-2">Recommendations</div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {[
+                                    "Practice daily meditation or deep breathing exercises",
+                                    "Avoid screens 1 hour before bed",
 
+                                ].map((rec, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="bg-[#EFEBEB] border border-gray-200 p-4 rounded-xl shadow-sm text-sm flex items-start gap-2"
+                                    >
+                                        <span className="text-yellow-500">💡</span> {rec}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
-                        <div className="absolute bottom-5 right-8 md:right-14 md:bottom-7 lg:bottom-20 lg:right-20" >
+                        <div className="absolute bottom-5 right-8 md:right-14 md:bottom-7 lg:bottom-20 lg:right-20 cursor-pointer" >
                             <RowButton text="Let's get started"
 
-                                onClick={() => console.log("Started!")} />
+                                onClick={() => {
+                                    navigate('/SubscriptionPlans')
+                                    console.log("Started!")
+                                }} />
                         </div>
                     </div>
                 </div>

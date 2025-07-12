@@ -12,6 +12,9 @@ import LifestyleQuiz from "../Pages/LifestyleQuiz";
 import PeriodDatePicker from "../Pages/PeriodDatePicker";
 import QuizGreetings from "../Pages/QuizGreetings";
 import SkinAnalysis from "../Pages/SkinAnalysis";
+import SubscriptionPlans from "../Pages/SubscriptionPlans";
+import CheckoutPage from "../Pages/CheckoutPage";
+import Dashboard from "../Layout/Dashboard";
 
 const router = createBrowserRouter([
     {
@@ -53,6 +56,19 @@ const router = createBrowserRouter([
     {
         path: "/SkinAnalysis",
         element: <SkinAnalysis></SkinAnalysis>
+    },
+    {
+        path: "/SubscriptionPlans",
+        element: <SubscriptionPlans></SubscriptionPlans>
+    },
+    {
+        path: "/SubscriptionPlans/CheckoutPage",
+        element: <CheckoutPage></CheckoutPage>
+    },
+    // Dashboard or Home route
+    {
+        path: "Dashboard",
+        element: <Dashboard></Dashboard>
     },
 ]);
 

@@ -3,6 +3,8 @@ import AuthNav from '../Components/AuthNav'
 import { FaGreaterThan } from "react-icons/fa6";
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import { useNavigate } from 'react-router-dom';
+import RowButton from '../Components/RowButton';
+import { nextDay } from 'date-fns/fp';
 
 const QuizGreetings = () => {
 
@@ -28,13 +30,18 @@ const QuizGreetings = () => {
                     Tell us Your email so we can send to you a complete Yourself Beauty guide with personalized tips, insights, and recommendations to support Your skin Beauty as well as a thank you for taking care of Yourself gift.
 
                 </p>
-                <button
-                    onClick={() => {
-                        navigate('/SkinAnalysis')
-                    }}
-                    className='btn bg-[#090642] text-white rounded-xl '>
-                    See my results <span> <FaGreaterThan /></span>
-                </button>
+                <div className='w-full'>
+                    <div className="w-1/2 mx-auto mt-10" >
+                        <RowButton text="Let's get started"
+
+                            onClick={() => {
+                                navigate('/SkinAnalysis')
+                                console.log("Started!")
+                            }} />
+                    </div>
+                </div>
+
+
             </div>
 
 
