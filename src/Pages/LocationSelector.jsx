@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useNavigate } from 'react-router-dom';
 
 // Custom marker icon
 const markerIcon = new L.Icon({
@@ -32,6 +33,8 @@ const LocationSelector = () => {
     const [address, setAddress] = useState({ street: '', city: '', country: '' });
     const [searchInput, setSearchInput] = useState('');
     const mapRef = useRef();
+
+   const navigate = useNavigate();
 
     // Fetch human-readable address from lat/lng
     const fetchAddress = async (lat, lon) => {
@@ -148,7 +151,10 @@ const LocationSelector = () => {
 
             {/* Save Button */}
             <button
-                onClick={() => alert('Location saved!')}
+                onClick={() => {
+                    alert('Location saved!')
+                    navigate('/LifestyleQuiz'); // Redirect to home or another page after saving
+                }}
                 className="bg-[#0c0c36] text-white px-6 py-3 rounded-md text-sm hover:bg-[#1c1c4f]"
             >
                 Save my location

@@ -8,6 +8,10 @@ import SimpleRegisterPage from "../Pages/SimpleRegisterPage";
 import UploadProfilePage from "../Pages/UploadProfilePage";
 import StartQuizPage from "../Pages/StartQuizPage";
 import LocationSelector from "../Pages/LocationSelector";
+import LifestyleQuiz from "../Pages/LifestyleQuiz";
+import PeriodDatePicker from "../Pages/PeriodDatePicker";
+import QuizGreetings from "../Pages/QuizGreetings";
+import SkinAnalysis from "../Pages/SkinAnalysis";
 
 const router = createBrowserRouter([
     {
@@ -33,6 +37,22 @@ const router = createBrowserRouter([
     {
         path: "/LocationSelector",
         element: <LocationSelector></LocationSelector>
+    },
+    {
+        path: "/LifestyleQuiz",
+        element: <LifestyleQuiz></LifestyleQuiz>
+    },
+    {
+        path: "/PeriodDatePicker",
+        element: <PeriodDatePicker></PeriodDatePicker>
+    },
+    {
+        path: "/QuizGreetings",
+        element: <QuizGreetings></QuizGreetings>
+    },
+    {
+        path: "/SkinAnalysis",
+        element: <SkinAnalysis></SkinAnalysis>
     },
 ]);
 
