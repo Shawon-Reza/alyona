@@ -15,6 +15,8 @@ import SkinAnalysis from "../Pages/SkinAnalysis";
 import SubscriptionPlans from "../Pages/SubscriptionPlans";
 import CheckoutPage from "../Pages/CheckoutPage";
 import Dashboard from "../Layout/Dashboard";
+import SubscriptionPlanComponent from "../Components/SubscriptionPlanComponent";
+import MainDashboard from "../Pages/MainDashboard";
 
 const router = createBrowserRouter([
     {
@@ -65,10 +67,21 @@ const router = createBrowserRouter([
         path: "/SubscriptionPlans/CheckoutPage",
         element: <CheckoutPage></CheckoutPage>
     },
+    {
+        path: "/mainDashboard",
+        element: <MainDashboard></MainDashboard>
+    },
     // Dashboard or Home route
     {
         path: "Dashboard",
-        element: <Dashboard></Dashboard>
+        element: <Dashboard></Dashboard>,
+        children: [
+            {
+                path: "", // default child route (dashboard/)
+                element: <SubscriptionPlanComponent></SubscriptionPlanComponent>
+            },
+
+        ]
     },
 ]);
 
