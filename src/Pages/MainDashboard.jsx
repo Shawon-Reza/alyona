@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AboutMySkin from "../Components/AboutMySkin";
 import LoginPageOverLap from '../assets/LoginPageOverLap.png'
+import img from '../assets/annaImg.png'
 import AuthNav from "../Components/AuthNav";
 import { IoIosSearch } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
@@ -12,13 +13,17 @@ import {
     getDaysInMonth,
 
 } from 'date-fns';
+import MyBadges from "../Components/MyBadges";
+import ProductRecommendations from "../Components/ProductRecommendations";
+import PersonalizedSuggestions from "../Components/PersonalizedSuggestions";
+
 
 const user = {
     name: "Anna",
     level: 3,
     streak: 3,
     efficiency: 78,
-    profileImage: "https://via.placeholder.com/80",
+    profileImage: img,
     selectedDates: [
         new Date("2025-07-19"),
         new Date("2025-07-20"),
@@ -47,32 +52,10 @@ const getLast7Days = () => {
 
 export default function MainDashboard() {
 
-    const compatibleProducts = [
-        {
-            name: "Alpha Beta Pore Perfecting Cleansing Gel",
-            percent: "79%",
-            type: "Gel cleanser",
-            image: "https://thebioaqua.com/cdn/shop/products/product-image-924759520.jpg?v=1605491158",
-        },
-        {
-            name: "Kakadu C Brightening Daily Cleanser",
-            percent: "85%",
-            type: "Gel cleanser",
-            image: "https://thebioaqua.com/cdn/shop/products/product-image-924759520.jpg?v=1605491158",
-        },
-    ];
+    const [CalendarPopUp, setCalendarPopup] = useState(false);
 
-    const badges = [
-        "Level 3",
-        "3 days streak",
-        "My first review",
-        "You’ve tried 3 cleansers",
-        "My first product",
-        "Mask lover",
-        "Mask lover",
-        "Mask lover",
-    ];
-
+    // Calculate the start of the month and the number of days in the month
+    // to display the calendar correctly
     const today = new Date();
     const monthStart = startOfMonth(today);
     const daysInMonth = getDaysInMonth(monthStart);
@@ -105,7 +88,10 @@ export default function MainDashboard() {
                 {/* Left Column */}
                 <div className="lg:col-span-1 space-y-6">
                     {/* User Card */}
-                    <div style={{ maxWidth: 400, margin: "0 auto", padding: 16, borderRadius: 16, boxShadow: "0 4px 12px rgba(0,0,0,0.1)", background: "linear-gradient(to bottom, #fff, #fef3c7)" }}>
+                    <div
+                        className=" mx-auto p-4 rounded-2xl shadow-md bg-gradient-to-b from-[#FAFAFA] to-[#EDDBCB]"
+
+                    >
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                             <img
                                 src={user.profileImage}
@@ -141,8 +127,8 @@ export default function MainDashboard() {
                                         <div
                                             key={index}
                                             style={{
-                                                width: 32,
-                                                height: 32,
+                                                width: 40,
+                                                height: 40,
                                                 display: "flex",
                                                 alignItems: "center",
                                                 justifyContent: "center",
@@ -159,13 +145,23 @@ export default function MainDashboard() {
                                     );
                                 })}
                                 <div style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", backgroundColor: "#a16207", color: "#fff" }}>
-                                    <span role="img" aria-label="calendar">📅</span>
+
+                                    <span
+                                        role="img"
+                                        aria-label="calendar"
+
+                                        onClick={() => setCalendarPopup(!CalendarPopUp)}
+                                        className="cursor-pointer"
+                                    >
+                                        📅
+
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     {/* Calendar show */}
-                    <div className="p-4 rounded-xl bg-white shadow-md  ">
+                    <div className={` p-4 rounded-xl bg-white shadow-md ${CalendarPopUp ? 'block' : 'hidden'}`}>
                         {/* Header */}
                         <div className="text-center mb-3">
                             <h2 className="text-lg font-semibold text-[#5B5B5B]">
@@ -295,156 +291,12 @@ export default function MainDashboard() {
                     </div>
 
 
-                    {/* Improve Routine */}
-                    <div className="space-y-10 mt-6">
-                        {/* Improve your routine */}
-                        <div className="space-y-4">
-                            <h1 className="text-xl font-bold">Improve your routine</h1>
-                            <div className="flex flex-col sm:flex-row gap-4">
-                                {/* Skincare efficiency */}
-                                <div className="bg-white rounded-xl border-base-700 p-4 shadow-sm flex-1">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <p className="text-sm font-semibold text-purple-600 flex items-center gap-1">
-                                                <span>💧</span> Skincare efficiency
-                                            </p>
-                                            <p className="text-sm mt-1 text-gray-800">
-                                                Would you like us to give you more recommendations to improve it?
-                                            </p>
-                                        </div>
-                                        <span className="text-lg text-gray-400">›</span>
-                                    </div>
-                                </div>
 
-                                {/* Quiz */}
-                                <div className="bg-white rounded-xl border-base-700 p-4 shadow-sm flex-1">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <p className="text-sm font-semibold text-pink-500 flex items-center gap-1">
-                                                <span>🧠</span> Quiz
-                                            </p>
-                                            <p className="text-sm mt-1 text-gray-800">
-                                                Take more quizzes for custom skincare advice
-                                            </p>
-                                        </div>
-                                        <span className="text-lg text-gray-400">›</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* For you */}
-                        <div className="space-y-4">
-                            <h1 className="text-xl font-bold -mt-5">For you</h1>
-                            <div className="flex flex-col sm:flex-row gap-4">
-                                {/* Mi Daily Routine */}
-                                <div className="bg-white border-2 border-base-200  rounded-xl p-4 shadow-lg flex-1">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <p className="text-sm font-semibold text-[#7271E3] flex items-center gap-1">
-                                                <span>✨</span> Mi Daily Routine
-                                            </p>
-                                            <p className="text-sm font-semibold text-gray-800 mt-1">
-                                                Did you do your morning routine?
-                                            </p>
-                                            <p className="text-sm text-gray-500 mt-1">
-                                                Start now and don’t lose your streak
-                                            </p>
-                                        </div>
-                                        <span className="text-lg text-gray-400">›</span>
-                                    </div>
-
-                                    {/* Dotted progress bar */}
-                                    <div className="flex gap-5 mt-4">
-                                        {[...Array(2)].map((_, i) => (
-                                            <div key={i} className="h-1 w-10 rounded-ll bg-violet-500" />
-                                        ))}
-                                        {[...Array(5)].map((_, i) => (
-                                            <div key={i} className="h-1 w-10 rounded-full bg-violet-200" />
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Products */}
-                                <div className="bg-white rounded-xl border-base-700 p-4 shadow-sm flex-1">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <p className="text-sm font-semibold text-cyan-600 flex items-center gap-1">
-                                                <span>📦</span> Products
-                                            </p>
-                                            <p className="text-sm mt-1 text-gray-800">New Product added</p>
-                                            <p className="text-xs text-gray-500">Cleanser Free Oil</p>
-                                        </div>
-                                        <span className="text-lg text-gray-400">›</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    {/* Product Recommendations */}
-                    <div className="mt-6">
-                        <h3 className="font-semibold text-gray-800 mb-1">
-                            These products are compatible with your skin type
-                        </h3>
-                        <p className="text-sm text-gray-500 mb-4">Add one to improve your routine</p>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {compatibleProducts.map((prod, idx) => (
-                                <div
-                                    key={idx}
-                                    className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-start justify-between"
-                                >
-                                    <div className="flex items-start gap-4">
-                                        <img
-                                            src={prod.image}
-                                            alt={prod.name}
-                                            className="w-12 h-20 object-contain rounded-md"
-                                        />
-                                        <div>
-                                            <p className="font-semibold text-sm text-gray-800">{prod.name}</p>
-                                            <div className="flex items-center gap-2 mt-2">
-                                                <span className="text-[10px] font-medium bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full">
-                                                    {prod.percent}
-                                                </span>
-                                                <p className="text-xs text-gray-500">{prod.type}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="w-5 h-5 rounded-full border border-amber-300 flex items-center justify-center mt-1">
-                                        <span className="text-amber-500 text-xs font-bold">✓</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Badges */}
+                    <PersonalizedSuggestions></PersonalizedSuggestions>
+                    <ProductRecommendations></ProductRecommendations>
                     {/* My Badges */}
-                    <div className="mt-6">
-                        <h2 className="text-base font-semibold text-gray-800 mb-3">My Badges</h2>
-                        <div className="flex overflow-x-auto space-x-3 pb-2">
-                            {[
-                                { label: "Level 3", icon: "🧠", color: "text-gray-900", bg: "bg-white" },
-                                { label: "3 days streak", icon: "🔥", color: "text-violet-600", bg: "bg-white" },
-                                { label: "My first review", icon: "🏅", color: "text-teal-600", bg: "bg-white" },
-                                { label: "You’ve tried 3 cleansers", icon: "🧴", color: "text-amber-700", bg: "bg-white" },
-                                { label: "My first product", icon: "🏠", color: "text-violet-600", bg: "bg-white" },
-                                ...Array(3).fill({ label: "Mask lover", icon: "💖", color: "text-amber-400", bg: "bg-[#fcf9f6]" }),
-                            ].map((badge, i) => (
-                                <div
-                                    key={i}
-                                    className={`min-w-[120px] flex flex-col items-center justify-center p-3 rounded-xl border-base-300 bg-white shadow-sm ${badge.bg}`}
-                                >
-                                    <div className={`text-2xl mb-1 ${badge.color}`}>{badge.icon}</div>
-                                    <div className="text-xs font-medium text-center text-gray-800">{badge.label}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <MyBadges></MyBadges>
+
 
                 </div>
             </div>
