@@ -8,13 +8,13 @@ const skinStats = [
 
 export default function AboutMySkin() {
     return (
-        <div className="bg-[#f5f5f5] rounded-2xl p-6">
+        <div className="bg-[#7271E30D] rounded-2xl p-6 ">
             <h2 className="text-xl font-bold mb-4">About my Skin</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {skinStats.map((stat, index) => (
                     <div
                         key={index}
-                        className="bg-white rounded-xl p-4 shadow-sm text-center flex flex-col items-center justify-center"
+                        className="bg-white rounded-xl p-4 shadow-sm text-center flex flex-col items-center justify-center "
                     >
                         <div
                             className="radial-progress text-indigo-500 mb-2"

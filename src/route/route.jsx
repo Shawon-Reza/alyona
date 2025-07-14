@@ -17,6 +17,11 @@ import CheckoutPage from "../Pages/CheckoutPage";
 import Dashboard from "../Layout/Dashboard";
 import SubscriptionPlanComponent from "../Components/SubscriptionPlanComponent";
 import MainDashboard from "../Pages/MainDashboard";
+import Badges from "../Components/BadgeSection.JSX";
+import MonthlySkinReport from "../Components/MonthlySkinReport ";
+import ReportDetails from "../Components/ReportDetails";
+import Subscribe from "../Components/Subscribe";
+import AboutSkin from "../Components/AboutSkin";
 
 const router = createBrowserRouter([
     {
@@ -79,6 +84,26 @@ const router = createBrowserRouter([
             {
                 path: "", // default child route (dashboard/)
                 element: <SubscriptionPlanComponent></SubscriptionPlanComponent>
+            },
+            {
+                path: "monthly-report", // default child route (dashboard/)
+                element: <MonthlySkinReport></MonthlySkinReport>
+            },
+            {
+                path: "monthly-report/report-details", // default child route (dashboard/)
+                element: <ReportDetails></ReportDetails>
+            },
+            {
+                path: "badges", // default child route (dashboard/)
+                element: <Badges></Badges>
+            },
+            {
+                path: "Payment/subscribe", // default child route (dashboard/)
+                element: <Subscribe></Subscribe>
+            },
+            {
+                path: "about-my-skin", // default child route (dashboard/)
+                element: <AboutSkin></AboutSkin>
             },
 
         ]

@@ -1,4 +1,3 @@
-
 import AuthNav from '../Components/AuthNav';
 import { NavLink, Outlet } from 'react-router-dom';
 import { MdOutlineModeEdit, MdOutlineStarBorder } from "react-icons/md";
@@ -8,6 +7,8 @@ import { AiOutlineBarChart, AiOutlineProduct } from 'react-icons/ai';
 import { HiOutlineBadgeCheck } from 'react-icons/hi';
 import { WiStars } from 'react-icons/wi';
 import { IoCallOutline } from 'react-icons/io5';
+import LoginPageOverLap from '../assets/LoginPageOverLap.png'
+
 
 const plans = [
     {
@@ -53,13 +54,16 @@ const Dashboard = () => {
 
 
     return (
-        <div className="flex min-h-screen bg-[#f7f5f2] text-gray-800 px-10">
+        <div className=" relative flex min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF] text-gray-800 px-10">
             <div className=''>
                 <AuthNav></AuthNav>
             </div>
+            <div className='absolute bottom-0 right-0'>
+                <img src={LoginPageOverLap} alt="OverlapIMG" />
+            </div>
 
             {/* Sidebar */}
-            <aside className="mt-28 w-64 ">
+            <aside className="mt-28 w-64  ">
 
                 {/* GENERAL */}
                 <h2 className="mt-2 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">General</h2>
@@ -67,8 +71,9 @@ const Dashboard = () => {
                 <div className='w-64 bg-white shadow-md  border-r border-gray-200 border rounded-2xl'>
 
                     <ul className="text-sm text-gray-800 border border-gray-200 rounded-md overflow-hidden">
+
                         <li className="border-t border-gray-200 first:border-t-0">
-                            <NavLink to="/dashboard" className={({ isActive }) =>
+                            <NavLink to="" className={({ isActive }) =>
                                 `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
                             }>
                                 <span className="flex items-center space-x-2">
@@ -111,7 +116,7 @@ const Dashboard = () => {
                         </li>
 
                         <li className="border-t border-gray-300">
-                            <NavLink to="/about-my-skin" className={({ isActive }) =>
+                            <NavLink to="about-my-skin" className={({ isActive }) =>
                                 `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
                             }>
                                 <span className="flex items-center space-x-2">
@@ -123,7 +128,7 @@ const Dashboard = () => {
                         </li>
 
                         <li className="border-t border-gray-300">
-                            <NavLink to="/monthly-report" className={({ isActive }) =>
+                            <NavLink to="monthly-report" className={({ isActive }) =>
                                 `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
                             }>
                                 <span className="flex items-center space-x-2">
@@ -147,7 +152,7 @@ const Dashboard = () => {
                         </li>
 
                         <li className="border-t border-gray-300">
-                            <NavLink to="/badges" className={({ isActive }) =>
+                            <NavLink to="badges" className={({ isActive }) =>
                                 `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
                             }>
                                 <span className="flex items-center space-x-2">
@@ -164,7 +169,7 @@ const Dashboard = () => {
 
 
                 {/* NOTIFICATIONS */}
-                <h2 className="mt-2 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Notifications</h2>
+                <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Notifications</h2>
 
                 <div className='bg-white shadow-md border-r border-gray-200 border rounded-2xl'>
                     <div className="border-t border-gray-300 first:border-t-0 flex justify-between items-center px-3 py-4">
@@ -194,13 +199,13 @@ const Dashboard = () => {
                 </div>
 
                 {/* HELP */}
-                <h2 className="mt-2 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Help & Privacy</h2>
-                <div className='bg-white shadow-md p-6 space-y-8 border-r border-gray-200 border rounded-2xl '>
+                <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Help & Privacy</h2>
+                <div className='bg-white shadow-md px-6 py-3 space-y-8 border-r border-gray-200 border rounded-2xl '>
 
-                    <div className="border-b border-gray-300 flex justify-between items-center  py-4">
+                    <div className="border-b border-gray-300 flex justify-between items-center  pb-1">
                         <span className="h-5 flex items-center space-x-2">
 
-                            <IoCallOutline  ars className="text-lg" />
+                            <IoCallOutline ars className="text-lg" />
                             <span>Support</span>
                         </span>
                         <input type="checkbox" className="toggle toggle-sm scale-75" />
@@ -209,7 +214,10 @@ const Dashboard = () => {
             </aside>
 
             {/* Main Content */}
-            <Outlet></Outlet>
+            <div className='p-10 mt-16 flex-1'>
+                <Outlet></Outlet>
+            </div>
+
 
         </div>
     );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const plans = [
     {
@@ -47,10 +48,12 @@ const SubscriptionPlanComponent = () => {
         console.log("Billing cycle changed to:", billingCycle);
     }, [billingCycle]);
 
+    const navigate = useNavigate();
+
     return (
         <div>
             {/* Main Content */}
-            <main className="flex-1 p-10 mt-16">
+            <main className="flex-1 ">
                 <h1 className="text-2xl font-semibold mb-6 text-center">Subscription Plan</h1>
 
                 {/* Billing Toggle */}
@@ -86,7 +89,11 @@ const SubscriptionPlanComponent = () => {
                                 ))}
                             </ul>
 
-                            <button className=" pt bg-[#0b0544] text-white text-sm py-2 px-4 rounded-md w-full mt-auto">
+                            <button
+                                onClick={() => {
+                                    navigate('Payment/subscribe')
+                                }}
+                                className=" pt bg-[#0b0544] text-white text-sm py-2 px-4 rounded-md w-full mt-auto">
                                 Change plan
                             </button>
                         </div>
@@ -95,7 +102,7 @@ const SubscriptionPlanComponent = () => {
 
 
                 {/* Payment History */}
-                <h2 className="text-xl font-semibold mb-4 text-center">Payment History</h2>
+                <h2 className="text-xl font-semibold mb-8 xl:mt-20 text-center">Payment History</h2>
 
                 <table className="w-full text-sm text-left overflow-hidden shadow-md rounded-2xl border border-gray-200">
                     <thead>
