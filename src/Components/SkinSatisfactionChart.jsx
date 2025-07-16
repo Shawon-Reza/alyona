@@ -1,31 +1,36 @@
 import React from "react";
+import {
+    LineChart,
+    Line,
+    XAxis,
+    Tooltip,
+    ResponsiveContainer,
+    CartesianGrid,
+    Dot
+} from "recharts";
+
+// Generate last 4 months
+const getLastFourMonths = () => {
+    const months = [];
+    const now = new Date();
+    for (let i = 3; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        months.push(d.toLocaleString("default", { month: "short" }));
+    }
+    return months;
+};
 
 const SkinSatisfactionChart = ({
-    data = [5, 25, 0, 27], // 4 values required
+    data = [5, 25, 0, 27], // expects 4 data points
     latestValue = "87%",
 }) => {
-    // Generate last 4 months including current
-    const getLastFourMonths = () => {
-        const labels = [];
-        const date = new Date();
-        for (let i = 3; i >= 0; i--) {
-            const d = new Date(date.getFullYear(), date.getMonth() - i, 1);
-            labels.push(d.toLocaleString("default", { month: "short" }));
-        }
-        return labels;
-    };
+    const monthLabels = getLastFourMonths();
 
-    const labels = getLastFourMonths();
-
-    const generatePath = (dataPoints) => {
-        let path = `M0,${40 - dataPoints[0]}`;
-        for (let i = 1; i < dataPoints.length; i++) {
-            const x = (100 / (dataPoints.length - 1)) * i;
-            const y = 40 - dataPoints[i];
-            path += ` T${x},${y}`;
-        }
-        return path;
-    };
+    // Prepare chart data
+    const chartData = monthLabels.map((month, idx) => ({
+        month,
+        value: data[idx] || 0,
+    }));
 
     return (
         <div className="bg-white rounded-xl shadow-sm p-4 relative overflow-hidden w-full">
@@ -34,46 +39,36 @@ const SkinSatisfactionChart = ({
             </h3>
 
             <div className="relative h-40 w-full">
-                {/* Background bars */}
-                <div className="absolute inset-0 flex gap-[2px] justify-between px-1">
-                    {data.map((_, idx) => (
-                        <div
-                            key={idx}
-                            className="flex-1 bg-gradient-to-b from-[#f4f4f5] to-[#bfc3e0] h-full rounded-sm"
+                {/* Recharts Container */}
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={chartData}>
+                        <CartesianGrid strokeDasharray="0" vertical={false} stroke="#f0f0f0" />
+                        <XAxis
+                            dataKey="month"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fontSize: 10, fill: "#888" }}
                         />
-                    ))}
-                </div>
+                        <Tooltip />
+                        <Line
+                            type="monotone"
+                            dataKey="value"
+                            stroke="#1f1f3f"
+                            strokeWidth={3.5}
+                            dot={{
+                                stroke: "#1f1f3f",
+                                strokeWidth: 4,
+                                r: 2,
+                                fill: "#1f1f3f",
+                            }}
+                            activeDot={{ r: 4 }}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
 
-                {/* SVG Line Path */}
-                <svg
-                    viewBox="0 0 100 40"
-                    preserveAspectRatio="none"
-                    className="absolute inset-0 w-full h-full"
-                >
-                    <path
-                        d={generatePath(data)}
-                        fill="none"
-                        stroke="#1f1f3f"
-                        strokeWidth="1.5"
-                    />
-                    <circle
-                        cx="100"
-                        cy={40 - data[data.length - 1]}
-                        r="1.8"
-                        fill="#1f1f3f"
-                    />
-                </svg>
-
-                {/* Value label */}
+                {/* Latest Value Tag */}
                 <div className="absolute top-3 right-[5%] text-xs font-bold text-gray-800">
                     {latestValue}
-                </div>
-
-                {/* Month labels */}
-                <div className="absolute bottom-2 left-0 w-full flex justify-between px-2 text-[10px] text-gray-400">
-                    {labels.map((label, idx) => (
-                        <span key={idx}>{label}</span>
-                    ))}
                 </div>
             </div>
         </div>

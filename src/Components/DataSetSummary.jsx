@@ -1,4 +1,10 @@
 import React from "react";
+import {
+  RadialBarChart,
+  RadialBar,
+  PolarAngleAxis,
+  ResponsiveContainer,
+} from "recharts";
 
 const dataSet = [
   { label: "A", avg: 136, value: 151, total: 753 },
@@ -7,49 +13,41 @@ const dataSet = [
   { label: "D", avg: 128, value: 145, total: 753 },
 ];
 
-const CircularProgress = ({ percentage, label }) => {
-  const strokeWidth = 6;
-  const radius = 35;
-  const normalizedRadius = radius - strokeWidth / 2;
-  const circumference = 2 * Math.PI * normalizedRadius;
-  const offset = circumference - (percentage / 100) * circumference;
+const CircularProgressChart = ({ label, percentage }) => {
+  const chartData = [{ name: label, value: percentage }];
 
   return (
-    <svg width="80" height="80" className="mb-2">
-      {/* Background circle */}
-      <circle
-        cx="40"
-        cy="40"
-        r={normalizedRadius}
-        stroke="#f2e8df"
-        strokeWidth={strokeWidth}
-        fill="none"
-      />
-      {/* Progress circle */}
-      <circle
-        cx="40"
-        cy="40"
-        r={normalizedRadius}
-        stroke="#b5764f"
-        strokeWidth={strokeWidth}
-        fill="none"
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-        transform="rotate(-90 40 40)"
-      />
-      {/* Label in center */}
-      <text
-        x="40"
-        y="45"
-        textAnchor="middle"
-        fontSize="14"
-        fontWeight="bold"
-        fill="#2c2c2c"
-      >
+    <div className="w-24 h-24 relative">
+      <ResponsiveContainer width="100%" height="100%">
+        <RadialBarChart
+          cx="50%"
+          cy="50%"
+          innerRadius="75%"
+          outerRadius="100%"
+          barSize={8}
+          data={chartData}
+          startAngle={90}
+          endAngle={-270}
+        >
+          <PolarAngleAxis
+            type="number"
+            domain={[0, 100]}
+            angleAxisId={0}
+            tick={false}
+          />
+          <RadialBar
+            background
+            clockWise
+            dataKey="value"
+            fill="#b5764f"
+            cornerRadius={5}
+          />
+        </RadialBarChart>
+      </ResponsiveContainer>
+      <div className="absolute inset-0 flex items-center justify-center font-bold text-sm text-gray-800">
         {label}
-      </text>
-    </svg>
+      </div>
+    </div>
   );
 };
 
@@ -67,7 +65,7 @@ const DataSetSummary = () => {
               key={idx}
               className="flex flex-col items-center text-center text-sm"
             >
-              <CircularProgress label={set.label} percentage={percentage} />
+              <CircularProgressChart label={set.label} percentage={percentage} />
               <div className="text-[13px] text-gray-500 mb-1">AVG {set.avg}</div>
               <div className="font-semibold text-[15px]">
                 {set.value}/{set.total}

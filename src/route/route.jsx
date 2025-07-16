@@ -22,6 +22,12 @@ import MonthlySkinReport from "../Components/MonthlySkinReport ";
 import ReportDetails from "../Components/ReportDetails";
 import Subscribe from "../Components/Subscribe";
 import AboutSkin from "../Components/AboutSkin";
+import PromoCodeCard from "../Components/PromoCodeCard";
+import ProductLibrary from "../Pages/ProductLibrary";
+import ProductDetailPage from "../Pages/ProductDetailPage";
+import ProductDescription from "../Components/ProductDescription";
+import ProductDetails from "../Components/ProductDetails";
+import SimilarProductsList from "../Components/SimilarProductsList";
 
 const router = createBrowserRouter([
     {
@@ -98,6 +104,10 @@ const router = createBrowserRouter([
                 element: <Badges></Badges>
             },
             {
+                path: "Payment/promocode", // default child route (dashboard/)
+                element: <PromoCodeCard></PromoCodeCard>
+            },
+            {
                 path: "Payment/subscribe", // default child route (dashboard/)
                 element: <Subscribe></Subscribe>
             },
@@ -106,6 +116,28 @@ const router = createBrowserRouter([
                 element: <AboutSkin></AboutSkin>
             },
 
+        ]
+    },
+    {
+        path: "/library",
+        element: <ProductLibrary></ProductLibrary>
+    },
+    {
+        path: "/library/product-detail",
+        element: <ProductDetailPage></ProductDetailPage>,
+        children: [
+            {
+                path: "",
+                element: <ProductDescription></ProductDescription>
+            },
+            {
+                path: "product-details",
+                element: <ProductDetails></ProductDetails>
+            },
+            {
+                path: "similar-products",
+                element: <SimilarProductsList></SimilarProductsList>
+            },
         ]
     },
 ]);

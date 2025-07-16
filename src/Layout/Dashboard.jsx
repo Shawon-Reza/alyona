@@ -8,6 +8,7 @@ import { HiOutlineBadgeCheck } from 'react-icons/hi';
 import { WiStars } from 'react-icons/wi';
 import { IoCallOutline } from 'react-icons/io5';
 import LoginPageOverLap from '../assets/LoginPageOverLap.png'
+import Navbar from '../Components/Navbar';
 
 
 const plans = [
@@ -54,171 +55,175 @@ const Dashboard = () => {
 
 
     return (
-        <div className=" relative flex min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF] text-gray-800 px-10">
-            <div className=''>
-                <AuthNav></AuthNav>
+
+        <div className='bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF]'>
+            <div className='px-10 pt-6'>
+                <Navbar></Navbar>
             </div>
-            <div className='absolute bottom-0 right-0'>
-                <img src={LoginPageOverLap} alt="OverlapIMG" />
-            </div>
+            <div className=" relative flex min-h-screen  text-gray-800 px-10">
 
-            {/* Sidebar */}
-            <aside className="mt-28 w-64  ">
+                <div className='absolute bottom-0 right-0'>
+                    <img src={LoginPageOverLap} alt="OverlapIMG" />
+                </div>
 
-                {/* GENERAL */}
-                <h2 className="mt-2 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">General</h2>
+                {/* Sidebar */}
+                <aside className="mt-10 w-64  ">
 
-                <div className='w-64 bg-white shadow-md  border-r border-gray-200 border rounded-2xl'>
+                    {/* GENERAL */}
+                    <h2 className="mt-2 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">General</h2>
 
-                    <ul className="text-sm text-gray-800 border border-gray-200 rounded-md overflow-hidden">
+                    <div className='w-64 bg-white shadow-md  border-r border-gray-200 border rounded-2xl'>
 
-                        <li className="border-t border-gray-200 first:border-t-0">
-                            <NavLink to="" className={({ isActive }) =>
-                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                            }>
+                        <ul className="text-sm text-gray-800 border border-gray-200 rounded-md overflow-hidden">
+
+                            <li className="border-t border-gray-200 first:border-t-0">
+                                <NavLink to="" className={({ isActive }) =>
+                                    `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                }>
+                                    <span className="flex items-center space-x-2">
+                                        <MdOutlineStarBorder className="text-lg" />
+                                        <span>Subscription Plan</span>
+                                    </span>
+                                    <span className="text-2xl font-light">›</span>
+                                </NavLink>
+                            </li>
+
+                            <li className="border-t border-gray-300">
+                                <NavLink to="/edit-profile" className={({ isActive }) =>
+                                    `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                }>
+                                    <span className="flex items-center space-x-2">
+                                        <MdOutlineModeEdit className="text-lg" />                                      <span>Edit Profile</span>
+                                    </span>
+                                    <span className="text-2xl font-light">›</span>
+                                </NavLink>
+                            </li>
+
+                            <li className="border-t border-gray-300">
+                                <NavLink to="/skin-type-test" className={({ isActive }) =>
+                                    `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                }>
+                                    <span className="flex items-center space-x-2">
+                                        <MdOutlineStarBorder className="text-lg" />
+                                        <span>Skin Type Test</span>
+                                    </span>
+                                    <span className="text-2xl font-light">›</span>
+                                </NavLink>
+                            </li>
+
+                            <li className="border-t border-gray-300 flex justify-between items-center px-3 py-2 hover:bg-gray-100">
                                 <span className="flex items-center space-x-2">
-                                    <MdOutlineStarBorder className="text-lg" />
-                                    <span>Subscription Plan</span>
+                                    <PiBabyLight className="text-lg" />
+                                    <span>Pregnant or breastfeeding</span>
                                 </span>
-                                <span className="text-2xl font-light">›</span>
-                            </NavLink>
-                        </li>
+                                <input type="checkbox" className="toggle toggle-sm scale-75" />
+                            </li>
 
-                        <li className="border-t border-gray-300">
-                            <NavLink to="/edit-profile" className={({ isActive }) =>
-                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                            }>
-                                <span className="flex items-center space-x-2">
-                                    <MdOutlineModeEdit className="text-lg" />                                      <span>Edit Profile</span>
-                                </span>
-                                <span className="text-2xl font-light">›</span>
-                            </NavLink>
-                        </li>
+                            <li className="border-t border-gray-300">
+                                <NavLink to="about-my-skin" className={({ isActive }) =>
+                                    `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                }>
+                                    <span className="flex items-center space-x-2">
+                                        <PiHeartStraightBold className="text-lg" />
+                                        <span>About my skin</span>
+                                    </span>
+                                    <span className="text-2xl font-light">›</span>
+                                </NavLink>
+                            </li>
 
-                        <li className="border-t border-gray-300">
-                            <NavLink to="/skin-type-test" className={({ isActive }) =>
-                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                            }>
-                                <span className="flex items-center space-x-2">
-                                    <MdOutlineStarBorder className="text-lg" />
-                                    <span>Skin Type Test</span>
-                                </span>
-                                <span className="text-2xl font-light">›</span>
-                            </NavLink>
-                        </li>
+                            <li className="border-t border-gray-300">
+                                <NavLink to="monthly-report" className={({ isActive }) =>
+                                    `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                }>
+                                    <span className="flex items-center space-x-2">
+                                        <TbFileReport className="text-lg" />
+                                        <span>Monthly skin report</span>
+                                    </span>
+                                    <span className="text-2xl font-light">›</span>
+                                </NavLink>
+                            </li>
 
-                        <li className="border-t border-gray-300 flex justify-between items-center px-3 py-2 hover:bg-gray-100">
-                            <span className="flex items-center space-x-2">
-                                <PiBabyLight className="text-lg" />
-                                <span>Pregnant or breastfeeding</span>
+                            <li className="border-t border-gray-300">
+                                <NavLink to="/routine-analysis" className={({ isActive }) =>
+                                    `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                }>
+                                    <span className="flex items-center space-x-2">
+                                        <AiOutlineBarChart className="text-lg" />
+                                        <span>Routine analysis</span>
+                                    </span>
+                                    <span className="text-2xl font-light">›</span>
+                                </NavLink>
+                            </li>
+
+                            <li className="border-t border-gray-300">
+                                <NavLink to="badges" className={({ isActive }) =>
+                                    `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                }>
+                                    <span className="flex items-center space-x-2">
+                                        <HiOutlineBadgeCheck className="text-lg" />
+                                        <span>Badges</span>
+                                    </span>
+                                    <span className="text-2xl font-light">›</span>
+                                </NavLink>
+                            </li>
+                        </ul>
+
+
+                    </div>
+
+
+                    {/* NOTIFICATIONS */}
+                    <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Notifications</h2>
+
+                    <div className='bg-white shadow-md border-r border-gray-200 border rounded-2xl'>
+                        <div className="border-t border-gray-300 first:border-t-0 flex justify-between items-center px-3 py-4">
+                            <span className="h-5 flex items-center space-x-2">
+                                <AiOutlineProduct className="text-lg" />
+                                <span>New products</span>
                             </span>
                             <input type="checkbox" className="toggle toggle-sm scale-75" />
-                        </li>
+                        </div>
 
-                        <li className="border-t border-gray-300">
-                            <NavLink to="about-my-skin" className={({ isActive }) =>
-                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                            }>
-                                <span className="flex items-center space-x-2">
-                                    <PiHeartStraightBold className="text-lg" />
-                                    <span>About my skin</span>
-                                </span>
-                                <span className="text-2xl font-light">›</span>
-                            </NavLink>
-                        </li>
+                        <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
+                            <span className="h-5 flex items-center space-x-2">
+                                <PiSunLight className="text-lg" />
+                                <span>UV alerts</span>
+                            </span>
+                            <input type="checkbox" className="toggle toggle-sm scale-75" />
+                        </div>
 
-                        <li className="border-t border-gray-300">
-                            <NavLink to="monthly-report" className={({ isActive }) =>
-                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                            }>
-                                <span className="flex items-center space-x-2">
-                                    <TbFileReport className="text-lg" />
-                                    <span>Monthly skin report</span>
-                                </span>
-                                <span className="text-2xl font-light">›</span>
-                            </NavLink>
-                        </li>
+                        <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
+                            <span className="h-5 flex items-center space-x-2">
 
-                        <li className="border-t border-gray-300">
-                            <NavLink to="/routine-analysis" className={({ isActive }) =>
-                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                            }>
-                                <span className="flex items-center space-x-2">
-                                    <AiOutlineBarChart className="text-lg" />
-                                    <span>Routine analysis</span>
-                                </span>
-                                <span className="text-2xl font-light">›</span>
-                            </NavLink>
-                        </li>
+                                <WiStars className="text-lg" />
+                                <span>AI recommendations</span>
+                            </span>
+                            <input type="checkbox" className="toggle toggle-sm scale-75" />
+                        </div>
+                    </div>
 
-                        <li className="border-t border-gray-300">
-                            <NavLink to="badges" className={({ isActive }) =>
-                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                            }>
-                                <span className="flex items-center space-x-2">
-                                    <HiOutlineBadgeCheck className="text-lg" />
-                                    <span>Badges</span>
-                                </span>
-                                <span className="text-2xl font-light">›</span>
-                            </NavLink>
-                        </li>
-                    </ul>
+                    {/* HELP */}
+                    <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Help & Privacy</h2>
+                    <div className='bg-white shadow-md px-6 py-3 space-y-8 border-r border-gray-200 border rounded-2xl '>
 
+                        <div className="border-b border-gray-300 flex justify-between items-center  pb-1">
+                            <span className="h-5 flex items-center space-x-2">
 
+                                <IoCallOutline ars className="text-lg" />
+                                <span>Support</span>
+                            </span>
+                            <input type="checkbox" className="toggle toggle-sm scale-75" />
+                        </div>
+                    </div>
+                </aside>
+
+                {/* Main Content */}
+                <div className='p-10 mt-4 flex-1'>
+                    <Outlet></Outlet>
                 </div>
 
 
-                {/* NOTIFICATIONS */}
-                <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Notifications</h2>
-
-                <div className='bg-white shadow-md border-r border-gray-200 border rounded-2xl'>
-                    <div className="border-t border-gray-300 first:border-t-0 flex justify-between items-center px-3 py-4">
-                        <span className="h-5 flex items-center space-x-2">
-                            <AiOutlineProduct className="text-lg" />
-                            <span>New products</span>
-                        </span>
-                        <input type="checkbox" className="toggle toggle-sm scale-75" />
-                    </div>
-
-                    <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
-                        <span className="h-5 flex items-center space-x-2">
-                            <PiSunLight className="text-lg" />
-                            <span>UV alerts</span>
-                        </span>
-                        <input type="checkbox" className="toggle toggle-sm scale-75" />
-                    </div>
-
-                    <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
-                        <span className="h-5 flex items-center space-x-2">
-
-                            <WiStars className="text-lg" />
-                            <span>AI recommendations</span>
-                        </span>
-                        <input type="checkbox" className="toggle toggle-sm scale-75" />
-                    </div>
-                </div>
-
-                {/* HELP */}
-                <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Help & Privacy</h2>
-                <div className='bg-white shadow-md px-6 py-3 space-y-8 border-r border-gray-200 border rounded-2xl '>
-
-                    <div className="border-b border-gray-300 flex justify-between items-center  pb-1">
-                        <span className="h-5 flex items-center space-x-2">
-
-                            <IoCallOutline ars className="text-lg" />
-                            <span>Support</span>
-                        </span>
-                        <input type="checkbox" className="toggle toggle-sm scale-75" />
-                    </div>
-                </div>
-            </aside>
-
-            {/* Main Content */}
-            <div className='p-10 mt-16 flex-1'>
-                <Outlet></Outlet>
             </div>
-
-
         </div>
     );
 };

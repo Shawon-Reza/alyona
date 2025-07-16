@@ -91,7 +91,7 @@ const SubscriptionPlanComponent = () => {
 
                             <button
                                 onClick={() => {
-                                    navigate('Payment/subscribe')
+                                    navigate('Payment/promocode')
                                 }}
                                 className=" pt bg-[#0b0544] text-white text-sm py-2 px-4 rounded-md w-full mt-auto">
                                 Change plan
