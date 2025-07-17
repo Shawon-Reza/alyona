@@ -156,25 +156,24 @@ export default function ProductLibrary() {
                                 className=" p-4 rounded-xl hover:shadow-md transition cursor-pointer"
                             >
                                 <div className="relative mb-4 w-full">
-    <img
-        src={product.img}
-        alt={product.name}
-        className="w-full h-[160px] sm:h-[180px] object-contain rounded-lg"
-    />
-    <div
-        className={`absolute top-2 left-2 text-[11px] font-semibold px-2 py-1 rounded-full ${
-            product.match >= 90
-                ? "bg-purple-600 text-white"
-                : product.match >= 70
-                ? "bg-blue-500 text-white"
-                : product.match >= 50
-                ? "bg-pink-400 text-white"
-                : "bg-gray-300 text-gray-800"
-        }`}
-    >
-        {product.match}%
-    </div>
-</div>
+                                    <img
+                                        src={product.img}
+                                        alt={product.name}
+                                        className="w-full h-[160px] sm:h-[180px] object-contain rounded-lg"
+                                    />
+                                    <div
+                                        className={`absolute top-2 left-2 text-[11px] font-semibold px-2 py-1 rounded-full ${product.match >= 90
+                                            ? "bg-purple-600 text-white"
+                                            : product.match >= 70
+                                                ? "bg-blue-500 text-white"
+                                                : product.match >= 50
+                                                    ? "bg-pink-400 text-white"
+                                                    : "bg-gray-300 text-gray-800"
+                                            }`}
+                                    >
+                                        {product.match}%
+                                    </div>
+                                </div>
 
                                 <div className="text-[16px] sm:text-[18px] text-[#181818] font-bold mb-1">
                                     ${" "}{product.price.toFixed(2)}

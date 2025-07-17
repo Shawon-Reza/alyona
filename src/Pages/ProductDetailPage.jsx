@@ -25,11 +25,11 @@ const ProductDetailPage = () => {
                     <div className="w-full max-w-sm flex flex-col gap-4">
                         {/* Image Box */}
                         <div className="relative w-full">
-                            <div className="w-full h-[340px] sm:h-[465px] bg-white rounded-lg overflow-hidden flex items-center justify-center">
+                            <div className="w-full h-[340px] sm:h-[465px]  rounded-lg overflow-hidden flex items-center justify-center ">
                                 <img
                                     src={dummyImage}
                                     alt="Product"
-                                    className="w-full h-full object-contain"
+                                    className="w-full h-full object-contain "
                                 />
                             </div>
                             <span className="absolute top-2 left-2 bg-[#5b52e6] text-white text-xs font-bold px-2 py-1 rounded-md">

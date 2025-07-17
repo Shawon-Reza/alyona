@@ -28,6 +28,9 @@ import ProductDetailPage from "../Pages/ProductDetailPage";
 import ProductDescription from "../Components/ProductDescription";
 import ProductDetails from "../Components/ProductDetails";
 import SimilarProductsList from "../Components/SimilarProductsList";
+import ChatPage from "../Pages/ChatPage";
+import FaceScan from "../Components/FaceScan";
+import ChatPanel from "../Components/ChatPanel";
 
 const router = createBrowserRouter([
     {
@@ -137,6 +140,20 @@ const router = createBrowserRouter([
             {
                 path: "similar-products",
                 element: <SimilarProductsList></SimilarProductsList>
+            },
+        ]
+    },
+    {
+        path: "/chat",
+        element: <ChatPage></ChatPage>,
+        children: [
+            {
+                path: "",
+                element: <ChatPanel></ChatPanel>, 
+            },
+            {
+                path: "face-scan",
+                element: <FaceScan />, // <-- renders inside <Outlet />
             },
         ]
     },

@@ -1,76 +1,54 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import AuthNavIcon from '../assets/AuthNavIcon.png'; // Replace with your actual logo later
+import AuthNavIcon from '../assets/NavbarLogo.png';
 import { IoMenu } from "react-icons/io5";
 import useIsMobile from '../hooks/useIsMobile';
+import annaImg from '../assets/annaImg.png';
 
 const AuthNav = () => {
     const isMobile = useIsMobile();
 
     return (
-        <div
-            className="w-full bg-white shadow-md rounded-xl px-8 flex justify-between items-center">
+        <div className="w-full bg-white shadow-md rounded-xl px-4 sm:px-8 flex justify-between items-center h-[70px]">
 
-            {/* Logo Section */}
-            <div className="flex items-center gap-2">
-                <img src={AuthNavIcon} alt="Logo" className="" />
+            {/* Logo */}
+            <div className="flex items-center gap-2 h-16 whitespace-nowrap">
+                <img src={AuthNavIcon} alt="Brand Logo" className="w-14 h-18" />
+                <span className="font-semibold lg:text-xl hidden sm:block">YOURSELF BEAUTY</span>
             </div>
 
-            {/* Nav Links */}
+
+            {/* Nav Links (desktop only) */}
             <ul className="hidden md:flex gap-6 text-sm text-[#5B5B5B]">
-                <li>
-                    <NavLink
-                        to="/dashboard"
-                        className={({ isActive }) =>
-                            `hover:text-[#0b0544] ${isActive ? 'font-semibold text-[#0b0544]' : ''}`
-                        }
-                    >
-                        Dashboard
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink
-                        to="/library"
-                        className={({ isActive }) =>
-                            `hover:text-[#0b0544] ${isActive ? 'font-semibold text-[#0b0544]' : ''}`
-                        }
-                    >
-                        Library
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink
-                        to="/chat"
-                        className={({ isActive }) =>
-                            `hover:text-[#0b0544] ${isActive ? 'font-semibold text-[#0b0544]' : ''}`
-                        }
-                    >
-                        Chat
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink
-                        to="/tracker"
-                        className={({ isActive }) =>
-                            `hover:text-[#0b0544] ${isActive ? 'font-semibold text-[#0b0544]' : ''}`
-                        }
-                    >
-                        Tracker
-                    </NavLink>
-                </li>
+                {["dashboard", "library", "chat", "tracker"].map((route) => (
+                    <li key={route}>
+                        <NavLink
+                            to={`/${route}`}
+                            className={({ isActive }) =>
+                                `capitalize hover:text-[#0b0544] ${isActive ? 'font-semibold text-[#0b0544]' : ''}`
+                            }
+                        >
+                            {route}
+                        </NavLink>
+                    </li>
+                ))}
             </ul>
 
-            {/* Auth Buttons + Mobile Menu */}
-            <div className="flex items-center gap-4">
-                <button className="text-sm text-[#1e1e2f] hover:underline">Log in</button>
-                <button className="bg-[#0c0c36] text-white px-4 py-2 rounded-md text-sm hover:bg-[#1c1c4f] transition">
-                    Join
-                </button>
+            {/* Auth/Profile & Menu */}
+            <div className="flex items-center gap-3 sm:gap-4">
+
+
+                <div className="rounded-full w-10 h-10 overflow-hidden">
+                    <img src={annaImg} alt="User profile" className="w-full h-full object-cover" />
+                </div>
 
                 {isMobile && (
-                    <div className="md:hidden border p-2 rounded-full text-2xl bg-[#131313] text-white">
+                    <button
+                        aria-label="Open menu"
+                        className="md:hidden p-2 rounded-full bg-[#131313] text-white text-xl"
+                    >
                         <IoMenu />
-                    </div>
+                    </button>
                 )}
             </div>
         </div>

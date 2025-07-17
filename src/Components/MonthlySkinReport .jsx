@@ -12,7 +12,7 @@ const MonthlySkinReport = () => {
     const navigate = useNavigate();
     return (
         <div className="w-full mt-6">
-            <h2 className="text-sm font-semibold text-gray-800 mb-3">Reports</h2>
+            <h2 className="text-[22px] font-semibold text-gray-800 mb-3">Reports</h2>
             <div className="space-y-3 w-full">
                 {reports.map((report, idx) => (
                     <div

@@ -2,7 +2,7 @@ import { FaLeaf, FaPaw, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 export default function ProductDetails() {
     return (
-        <div className=" text-[#181818] ">
+        <div className=" p-6 sm:p-8 text-[#181818] ">
             {/* Top: Icons */}
             <div className="flex items-center gap-10 mb-6 text-[14px]">
                 <div className="flex flex-col items-center text-center  text-gray-700">
