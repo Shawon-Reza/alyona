@@ -19,7 +19,9 @@ const ChatPage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#f9f0f0] to-[#f0f5ff] px-4 sm:px-6 py-6">
             {/* Top Navbar */}
-            <Navbar />
+            <div className='mb-10'>
+                <Navbar />
+            </div>
 
             {/* Main layout */}
             <div className="flex flex-col md:flex-row gap-6 mt-4 h-full">

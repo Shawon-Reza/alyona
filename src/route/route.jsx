@@ -31,6 +31,7 @@ import SimilarProductsList from "../Components/SimilarProductsList";
 import ChatPage from "../Pages/ChatPage";
 import FaceScan from "../Components/FaceScan";
 import ChatPanel from "../Components/ChatPanel";
+import TrackerLayout from "../Layout/TrackerLayout";
 
 const router = createBrowserRouter([
     {
@@ -149,13 +150,17 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "",
-                element: <ChatPanel></ChatPanel>, 
+                element: <ChatPanel></ChatPanel>,
             },
             {
                 path: "face-scan",
                 element: <FaceScan />, // <-- renders inside <Outlet />
             },
         ]
+    },
+    {
+        path: "/tracker",
+        element: <TrackerLayout></TrackerLayout>
     },
 ]);
 

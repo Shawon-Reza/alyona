@@ -1,22 +1,14 @@
 import React, { useState } from "react";
 import AboutMySkin from "../Components/AboutMySkin";
-import LoginPageOverLap from '../assets/LoginPageOverLap.png'
-import img from '../assets/annaImg.png'
-import AuthNav from "../Components/AuthNav";
-import { IoIosSearch } from "react-icons/io";
-import { FaPlus } from "react-icons/fa6";
-import {
-    format,
-    startOfMonth,
-    getDay,
-    addDays,
-    getDaysInMonth,
-
-} from 'date-fns';
 import MyBadges from "../Components/MyBadges";
 import ProductRecommendations from "../Components/ProductRecommendations";
 import PersonalizedSuggestions from "../Components/PersonalizedSuggestions";
-
+import AuthNav from "../Components/AuthNav";
+import LoginPageOverLap from '../assets/LoginPageOverLap.png';
+import img from '../assets/annaImg.png';
+import { IoIosSearch } from "react-icons/io";
+import { FaPlus } from "react-icons/fa6";
+import { format, startOfMonth, getDay, addDays, getDaysInMonth } from 'date-fns';
 
 const user = {
     name: "Anna",
@@ -54,8 +46,6 @@ export default function MainDashboard() {
 
     const [CalendarPopUp, setCalendarPopup] = useState(false);
 
-    // Calculate the start of the month and the number of days in the month
-    // to display the calendar correctly
     const today = new Date();
     const monthStart = startOfMonth(today);
     const daysInMonth = getDaysInMonth(monthStart);
@@ -78,112 +68,88 @@ export default function MainDashboard() {
                 <img src={LoginPageOverLap} alt="OverlapIMG" />
             </div>
             <div className="mb-20">
-                <AuthNav></AuthNav>
+                <AuthNav />
             </div>
-
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-                {/* First Part */}
                 {/* Left Column */}
                 <div className="lg:col-span-1 space-y-6">
                     {/* User Card */}
-                    <div
-                        className=" mx-auto p-4 rounded-2xl shadow-md bg-gradient-to-b from-[#FAFAFA] to-[#EDDBCB]"
-
-                    >
-                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div className="mx-auto p-4 rounded-2xl shadow-md bg-gradient-to-b from-[#FAFAFA] to-[#EDDBCB]">
+                        <div className="flex flex-col items-center">
                             <img
                                 src={user.profileImage}
                                 alt="Profile"
-                                width={80}
-                                height={80}
-                                style={{ borderRadius: "50%", objectFit: "cover", marginBottom: 16 }}
+                                className="w-20 h-20 rounded-full object-cover mb-4"
                             />
-                            <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>Hello {user.name}!</h2>
+                            <h2 className="text-lg font-semibold mb-2">Hello {user.name}!</h2>
 
-                            <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
-                                <div style={{ padding: "4px 8px", border: "1px solid #ccc", borderRadius: 999, fontSize: 14 }}>Level {user.level}</div>
-                                <div style={{ padding: "4px 8px", border: "1px solid #ccc", borderRadius: 999, fontSize: 14, display: "flex", alignItems: "center", gap: 4 }}>
+                            <div className="flex gap-3 items-center mb-3">
+                                <div className="px-3 py-1 text-sm border border-gray-300 rounded-full">Level {user.level}</div>
+                                <div className="px-3 py-1 text-sm border border-gray-300 rounded-full flex items-center gap-2">
                                     <span role="img" aria-label="flame">🔥</span>
                                     {user.streak} days streak
                                 </div>
                             </div>
 
-                            <div style={{ fontSize: 14, color: "#555", marginBottom: 4 }}>
+                            <div className="text-sm text-gray-500 mb-4">
                                 Your skincare is {user.efficiency}% efficient
                             </div>
-                            <div style={{ width: "100%", height: 12, background: "#fff", borderRadius: 8, overflow: "hidden", marginBottom: 16 }}>
+
+                            {/* Efficiency bar */}
+                            <div className="w-full h-2 bg-white rounded-full overflow-hidden mb-4">
                                 <div
-                                    style={{ width: `${user.efficiency}%`, height: "100%", background: "#1e1b4b" }}
+                                    className="h-full bg-[#1e1b4b]"
+                                    style={{ width: `${user.efficiency}%` }}
                                 ></div>
                             </div>
 
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", gap: 4 }}>
+                            <div className="flex justify-between items-center w-full gap-2">
                                 {days.map((date, index) => {
                                     const isToday = isSameDay(date, today);
                                     const isSelected = user.selectedDates.some(d => isSameDay(d, date));
                                     return (
                                         <div
                                             key={index}
-                                            style={{
-                                                width: 40,
-                                                height: 40,
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                borderRadius: "50%",
-                                                fontSize: 14,
-                                                fontWeight: 500,
-                                                backgroundColor: isSelected ? "#a16207" : isToday ? "#fff" : "#fef3c7",
-                                                border: isToday ? "2px solid #a16207" : "1px solid #e5e7eb",
-                                                color: isSelected ? "#fff" : isToday ? "#a16207" : "#555"
-                                            }}
+                                            className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-semibold
+                                            ${isSelected ? 'bg-[#a16207] text-white' : isToday ? 'bg-white border-2 border-[#a16207]' : 'bg-[#fef3c7] text-gray-600'}`}
                                         >
                                             {date.getDate()}
                                         </div>
                                     );
                                 })}
-                                <div style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", backgroundColor: "#a16207", color: "#fff" }}>
+                                <div
+                                    className="w-8 h-8 flex items-center justify-center rounded-full bg-[#a16207] text-white"
 
-                                    <span
-                                        role="img"
-                                        aria-label="calendar"
-
-                                        onClick={() => setCalendarPopup(!CalendarPopUp)}
-                                        className="cursor-pointer"
-                                    >
-                                        📅
-
-                                    </span>
+                                    onClick={() => setCalendarPopup(!CalendarPopUp)}
+                                    role="img" aria-label="calendar"
+                                >
+                                    📅
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {/* Calendar show */}
-                    <div className={` p-4 rounded-xl bg-white shadow-md ${CalendarPopUp ? 'block' : 'hidden'}`}>
-                        {/* Header */}
+
+                    {/* Calendar Popup */}
+                    <div className={`p-4 rounded-xl bg-white shadow-md ${CalendarPopUp ? 'block' : 'hidden'}`}>
                         <div className="text-center mb-3">
                             <h2 className="text-lg font-semibold text-[#5B5B5B]">
                                 {format(today, 'MMMM yyyy')}
                             </h2>
                         </div>
 
-                        {/* Weekday Labels */}
                         <div className="grid grid-cols-7 gap-1 text-sm text-center mb-2 text-[#5B5B5B]">
                             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
                                 <div key={day}>{day}</div>
                             ))}
                         </div>
 
-                        {/* Calendar Grid */}
                         <div className="grid grid-cols-7 gap-1 text-sm text-center">
-                            {/* Empty slots before month starts */}
                             {Array.from({ length: startOffset }).map((_, i) => (
                                 <div key={`blank-${i}`} />
                             ))}
 
-                            {/* Days in month */}
                             {Array.from({ length: daysInMonth }).map((_, i) => {
                                 const dateObj = addDays(monthStart, i);
                                 const formatted = format(dateObj, 'yyyy-MM-dd');
@@ -195,9 +161,9 @@ export default function MainDashboard() {
                                         key={formatted}
                                         onClick={() => setSelectedDate(formatted)}
                                         className={`w-8 h-8 flex items-center justify-center rounded-full
-              ${isCompleted ? 'bg-[#B59176] text-white' : 'text-[#5B5B5B]'}
-              ${isSelected ? 'border-2 border-[#07004D]' : ''}
-            `}
+                                            ${isCompleted ? 'bg-[#B59176] text-white' : 'text-[#5B5B5B]'}
+                                            ${isSelected ? 'border-2 border-[#07004D]' : ''}
+                                        `}
                                     >
                                         {format(dateObj, 'd')}
                                     </button>
@@ -225,7 +191,6 @@ export default function MainDashboard() {
                         </div>
                     </div>
 
-
                     {/* Recommendations */}
                     <div className="bg-white rounded-xl shadow-md p-5">
                         <div className="flex items-center justify-between mb-3">
@@ -237,7 +202,6 @@ export default function MainDashboard() {
                         </div>
 
                         <div className="text-sm text-[#5B5B5B] space-y-4">
-                            {/* Weekly Care Tips */}
                             <div>
                                 <p className="font-semibold">Weekly Care Tips:</p>
                                 <ul className="list-disc list-inside text-[#5B5B5B]">
@@ -246,7 +210,6 @@ export default function MainDashboard() {
                                 </ul>
                             </div>
 
-                            {/* Key Focus Areas */}
                             <div>
                                 <p className="font-semibold">Key Focus Areas:</p>
                                 <ul className="list-disc list-inside text-[#5B5B5B]">
@@ -257,28 +220,19 @@ export default function MainDashboard() {
                                 </ul>
                             </div>
 
-                            {/* Final note */}
                             <p className="text-[#5B5B5B]">
-                                Track your progress using the app's Skin Tracker feature and adjust your routine
-                                based on seasonal changes or specific concerns that may arise.
+                                Track your progress using the app's Skin Tracker feature and adjust your routine based on seasonal changes or specific concerns that may arise.
                             </p>
                         </div>
                     </div>
-
-
                 </div>
 
-                {/* Second Part */}
                 {/* Right Column */}
                 <div className="lg:col-span-3 space-y-6">
-
-
                     <div className="md:flex gap-5">
                         <div className="md:w-1/2 w-full">
-                            <AboutMySkin></AboutMySkin>
+                            <AboutMySkin />
                         </div>
-
-                        {/* Proficiency Level */}
 
                         <div className="md:w-1/2 w-full bg-[#fff6f6] p-4 rounded-2xl shadow-sm">
                             <h3 className="text-base font-semibold">Your skincare proficiency level</h3>
@@ -290,14 +244,9 @@ export default function MainDashboard() {
                         </div>
                     </div>
 
-
-
-                    <PersonalizedSuggestions></PersonalizedSuggestions>
-                    <ProductRecommendations></ProductRecommendations>
-                    {/* My Badges */}
-                    <MyBadges></MyBadges>
-
-
+                    <PersonalizedSuggestions />
+                    <ProductRecommendations />
+                    <MyBadges />
                 </div>
             </div>
         </div>
