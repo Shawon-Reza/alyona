@@ -56,7 +56,7 @@ export default function PopUpCalendarOnClick() {
     return (
         <div>
 
-            <div className="flex justify-between items-center w-full gap-2 mb-5 bg-white p-4 rounded-lg shadow-md">
+            <div className="flex justify-between items-center w-full gap-2  bg-white/50 p-4 rounded-lg shadow-md">
                 {days.map((date, index) => {
                     const isToday = isSameDay(date, today);
                     const isSelected = selectedDates.some(d => isSameDay(d, date));
@@ -65,7 +65,7 @@ export default function PopUpCalendarOnClick() {
                         <div
                             key={index}
                             className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-semibold
-                                ${isSelected ? 'bg-[#BB9777]' : isToday ? 'bg-white border-2 border-[#a16207]' : 'bg-[#BB9777] text-white' }`}
+                                ${isSelected ? 'bg-[#BB9777]' : isToday ? 'bg-white border-2 border-[#a16207]' : 'bg-[#BB9777] text-white'}`}
                             onClick={() => handleDateSelection(date)}
                         >
                             {date.getDate()}
@@ -73,7 +73,7 @@ export default function PopUpCalendarOnClick() {
                     );
                 })}
                 <div
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-[#a16207] text-white"
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-[#a16207] text-white cursor-pointer"
                     onClick={() => setCalendarPopup(!calendarPopUp)}
                     role="img" aria-label="calendar"
                 >
@@ -82,7 +82,7 @@ export default function PopUpCalendarOnClick() {
             </div>
 
             {/* Calendar Popup */}
-            <div className={`mb-5 p-4 rounded-xl bg-white shadow-md ${calendarPopUp ? 'block' : 'hidden'}`}>
+            <div className={`mb-5 mt-3 p-4 rounded-xl bg-white shadow-md ${calendarPopUp ? 'block' : 'hidden'}`}>
                 <div className="text-center mb-3">
                     <h2 className="text-lg font-semibold text-[#5B5B5B]">
                         {format(today, 'MMMM yyyy')}

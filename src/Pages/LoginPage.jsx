@@ -4,6 +4,7 @@ import { FaFacebookF, FaEye, FaEyeSlash } from 'react-icons/fa';
 import login from '../assets/loginPageIMG.png';
 import { Link, useNavigate } from 'react-router-dom';
 import LoginPageOverLap from '../assets/LoginPageOverLap.png'
+import NavbarLogo from '../assets/NavbarLogo.png'
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -30,78 +31,76 @@ const LoginPage = () => {
             </div>
 
             {/* Right Side Login Form */}
-            <div className="relative md:w-1/2 w-full flex items-center justify-center bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] px-6 py-10 rounded-r-3xl">
-
-                <div className='absolute bottom-0 right-0'>
-                    <img src={LoginPageOverLap} alt="OverlapIMG" />
+            <div className="md:w-1/2 w-full relative bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] flex flex-col justify-center items-center px-6 py-10 min-h-screen">
+                {/* Overlap background decoration */}
+                <div className="absolute bottom-0 right-0 opacity-30 pointer-events-none z-0">
+                    <img src={LoginPageOverLap} alt="Decor" />
                 </div>
 
-                <div className="max-w-md w-full space-y-6">
-                    <div className="text-center">
-                        <div className="text-3xl font-semibold text-gray-800">YOURSELF BEAUTY</div>
+                <div className="w-full max-w-md space-y-8 z-10 lg:max-w-lg">
+
+                    <div className="flex flex-col justify-center items-center text-center gap-8">
+                        <img src={NavbarLogo} alt="" className='scale-200 object-cover ' />
+                        <div className="text-3xl lg:text-4xl font-semibold text-gray-800">YOURSELF BEAUTY</div>
                     </div>
 
                     {/* Social Login Buttons */}
-                    <div className="space-y-3">
-                        <button className="w-full  flex items-center justify-center border rounded-md py-2 gap-2 hover:bg-gray-100">
+                    <div className="space-y-4">
+                        <button className="w-full flex items-center justify-center border  border-base-200 rounded-xl py-3 lg:py-4 text-base lg:text-lg gap-2 hover:bg-gray-100 bg-white">
                             <FcGoogle className="text-xl" />
                             <span>Login with Google</span>
                         </button>
-                        <button className="w-full flex items-center justify-center border rounded-md py-2 gap-2 hover:bg-gray-100">
+                        <button className="w-full flex items-center justify-center border border-base-100 rounded-xl py-3 lg:py-4 text-base lg:text-lg gap-2 hover:bg-gray-100 bg-white">
                             <FaFacebookF className="text-blue-600 text-xl" />
                             <span>Log in with Facebook</span>
                         </button>
                     </div>
 
-                    <div className="relative text-center">
-                        <span className="text-gray-500 text-sm">Or</span>
-                    </div>
+                    <div className="text-center text-gray-500 text-sm lg:text-base">Or</div>
 
-                    {/* Email and Password Inputs */}
-                    <form className="space-y-4">
+                    {/* Email and Password Form */}
+                    <form className="space-y-5 lg:space-y-6">
                         <input
                             type="email"
                             placeholder="Email"
-                            className="w-full px-4 py-2 bg-[#EFEBEB] rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                            className="w-full px-4 lg:px-6 py-3 lg:py-4 text-base lg:text-lg  bg-white/50 rounded-xl border border-base-200  focus:outline-none focus:ring-2 focus:ring-indigo-200"
                         />
                         <div className="relative">
                             <input
                                 type={showPassword ? 'text' : 'password'}
                                 placeholder="Password"
-                                className="w-full px-4 py-2 pr-10 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                                className="w-full px-4 lg:px-6 py-3 lg:py-4 pr-10 text-base lg:text-lg rounded-xl bg-white/50 border border-base-200  focus:outline-none focus:ring-2 focus:ring-indigo-200"
                             />
                             <button
                                 type="button"
                                 onClick={togglePasswordVisibility}
                                 className="absolute inset-y-0 right-3 flex items-center text-gray-500"
                             >
-                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                {showPassword ? <FaEyeSlash className='text-xl' /> : <FaEye  className='text-xl'/>}
                             </button>
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between text-sm lg:text-base text-gray-700">
                             <label className="inline-flex items-center">
-                                <input type="checkbox" className="form-checkbox mr-2" />
-                                <span className="text-sm text-gray-700">Keep me signed in</span>
+                                <input type="checkbox" className="form-checkbox mr-2 " />
+                                <span className='text-[18px]'>Keep me signed in</span>
                             </label>
                         </div>
 
                         <button
                             type="submit"
-                            className="w-full bg-[#0c0a3e] text-white py-2 rounded-md hover:bg-[#191670] transition"
+                            className="w-full bg-[#0c0a3e] text-white py-3 lg:py-4 text-base lg:text-lg rounded-md hover:bg-[#191670] transition cursor-pointer"
                         >
                             Log In
                         </button>
                     </form>
 
                     {/* Bottom Links */}
-                    <div className="flex justify-between text-sm text-gray-600">
-                        <a href="#" className="hover:underline">
+                    <div className="flex flex-col sm:flex-row justify-between text-sm lg:text-base text-gray-600">
+                        <a href="#" className="hover:underline text-center sm:text-left">
                             Forgot my password
                         </a>
-                        <Link to="/registration_page" className="hover:underline z-10">
-                            Sign up
-                        </Link>
+                       
                     </div>
                 </div>
             </div>
