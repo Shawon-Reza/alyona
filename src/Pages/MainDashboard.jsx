@@ -9,6 +9,7 @@ import img from '../assets/annaImg.png';
 import { IoIosSearch } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 import { format, startOfMonth, getDay, addDays, getDaysInMonth } from 'date-fns';
+import Navbar from "../Components/Navbar";
 
 const user = {
     name: "Anna",
@@ -67,8 +68,8 @@ export default function MainDashboard() {
             <div className='absolute bottom-0 right-0'>
                 <img src={LoginPageOverLap} alt="OverlapIMG" />
             </div>
-            <div className="mb-20">
-                <AuthNav />
+            <div className="mb-5 md:mb-10">
+               <Navbar></Navbar>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -113,7 +114,7 @@ export default function MainDashboard() {
                                         <div
                                             key={index}
                                             className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-semibold
-                                            ${isSelected ? 'bg-[#a16207] text-white' : isToday ? 'bg-white border-2 border-[#a16207]' : 'bg-[#fef3c7] text-gray-600'}`}
+                                            ${isSelected ? 'bg-[#a16207] text-white' : isToday ? 'bg-white border-2 border-[#a16207]' : 'bg-white/50 text-gray-600 border-[#a16207] border-2'}`}
                                         >
                                             {date.getDate()}
                                         </div>

@@ -44,7 +44,7 @@ const BadgeSection = ({ title, badges, color }) => (
 
 const BadgesPage = () => {
     return (
-        <div className="min-h-screen  py-12   text-gray-800">
+        <div className="min-h-screen  py-12  px-5 text-gray-800">
 
             <div className=" ">
 

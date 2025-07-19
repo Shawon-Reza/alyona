@@ -9,7 +9,7 @@ const AuthenticationNav = () => {
     console.log(isMobile);
 
     return (
-        <div className="w-full flex justify-between items-center px-6 py-4  from-white via-[#f3ebe6] to-white">
+        <div className="w-full flex justify-between items-center px-6 py-4  from-white via-[#f3ebe6] to-white text-sm sm:text-lg">
             {/* Left: Logo */}
             <div className="flex items-center gap-2">
                 <img src={AuthNavIcon} alt="Logo" className="w-10 h-12" />
@@ -18,8 +18,8 @@ const AuthenticationNav = () => {
 
             {/* Right: Log in & Join */}
             <div className="flex items-center gap-4">
-                <button className="text-sm font-medium text-[#0c0c36] hover:underline">Log in</button>
-                <button className="flex items-center gap-2 bg-[#0c0c36] text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-[#1c1c4f]">
+                <button className=" font-medium text-[#0c0c36] hover:underline">Log in</button>
+                <button className="flex items-center gap-2 bg-[#0c0c36] text-white  font-medium px-4 py-2 rounded-md hover:bg-[#1c1c4f]">
                     <User className="w-4 h-4" />
                     Join
                 </button>

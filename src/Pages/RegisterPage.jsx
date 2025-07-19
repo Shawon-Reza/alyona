@@ -83,11 +83,11 @@ const RegisterPage = () => {
 
                     {/* Social Login */}
                     <div className="space-y-3">
-                        <button className="w-full bg-white border flex items-center justify-center py-2 gap-2 rounded-md hover:bg-gray-100">
+                        <button className="w-full bg-white border border-base-200 flex items-center justify-center py-2 gap-2 rounded-md hover:bg-gray-100">
                             <FcGoogle className="text-xl" />
                             <span>Login with Google</span>
                         </button>
-                        <button className="w-full bg-white border flex items-center justify-center py-2 gap-2 rounded-md hover:bg-gray-100">
+                        <button className="w-full bg-white border border-base-200 flex items-center justify-center py-2 gap-2 rounded-md hover:bg-gray-100">
                             <FaFacebookF className="text-blue-600 text-xl" />
                             <span>Log in with Facebook</span>
                         </button>
@@ -103,31 +103,31 @@ const RegisterPage = () => {
                             type="text"
                             name="nickName"
                             placeholder="👤 Nickname"
-                            className="w-full px-4 py-2 rounded-md bg-white border focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                            className="w-full px-4 py-2 rounded-md bg-white/50 border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                         />
                         <input
                             type="text"
                             name="name"
                             placeholder="🪪 Name"
-                            className="w-full px-4 py-2 rounded-md bg-white border focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                            className="w-full px-4 py-2 rounded-md bg-white border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                         />
                         <input
                             type="email"
                             name="email"
                             placeholder="📧 Email"
-                            className="w-full px-4 py-2 rounded-md bg-white border focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                            className="w-full px-4 py-2 rounded-md bg-white border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                         />
                         <input
                             type="date"
                             name="date"
-                            className="w-full px-4 py-2 rounded-md bg-white border text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                            className="w-full px-4 py-2 rounded-md bg-white border border-base-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                         />
                         <div className="relative">
                             <input
                                 type={showPassword ? 'text' : 'password'}
                                 name="password"
                                 placeholder="🔒 Password"
-                                className="w-full px-4 py-2 pr-10 rounded-md bg-white border focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                                className="w-full px-4 py-2 pr-10 rounded-md bg-white border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                             />
                             <button
                                 type="button"

@@ -31,7 +31,8 @@ const LoginPage = () => {
             </div>
 
             {/* Right Side Login Form */}
-            <div className="md:w-1/2 w-full relative bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] flex flex-col justify-center items-center px-6 py-10 min-h-screen">
+            <div className="md:w-1/2 w-full relative bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] flex flex-col justify-center items-center px-6  h-screen rounded-3xl sm:rounded-l-none  -mt-7.5">
+
                 {/* Overlap background decoration */}
                 <div className="absolute bottom-0 right-0 opacity-30 pointer-events-none z-0">
                     <img src={LoginPageOverLap} alt="Decor" />
@@ -76,7 +77,7 @@ const LoginPage = () => {
                                 onClick={togglePasswordVisibility}
                                 className="absolute inset-y-0 right-3 flex items-center text-gray-500"
                             >
-                                {showPassword ? <FaEyeSlash className='text-xl' /> : <FaEye  className='text-xl'/>}
+                                {showPassword ? <FaEyeSlash className='text-xl' /> : <FaEye className='text-xl' />}
                             </button>
                         </div>
 
@@ -96,12 +97,20 @@ const LoginPage = () => {
                     </form>
 
                     {/* Bottom Links */}
-                    <div className="flex flex-col sm:flex-row justify-between text-sm lg:text-base text-gray-600">
+                    <div className="flex flex-col items-center justify-center text-sm lg:text-base text-gray-600 h-[10%] 3xl:h-[20%]">
                         <a href="#" className="hover:underline text-center sm:text-left">
                             Forgot my password
                         </a>
-                       
+                        <div className="mt-auto text-[18px] text-center sm:text-left">
+                            Don't have an account?
+                            <span
+                                onClick={() => {
+                                    navigate('/registration_page')
+                                }}
+                                className="font-bold">Sign up</span>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>

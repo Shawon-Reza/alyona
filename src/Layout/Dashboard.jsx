@@ -57,17 +57,18 @@ const Dashboard = () => {
     return (
 
         <div className='bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF]'>
-            <div className='px-10 pt-6'>
+            <div className='sm:px-10 px-5 pt-6'>
                 <Navbar></Navbar>
             </div>
-            <div className=" relative flex min-h-screen  text-gray-800 px-10">
+
+            <div className=" relative flex min-h-screen  text-gray-800 sm:px-10 ">
 
                 <div className='absolute bottom-0 right-0'>
                     <img src={LoginPageOverLap} alt="OverlapIMG" />
                 </div>
 
                 {/* Sidebar */}
-                <aside className="mt-10 w-64  ">
+                <aside className="mt-10 w-auto  ">
 
                     {/* GENERAL */}
                     <h2 className="mt-2 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">General</h2>
@@ -218,7 +219,7 @@ const Dashboard = () => {
                 </aside>
 
                 {/* Main Content */}
-                <div className='p-10 mt-4 flex-1'>
+                <div className='sm:p-10 mt-4 flex-1 px-5'>
                     <Outlet></Outlet>
                 </div>
 

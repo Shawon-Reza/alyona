@@ -4,6 +4,8 @@ import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import AuthNav from '../Components/AuthNav';
 import { useNavigate } from 'react-router-dom';
 import RowButton from '../Components/RowButton';
+import AuthenticationNav from '../Components/AuthenticationNav';
+import { ChevronRight } from 'lucide-react';
 
 const getMonthData = (baseDate) => {
     const prevMonth = new Date(baseDate.getFullYear(), baseDate.getMonth() - 1);
@@ -68,7 +70,7 @@ const PeriodDatePicker = () => {
                                     key={idx}
                                     className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all text-sm font-medium 
                     ${day && selectedDate === fullDate
-                                            ? 'bg-blue-900 text-white'
+                                            ? 'bg-white text-white'
                                             : 'text-gray-700 hover:bg-gray-200'}`}
                                     onClick={() => day && toggleDate(monthIndex, fullDate)}
                                 >
@@ -87,84 +89,71 @@ const PeriodDatePicker = () => {
     const navigate = useNavigate()
 
     return (
-        <div className="h-screen p-4 sm:p-6 md:p-8 border-gray-200 bg-white relative">
+
+        <div className='min-h-screen p-4 sm:p-6 md:p-8 border-gray-200 bg-white relative'>
+            <div>
+                <AuthenticationNav></AuthenticationNav>
+            </div>
             <div className="absolute bottom-0 right-0">
                 <img src={LoginPageOverLap} alt="OverlapIMG" />
             </div>
 
-            <AuthNav />
+            <div className="">
 
-            <div className="mt-28 w-full mb-20">
-                <div className="w-full bg-[#e5e5e5] h-1 rounded">
-                    <div className="w-[60%] bg-[#b88b58] h-1 rounded transition-all duration-500"></div>
+                <div className="my-10">
+                    <div className="w-full bg-[#e5e5e5] h-1 rounded">
+                        <div className="w-[60%] bg-[#b88b58] h-1 rounded transition-all duration-500"></div>
+                    </div>
                 </div>
-            </div>
 
-            <h1 className="text-xl sm:text-2xl font-bold text-center mb-2">
-                Between which dates do you expect your next period
-            </h1>
-            <p className="text-sm text-center text-gray-600 mb-6">
-                Track period to assess hormonal fluctuation that might affect skin condition and sensitivity
-            </p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2">
+                    Between which dates do you expect your next period
+                </h1>
+                <p className="text-lg text-center text-gray-600 mb-6">
+                    Track period to assess hormonal fluctuation that might affect skin condition and sensitivity
+                </p>
 
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                {renderCalendar(0)}
-                {renderCalendar(1)}
-                {renderCalendar(2)}
-            </div>
-
-            {allSelectedDates.length > 0 && (
-                <div className="mt-4 text-center text-sm text-gray-700">
-                    <p>
-                        Selected Dates:{" "}
-                        {allSelectedDates.map((d, i) => (
-                            <span key={i} className="mx-1 px-2 py-1 bg-blue-100 rounded">
-                                {d}
-                            </span>
-                        ))}
-                    </p>
+                <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    {renderCalendar(0)}
+                    {renderCalendar(1)}
+                    {renderCalendar(2)}
                 </div>
-            )}
 
-            <div className="flex flex-col sm:flex-row  justify-between items-center mt-4 gap-3 ">
-                <div className=''></div>
+                {allSelectedDates.length > 0 && (
+                    <div className="mt-4 text-center text-sm text-gray-700">
+                        <p>
+                            Selected Dates:{" "}
+                            {allSelectedDates.map((d, i) => (
+                                <span key={i} className="mx-1 px-2 py-1 bg-blue-100 rounded">
+                                    {d}
+                                </span>
+                            ))}
+                        </p>
+                    </div>
+                )}
 
-                <div></div>
+                <div className="flex flex-col sm:flex-row  justify-between items-center mt-4 gap-3 ">
+                    <div className=''></div>
 
-                <button className="lg:col-span-1 text-sm text-gray-500 underline">Skip this question</button>
-                <button className="px-15 lg:col-span-1  xl:px-20 text-sm bg-[#BB9777] text-white py-2 rounded-md">I don’t remember</button>
+                    <div className='w-full'></div>
 
+                    <button className="lg:col-span-1 text-sm text-gray-500 underline w-full">Skip this question</button>
 
+                    <button
+                        className="w-full px-15 lg:col-span-1  xl:px-20 text-sm bg-[#BB9777] text-white py-3 rounded-md">I don’t remember</button>
 
-
-                {/* <div className=" mx-auto lg:col-span-1" >
-                    <RowButton text="Let's get started"
-
+                    <button
                         onClick={() => {
-                            navigate('/SkinAnalysis')
+                            navigate('/QuizGreetings')
                             console.log("Started!")
-                        }} />
-                </div> */}
-                <button
-                    onClick={() => {
-                        navigate('/QuizGreetings')
-                        console.log("Started!")
-                    }}
-                    className="z-1 cursor-pointer px-15 lg:col-span-1  xl:px-20 text-sm text-white py-2 rounded-md flex items-center justify-between gap-2 bg-[#0b0540]  font-semibold  hover:bg-[#1c1664] transition duration-200"
-                >
-                    Continue
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={2}
-                        stroke="currentColor"
-                        className="w-4 h-4"
+                        }}
+                        className="z-1 w-full cursor-pointer px-5 lg:col-span-1  xl:px-20 text-sm text-white py-3 rounded-md flex items-center justify-between gap-2 bg-[#0b0540]  font-semibold  hover:bg-[#1c1664] transition duration-200"
                     >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
+                        Continue
+                        <ChevronRight size={15} />
+                    </button>
 
+                </div>
             </div>
         </div>
     );

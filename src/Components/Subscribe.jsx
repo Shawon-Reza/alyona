@@ -103,7 +103,7 @@ const Subscribe = () => {
             {/* Submit Button */}
             <button
                 type="submit"
-                className="w-full bg-[#0b0544] hover:bg-[#1a0f66] text-white text-sm py-3 rounded-md transition font-medium"
+                className="w-full cursor-pointer bg-[#0b0544] hover:bg-[#1a0f66] text-white text-sm py-3 rounded-md transition font-medium"
             >
                 Subscribe
             </button>

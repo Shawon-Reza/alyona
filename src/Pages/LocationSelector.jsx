@@ -3,9 +3,10 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useNavigate } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import { ChevronRight, Search } from 'lucide-react';
 import AuthenticationNav from '../Components/AuthenticationNav';
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
+import MapProgressBar from '../Components/MapProgressBar';
 
 // Custom marker icon
 const markerIcon = new L.Icon({
@@ -88,8 +89,11 @@ const LocationSelector = () => {
 
     return (
         <div className='min-h-screen bg-gradient-to-b from-white via-[#f3ebe6] to-white relative'>
-            <div className='bg-white'>
+            <div className='pt-4'>
                 <AuthenticationNav />
+            </div>
+            <div className='sm:my-5'>
+                <MapProgressBar progress={30} />
             </div>
 
             {/* Overlay Image */}
@@ -163,9 +167,10 @@ const LocationSelector = () => {
                                 alert('Location saved!');
                                 navigate('/LifestyleQuiz');
                             }}
-                            className="bg-[#0c0c36] text-white px-6 py-3 rounded-md text-sm hover:bg-[#1c1c4f] w-full"
+                            className="bg-[#0c0c36] text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-[#1c1c4f] w-full flex justify-between "
                         >
                             Save my location
+                            <ChevronRight />
                         </button>
                     </div>
 

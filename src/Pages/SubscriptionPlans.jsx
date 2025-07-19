@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthNav from '../Components/AuthNav';
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
+import AuthenticationNav from '../Components/AuthenticationNav';
 
 const plans = [
     {
@@ -50,12 +51,12 @@ const SubscriptionPlans = () => {
 
 
     return (
-        <div className="min-h-screen bg-white px-4 md:px-10 py-10 relative">
-            <div className='sm:mb-28 mb-18'>
-                <AuthNav />
+        <div className="min-h-screen bg-white px-4 md:px-10 pt-5 relative">
+            <div>
+                <AuthenticationNav></AuthenticationNav>
             </div>
-            <div className="absolute bottom-0 right-0">
-                <img src={LoginPageOverLap} alt="OverlapIMG" />
+            <div className="absolute bottom-15 right-15 hidden sm:block">
+                <img src={LoginPageOverLap} alt="OverlapIMG" className='scale-120' />
             </div>
 
             <div className="text-center mb-6">
@@ -98,7 +99,7 @@ const SubscriptionPlans = () => {
                             onClick={() => {
                                 navigate('/SubscriptionPlans/CheckoutPage');
                             }}
-                            className="mt-20 bg-[#0b0544] hover:bg-[#1a0f66] text-white text-sm py-2 rounded-md transition">
+                            className="mt-20 lg:mt-25 cursor-pointer bg-[#0b0544] hover:bg-[#1a0f66] text-white text-sm py-2 rounded-md transition">
                             Choose this option
                         </button>
                     </div>

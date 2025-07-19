@@ -8,19 +8,28 @@ const FaceScan = () => {
     const canvasRef = useRef(null);
     const [imageSrc, setImageSrc] = useState('');
     const [captured, setCaptured] = useState(false);
+    const [mediaStream, setMediaStream] = useState(null);
 
+    // Access camera on component mount
     useEffect(() => {
         const initCamera = async () => {
             try {
-                const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 if (videoRef.current) {
-                    videoRef.current.srcObject = mediaStream;
+                    videoRef.current.srcObject = stream;
+                    setMediaStream(stream);
                 }
             } catch (err) {
                 console.error('Camera access error:', err);
             }
         };
         initCamera();
+        
+        return () => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop()); // Cleanup camera stream on unmount
+            }
+        };
     }, []);
 
     const capturePhoto = () => {
@@ -40,6 +49,24 @@ const FaceScan = () => {
     const retakePhoto = () => {
         setCaptured(false);
         setImageSrc('');
+        // Stop the current video stream and reset the video feed
+        const video = videoRef.current;
+        if (video && mediaStream) {
+            // Stop the current media tracks
+            mediaStream.getTracks().forEach(track => track.stop());
+
+            // Restart the video stream
+            const initCamera = async () => {
+                try {
+                    const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = newStream;
+                    setMediaStream(newStream);
+                } catch (err) {
+                    console.error('Error restarting camera:', err);
+                }
+            };
+            initCamera();
+        }
     };
 
     return (
@@ -53,7 +80,7 @@ const FaceScan = () => {
             <div className="flex flex-1 flex-col lg:flex-row gap-6 overflow-hidden">
                 {/* Video or Captured Image */}
                 <div className="w-full lg:w-1/2 flex justify-center items-center">
-                    <div className="relative aspect-square w-full max-w-[480px]  min-h-[480px] bg-black rounded-xl overflow-hidden shadow-md">
+                    <div className="relative aspect-square w-full max-w-[480px] min-h-[480px] bg-black rounded-xl overflow-hidden shadow-md">
                         {!captured ? (
                             <video
                                 ref={videoRef}

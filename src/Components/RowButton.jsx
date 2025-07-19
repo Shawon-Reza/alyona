@@ -4,7 +4,7 @@ export default function RowButton({ text = "Click me", onClick }) {
     return (
         <button
             onClick={onClick}
-            className=" flex items-center justify-between gap-2 bg-[#0b0540] text-white font-semibold text-base px-6 py-3 rounded-xl hover:bg-[#1c1664] transition duration-200"
+            className=" flex items-center justify-between gap-30 sm:gap-20 bg-[#0b0540] text-white cursor-pointer font-semibold text-base px-6 py-3 rounded-xl hover:bg-[#1c1664] transition duration-200"
         >
             <span>{text}</span>
             <svg

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import LoginPageOverLap from '../assets/LoginPageOverLap.png'
 import { useNavigate } from 'react-router-dom';
-import AuthNav from '../Components/AuthNav';
+import LoginPageOverLap from '../assets/LoginPageOverLap.png';
+import AuthenticationNav from '../Components/AuthenticationNav';
+import { ChevronRight } from 'lucide-react';
 
 const lifestyleOptions = [
     "Under a lot of stress: mostly night life — I love to go out",
@@ -15,8 +16,7 @@ const lifestyleOptions = [
 
 const LifestyleQuiz = () => {
     const [selected, setSelected] = useState([]);
-
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const toggleOption = (option) => {
         setSelected((prev) =>
@@ -27,72 +27,88 @@ const LifestyleQuiz = () => {
     };
 
     const handleBack = () => {
-        // handle back navigation
-        console.log("Go Back");
+        navigate(-1); // or specific route
     };
 
     const handleContinue = () => {
-        // handle next step
         console.log("Selected lifestyle:", selected);
+        navigate('/PeriodDatePicker');
     };
 
     return (
-        <div className="h-screen bg-gradient-to-br from-white via-[#f7f1ec] to-white px-6 py-10 flex flex-col items-center relative font-sans">
-            <div className='absolute bottom-0 right-0'>
-                <img src={LoginPageOverLap} alt="OverlapIMG" />
-            </div>
-
+        <div className="min-h-screen bg-gradient-to-br from-white via-[#f7f1ec] to-white relative px-4">
             {/* Top Nav */}
-           <AuthNav></AuthNav>
+            <div className="pt-4">
+                <AuthenticationNav />
+            </div>
 
-            {/* Progress Bar */}
-            <div className="mt-28 w-full max-w-4xl">
-                <div className="w-full bg-[#e5e5e5] h-1 rounded">
-                    <div className="w-[20%] bg-[#b88b58] h-1 rounded transition-all duration-500"></div>
+            {/* Overlay Image */}
+            <div className='absolute bottom-15 right-20 hidden sm:block'>
+                <img src={LoginPageOverLap} alt="OverlapIMG" className='scale-120' />
+            </div>
+
+            {/* Main Content */}
+            <div className="max-w-3xl mx-auto flex flex-col items-center py-10 z-10">
+                {/* Progress Bar */}
+                <div className="w-full mb-8">
+                    <div className="w-full h-1 rounded bg-[#e5e5e5]">
+                        <div
+                            className="h-full rounded bg-[#b88b58] transition-all duration-500"
+                            style={{ width: '20%' }}
+                        />
+                    </div>
                 </div>
-            </div>
 
-            {/* Question */}
-            <div className="max-w-2xl text-center mt-10">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-2">What is your lifestyle?</h2>
-                <p className="text-sm text-gray-600">Answer to this question helps to determine your everyday level of stress that can affect your skin wellbeing</p>
-            </div>
+                {/* Question */}
+                <div className="text-center max-w-2xl">
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                        What is your lifestyle?
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                        Answer to this question helps to determine your everyday level of stress that can affect your skin wellbeing
+                    </p>
+                </div>
 
-            {/* Options */}
-            <div className="mt-8 w-full max-w-md space-y-4">
-                {lifestyleOptions.map((option, index) => (
+                {/* Options */}
+                <div className="mt-8 w-full max-w-md space-y-4">
+                    {lifestyleOptions.map((option, index) => (
+                        <button
+                            key={index}
+                            onClick={() => toggleOption(option)}
+                            className={`w-full px-4 py-3 text-left rounded-md border flex justify-between items-center transition  cursor-pointer
+                ${selected.includes(option) ? 'bg-[#f0e5d9] border-[#c4a484]' : 'bg-white border-gray-300'}
+              `}
+                        >
+                            {option}
+                            {selected.includes(option) && (
+                                <span className="text-[#BB9777] font-bold z-10  border border-[#BB9777] p-1 px-2 rounded-lg">✓</span>
+                            )}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Navigation Buttons */}
+                <div className="flex gap-4 mt-10 max-w-md mx-auto w-full ">
                     <button
-                        key={index}
-                        onClick={() => toggleOption(option)}
-                        className={`w-full px-4 py-3 text-left rounded-md border flex justify-between items-center transition
-              ${selected.includes(option) ? 'bg-[#f0e5d9] border-[#c4a484]' : 'bg-white border-gray-300'}
+                        onClick={handleBack}
+                        className="bg-[#d2b89d] text-white px-6 py-2 rounded-md text-sm hover:bg-[#c3a686] transition"
+                    >
+                        Back
+                    </button>
+                    <button
+                        onClick={handleContinue}
+                        disabled={selected.length === 0}
+                        className={`px-6 py-2 rounded-md text-sm text-white transition z-10 cursor-pointer flex justify-between items-center gap-10 w-full
+              ${selected.length > 0
+                                ? 'bg-[#0c0c36] hover:bg-[#1c1c4f]'
+                                : 'bg-gray-400 cursor-not-allowed'
+                            }
             `}
                     >
-                        {option}
-                        {selected.includes(option) && (
-                            <span className="text-[#0c0c36] font-bold">✓</span>
-                        )}
+                        Continue
+                        <ChevronRight size={15}  />
                     </button>
-                ))}
-            </div>
-
-            {/* Buttons */}
-            <div className="flex gap-4 mt-10">
-                <button
-                    onClick={handleBack}
-                    className="bg-[#d2b89d] text-white px-6 py-2 rounded-md text-sm hover:bg-[#c3a686]"
-                >
-                    Back
-                </button>
-                <button
-                    onClick={() => {
-                        handleContinue()
-                        navigate('/PeriodDatePicker')
-                    }}
-                    className="bg-[#0c0c36] text-white px-6 py-2 rounded-md text-sm hover:bg-[#1c1c4f]"
-                >
-                    Continue
-                </button>
+                </div>
             </div>
         </div>
     );
