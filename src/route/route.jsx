@@ -17,7 +17,7 @@ import SubscriptionPlans from "../Pages/SubscriptionPlans";
 import CheckoutPage from "../Pages/CheckoutPage";
 import Dashboard from "../Layout/Dashboard";
 import SubscriptionPlanComponent from "../Components/SubscriptionPlanComponent";
-import MainDashboard from "../Pages/MainDashboard";
+import maindashboard from "../Pages/maindashboard";
 import Badges from "../Components/BadgeSection.jsx";
 import MonthlySkinReport from "../Components/MonthlySkinReport ";
 import ReportDetails from "../Components/ReportDetails";
@@ -85,8 +85,8 @@ const router = createBrowserRouter([
         element: <CheckoutPage></CheckoutPage>
     },
     {
-        path: "/mainDashboard",
-        element: <MainDashboard></MainDashboard>
+        path: "/maindashboard",
+        element: <maindashboard></maindashboard>
     },
     // Dashboard or Home route
     {

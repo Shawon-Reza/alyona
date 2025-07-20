@@ -43,7 +43,7 @@ const getLast7Days = () => {
     });
 };
 
-export default function MainDashboard() {
+export default function maindashboard() {
 
     const [CalendarPopUp, setCalendarPopup] = useState(false);
 
