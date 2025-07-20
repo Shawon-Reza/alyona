@@ -34,6 +34,7 @@ import FaceScan from "../Components/FaceScan";
 import ChatPanel from "../Components/ChatPanel";
 import TrackerLayout from "../Layout/TrackerLayout";
 import DailyRoutineTracker from "../Components/TrackerTabComponent/DailyRoutineTracker";
+import PageNotFound from "../Components/PageNotFound"
 
 const router = createBrowserRouter([
     {
@@ -211,6 +212,11 @@ const router = createBrowserRouter([
             },
         ],
     },
+    {
+        path: '*',
+        element: <PageNotFound></PageNotFound>
+    }
+
 
 
 ]);
