@@ -275,7 +275,7 @@ const Dashboard = () => {
                                         className={({ isActive }) =>
                                             `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
                                         }>
-                                        <span className="flex items-center space-x-2">
+                                        <span className="flex items-center space-x-2 z-10">
                                             <HiOutlineBadgeCheck className="text-lg" />
                                             <span>Badges</span>
                                         </span>
@@ -337,7 +337,7 @@ const Dashboard = () => {
 
                 {/* Outlet / Main Content */}
                 {(viewMode === 'outlet' || viewMode === 'both') && (
-                    <div className='sm:p-10 mt-4 flex-1 px-5 hidd'>
+                    <div className='sm:p-10 mt-4 flex-1 px- hidd'>
                         <Outlet></Outlet>
                     </div>
                 )}

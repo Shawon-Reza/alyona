@@ -17,7 +17,7 @@ export default function TrackerTabs() {
                     key={tab.to}
                     to={tab.to}
                     className={({ isActive }) =>
-                        `px-4 py-3 text-sm font-medium transition-all ${isActive
+                        `px-4 py-3 text-[10px] sm:text-sm md:text-lg xl:text-xl font-medium transition-all ${isActive
                             ? 'text-[#B1805A] border-b-2 border-[#B1805A] font-semibold'
                             : 'text-gray-600 hover:text-[#B1805A]'
                         }`

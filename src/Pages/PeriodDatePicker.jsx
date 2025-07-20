@@ -70,7 +70,7 @@ const PeriodDatePicker = () => {
                                     key={idx}
                                     className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all text-sm font-medium 
                     ${day && selectedDate === fullDate
-                                            ? 'bg-white text-white'
+                                            ? 'bg-[#090642] text-white'
                                             : 'text-gray-700 hover:bg-gray-200'}`}
                                     onClick={() => day && toggleDate(monthIndex, fullDate)}
                                 >

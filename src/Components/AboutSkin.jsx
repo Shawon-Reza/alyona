@@ -53,9 +53,9 @@ const CircularProgress = ({ value, size = 80 }) => {
 
 export default function AboutSkin() {
   return (
-    <div className="mt-10 p-6 w-full bg-gradient-to-b from-[#fafafa] via-[#ffffff] to-[#f5eadf] rounded-2xl">
+    <div className="sm:mt-10 mt-3  w-full bg-gradient-to-b from-[#fafafa] via-[#ffffff] to-[#f5eadf] rounded-2xl">
       {/* Skin type summary */}
-      <div className="bg-white p-6 rounded-xl shadow-sm mb-6 border text-sm text-gray-800 gap-10">
+      <div className="bg-white p-5 rounded-xl shadow-sm mb-6 border-base-300 text-sm text-gray-800 gap-10">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-10">
           <img
             src={SkinAnalysisPageIMG}
@@ -63,8 +63,8 @@ export default function AboutSkin() {
             className="w-36 h-36 rounded-full border"
           />
           <div>
-            <h2 className="font-bold text-base mb-1">Normal Type</h2>
-            <p className="text-gray-600 leading-relaxed text-xl">
+            <h2 className="font-bold text-[22px] mb-1">Normal Type</h2>
+            <p className="text-gray-600 leading-relaxed md:text-xl text-sm">
               Congratulations! You are a happy owner of a normal skin type.
               Even if you might have some skin concerns like wrinkles or dark
               circles. Your skin is perfect! Your skincare routine should be
