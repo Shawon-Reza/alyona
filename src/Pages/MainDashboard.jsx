@@ -54,10 +54,10 @@ export default function MainDashboard() {
 
     const [selectedDate, setSelectedDate] = useState(format(today, 'yyyy-MM-dd'));
     const [completedDates, setCompletedDates] = useState([
+        '2025-07-15',
         '2025-07-10',
-        '2025-07-11',
         '2025-07-12',
-        '2025-07-13',
+        '2025-07-31',
     ]);
 
     const days = getLast7Days();

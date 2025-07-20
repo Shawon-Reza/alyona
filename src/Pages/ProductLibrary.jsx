@@ -115,7 +115,7 @@ export default function ProductLibrary() {
                                 <button
                                     key={cat}
                                     onClick={() => setSelectedCategory(cat)}
-                                    className={`px-3 py-1 text-[16px] sm:text-[18px] rounded-xl border ${selectedCategory === cat
+                                    className={`px-3 py-1 text-[16px] sm:text-[18px] rounded-xl border cursor-pointer ${selectedCategory === cat
                                         ? "bg-[#BB9777] text-white"
                                         : "bg-white text-gray-700 border-gray-300"
                                         }`}

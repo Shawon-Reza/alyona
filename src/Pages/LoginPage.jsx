@@ -107,7 +107,7 @@ const LoginPage = () => {
                                 onClick={() => {
                                     navigate('/registration_page')
                                 }}
-                                className="font-bold">Sign up</span>
+                                className="font-bold cursor-pointer"> Sign up</span>
                         </div>
                     </div>
 

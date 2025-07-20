@@ -78,23 +78,23 @@ const UploadProfilePage = () => {
                 <div className="flex  sm:flex-row gap-3 justify-center mb-8">
                     <button
                         onClick={() => fileInputRef.current.click()}
-                        className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition"
+                        className="flex items-center cursor-pointer justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition"
                     >
                         <FaCamera /> From my camera
                     </button>
                     <button
                         onClick={handleFromGallery}
-                        className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition"
+                        className="flex items-center z-10 cursor-pointer justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition"
                     >
                         <FaImage /> From my gallery
                     </button>
                 </div>
 
                 {/* Continue Button for Desktop */}
-                <div className="hidden md:flex w-full max-w-xs mb-8">
+                <div className="hidden md:flex z-10 w-full max-w-xs mb-8">
                     <button
                         onClick={handleContinue}
-                        className="w-full flex items-center justify-between px-5 gap-2 bg-[#0c0c36] text-white py-3 rounded-md text-base hover:bg-[#1c1c4f] transition"
+                        className="w-full flex items-center cursor-pointer justify-between px-5 gap-2 bg-[#0c0c36] text-white py-3 rounded-md text-base hover:bg-[#1c1c4f] transition"
                     >
                         Continue <ChevronRight />
                     </button>
@@ -102,10 +102,10 @@ const UploadProfilePage = () => {
             </div>
 
             {/* Sticky Continue Button for Mobile */}
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white shadow-t md:hidden">
+            <div className="cursor-pointer z-10 fixed bottom-0 left-0 right-0 p-4 bg-white shadow-t md:hidden">
                 <button
                     onClick={handleContinue}
-                    className="w-full flex items-center justify-between px-5 gap-2 bg-[#0c0c36] text-white py-3 rounded-md text-base hover:bg-[#1c1c4f] transition"
+                    className="w-full cursor-pointer flex items-center justify-between px-5 gap-2 bg-[#0c0c36] text-white py-3 rounded-md text-base hover:bg-[#1c1c4f] transition"
                 >
                     Continue
                     <ChevronRight />

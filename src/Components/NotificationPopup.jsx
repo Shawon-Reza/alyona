@@ -26,10 +26,10 @@ const NotificationPopup = ({ isOpen, onClose }) => {
 
     return (
 
-        <div className="fixed top-[110px] rounded-2xl right-5 w-80 bg-white/80 shadow-lg p-4  z-50">
+        <div className="fixed top-[117px] lg:top-[134px] rounded-2xl right-4 lg:right-10 w-80 bg-white/80 shadow-lg p-4  z-50">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="font-semibold text-lg">Notifications</h2>
-                <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-lg">
+                <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-lg cursor-pointer">
                     &times;
                 </button>
             </div>

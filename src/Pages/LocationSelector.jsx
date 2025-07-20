@@ -167,7 +167,7 @@ const LocationSelector = () => {
                                 alert('Location saved!');
                                 navigate('/LifestyleQuiz');
                             }}
-                            className="bg-[#0c0c36] text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-[#1c1c4f] w-full flex justify-between "
+                            className="bg-[#0c0c36] text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-[#1c1c4f] w-full flex justify-between cursor-pointer "
                         >
                             Save my location
                             <ChevronRight />

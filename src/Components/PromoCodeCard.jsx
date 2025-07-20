@@ -8,9 +8,10 @@ export default function PromoCodeCard() {
 
     return (
         <div className="min-h-screen flex items-start justify-center px-4 py-10">
-            <div className="w-full max-w-4xl flex flex-col md:flex-row gap-6">
+
+            <div className="w-full flex flex-col lg:flex-row gap-6">
                 {/* Left: Plan Info */}
-                <div className="bg-gradient-to-br from-[#f3ede7] to-[#e3d5c5] p-6 rounded-xl w-full md:w-1/2 shadow-sm">
+                <div className="bg-gradient-to-br from-[#f3ede7] to-[#e3d5c5] p-6 rounded-xl w-full lg:w-1/2 shadow-sm">
                     <h3 className="text-xl font-semibold mb-4">Premium</h3>
                     <div className="flex items-center gap-3 mb-4">
                         <span className="line-through text-gray-400 text-lg">7€</span>
@@ -45,9 +46,9 @@ export default function PromoCodeCard() {
                     </div>
 
                     <button
-                         onClick={() => {
-                                   navigate('/Dashboard/Payment/subscribe');
-                                }}
+                        onClick={() => {
+                            navigate('/Dashboard/Payment/subscribe');
+                        }}
 
                         className="mt-6 z-1 cursor-pointer bg-[#0c0c33] text-white font-medium text-sm py-2 rounded-md hover:bg-[#1a1a4d] transition"
                     >

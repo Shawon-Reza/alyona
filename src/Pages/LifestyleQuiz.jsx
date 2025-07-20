@@ -91,7 +91,7 @@ const LifestyleQuiz = () => {
                 <div className="flex gap-4 mt-10 max-w-md mx-auto w-full ">
                     <button
                         onClick={handleBack}
-                        className="bg-[#d2b89d] text-white px-6 py-2 rounded-md text-sm hover:bg-[#c3a686] transition"
+                        className="bg-[#d2b89d] text-white cursor-pointer px-6 py-2 rounded-md text-sm hover:bg-[#c3a686] transition"
                     >
                         Back
                     </button>

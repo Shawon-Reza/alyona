@@ -112,7 +112,7 @@ const ChatPage = () => {
                 </div>
 
                 {/* Right Content */}
-                <div className="flex-1 w-fulln xl:max-h-screen rounded-2xl shadow-md flex flex-col">
+                <div style={{ height: 'calc(100vh - 200px)' }} className="flex-1 w-full xl:max-h-screen h-screen-mi  rounded-2xl shadow-md flex flex-col">
                     {/* Scrollable Chat Messages */}
                     <div className="flex-1 overflow-y-auto p-4">
                         <Outlet />

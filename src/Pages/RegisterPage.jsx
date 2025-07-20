@@ -153,7 +153,7 @@ const RegisterPage = () => {
                         <button
                             type="submit"
                             disabled={!accepted}
-                            className={`w-full py-2 rounded-md text-white transition ${accepted
+                            className={`w-full cursor-pointer py-2 rounded-md text-white transition ${accepted
                                 ? 'bg-[#0c0a3e] hover:bg-[#191670]'
                                 : 'bg-gray-400 cursor-not-allowed'
                                 }`}

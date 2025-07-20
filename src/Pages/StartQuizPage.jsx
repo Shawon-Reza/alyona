@@ -43,17 +43,17 @@ const StartQuizPage = () => {
                 {/* Start the Quiz Button (full width on mobile) */}
                 <button
                     onClick={handleStartQuiz}
-                    className="w-full max-w-xs bg-[#0c0c36] text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-[#1c1c4f] transition-all duration-200 flex  items-center justify-between mx-4 mt-12"
+                    className="w-full max-w-xs cursor-pointer z-10 bg-[#0c0c36] text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-[#1c1c4f] transition-all duration-200 flex  items-center justify-between mx-4 mt-12"
                 >
                     Start the Quiz
                     <ChevronRight />
                 </button>
 
                 {/* Skip Button */}
-                <div className="mt-4 w-full max-w-sm">
+                <div className="mt-4 w-full max-w-sm z-10">
                     <button
                         onClick={handleSkip}
-                        className="w-full text-[16px] font-semibold text-[#5B5B5B] underline hover:text-gray-800"
+                        className="w-full text-[16px] cursor-pointer font-semibold text-[#5B5B5B] underline hover:text-gray-800"
                     >
                         Skip this step
                     </button>

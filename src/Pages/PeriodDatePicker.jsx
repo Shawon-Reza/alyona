@@ -137,10 +137,10 @@ const PeriodDatePicker = () => {
 
                     <div className='w-full'></div>
 
-                    <button className="lg:col-span-1 text-sm text-gray-500 underline w-full">Skip this question</button>
+                    <button className="lg:col-span-1 cursor-pointer text-sm text-gray-500 underline w-full">Skip this question</button>
 
                     <button
-                        className="w-full px-15 lg:col-span-1  xl:px-20 text-sm bg-[#BB9777] text-white py-3 rounded-md">I don’t remember</button>
+                        className="w-full px-15 lg:col-span-1  xl:px-20 text-sm bg-[#BB9777] text-white py-3 rounded-md cursor-pointer">I don’t remember</button>
 
                     <button
                         onClick={() => {
