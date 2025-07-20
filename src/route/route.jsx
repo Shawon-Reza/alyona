@@ -18,7 +18,7 @@ import CheckoutPage from "../Pages/CheckoutPage";
 import Dashboard from "../Layout/Dashboard";
 import SubscriptionPlanComponent from "../Components/SubscriptionPlanComponent";
 import MainDashboard from "../Pages/MainDashboard";
-import Badges from "../Components/BadgeSection.JSX";
+import Badges from "../Components/BadgeSection";
 import MonthlySkinReport from "../Components/MonthlySkinReport ";
 import ReportDetails from "../Components/ReportDetails";
 import Subscribe from "../Components/Subscribe";
