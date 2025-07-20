@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../Components/Navbar";
 import PopUpCalendarOnClick from "../Components/PopUpCalenderOnClick";
 import Productimgfordetails from '../assets/Productimgfordetails.png';
 import { ChevronRight, Sparkle } from "lucide-react";
