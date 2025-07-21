@@ -35,6 +35,13 @@ import ChatPanel from "../Components/ChatPanel";
 import TrackerLayout from "../Layout/TrackerLayout";
 import DailyRoutineTracker from "../Components/TrackerTabComponent/DailyRoutineTracker";
 import PageNotFound from "../Components/PageNotFound"
+import AdminDashboardLogin from "../Pages/AdminDashboard/AdminDashboardLogin";
+import AdminResetPasswordPage from "../Pages/AdminDashboard/AdminResetPasswordPage";
+import AdminDashboard from "../Layout/AdminDashboard";
+import AdminDashboardComponent from "../Components/AdminDashboard/AdminDashboardComponent";
+import DashboardGeneralContent from "../Components/AdminDashboard/DashboardGeneralContent";
+import DashboardUserContent from "../Components/AdminDashboard/DashboardUserContent";
+import NewProductRequestPage from "../Pages/AdminDashboard/NewProductRequestPage";
 
 const router = createBrowserRouter([
     {
@@ -215,7 +222,61 @@ const router = createBrowserRouter([
     {
         path: '*',
         element: <PageNotFound></PageNotFound>
+    },
+
+    // Admin Dashboard......................................................
+    {
+        path: '/admindashboardlogin',
+        element: <AdminDashboardLogin></AdminDashboardLogin>
+    },
+    {
+        path: '/admindashboard-reset-password',
+        element: <AdminResetPasswordPage></AdminResetPasswordPage>
+    },
+    {
+        path: '/admindashboard',
+        element: <AdminDashboard />,
+        children: [
+            {
+                path: "",
+                element: <AdminDashboardComponent />, // This will render when "/admindashboard" is accessed
+                children: [
+                    {
+                        index: true,  // This makes the "general" tab show up by default when accessing /admindashboard
+                        element: <DashboardGeneralContent /> // Default content for the General page
+                    },
+                    {
+                        path: 'general',
+                        element: <DashboardGeneralContent /> // Content for the General page
+                    },
+                    {
+                        path: 'users',
+                        element: <DashboardUserContent></DashboardUserContent> // Content for the Users page
+                    },
+
+                ]
+            },
+            {
+                path: 'newproduct-requestpage',
+                element: <NewProductRequestPage></NewProductRequestPage> // Content for the Users page
+            },
+            {
+                path: "users",
+                element: <div>Users Content</div>,
+            },
+            {
+                path: "products",
+                element: <div>Products Content</div>,
+            },
+            {
+                path: "create-mentor",
+                element: <div>Create Mentor Content</div>,
+            },
+        ]
     }
+
+
+
 
 
 

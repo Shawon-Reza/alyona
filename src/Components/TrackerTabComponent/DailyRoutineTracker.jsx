@@ -79,41 +79,41 @@ const DailyRoutineTracker = () => {
                     <p>{title}</p>
                 </div>
 
-               <div className="flex gap-4 mb-6">
-    {["yes", "no"].map((value) => {
-        const isSelected = routineDone === value;
+                <div className="flex gap-4 mb-6">
+                    {["yes", "no"].map((value) => {
+                        const isSelected = routineDone === value;
 
-        // Determine background color
-        const bgClass =
-            isSelected && value === "yes"
-                ? mode === "night"
-                    ? "bg-[#3F53A0] text-white"
-                    : "bg-[#E6D1C0] text-[#181818]"
-                : isSelected && value === "no"
-                    ? "bg-[#F5F2EF] text-[#181818]"
-                    : "bg-white text-gray-500";
+                        // Determine background color
+                        const bgClass =
+                            isSelected && value === "yes"
+                                ? mode === "night"
+                                    ? "bg-[#3F53A0] text-white"
+                                    : "bg-[#E6D1C0] text-[#181818]"
+                                : isSelected && value === "no"
+                                    ? "bg-[#F5F2EF] text-[#181818]"
+                                    : "bg-white text-gray-500";
 
-        const tickBgClass =
-            isSelected
-                ? mode === "night" && value === "yes"
-                    ? "bg-[#3F53A0] text-white"
-                    : "bg-[#8C6D56] text-white"
-                : "border border-[#8C6D56] text-[#8C6D56]";
+                        const tickBgClass =
+                            isSelected
+                                ? mode === "night" && value === "yes"
+                                    ? "bg-[#3F53A0] text-white"
+                                    : "bg-[#8C6D56] text-white"
+                                : "border border-[#8C6D56] text-[#8C6D56]";
 
-        return (
-            <button
-                key={value}
-                onClick={() => setRoutineDone(value)}
-                className={`px-6 w-full py-2 rounded-lg flex items-center justify-between border border-base-300 ${bgClass}`}
-            >
-                {value.charAt(0).toUpperCase() + value.slice(1)}
-                <span className={`ml-3 w-7 h-7 rounded-lg flex items-center justify-center ${tickBgClass}`}>
-                    ✓
-                </span>
-            </button>
-        );
-    })}
-</div>
+                        return (
+                            <button
+                                key={value}
+                                onClick={() => setRoutineDone(value)}
+                                className={`px-6 w-full py-2 rounded-lg flex items-center justify-between border border-base-300 ${bgClass}`}
+                            >
+                                {value.charAt(0).toUpperCase() + value.slice(1)}
+                                <span className={`ml-3 w-7 h-7 rounded-lg flex items-center justify-center ${tickBgClass}`}>
+                                    ✓
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
 
             </div>
 
@@ -129,11 +129,10 @@ const DailyRoutineTracker = () => {
                                 onClick={() => toggleProduct(product.key)}
                             >
                                 <div
-                                    className={`absolute top-2 right-2 w-7 h-7 rounded-lg flex items-center justify-center text-xs z-10 ${
-                                        selectedProducts[product.key]
+                                    className={`absolute top-2 right-2 w-7 h-7 rounded-lg flex items-center justify-center text-xs z-10 ${selectedProducts[product.key]
                                             ? "bg-[#B1805A] text-white"
                                             : "border border-[#B1805A] text-[#B1805A]"
-                                    }`}
+                                        }`}
                                 >
                                     ✓
                                 </div>

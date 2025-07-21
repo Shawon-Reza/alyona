@@ -106,7 +106,7 @@ const LifestyleQuiz = () => {
             `}
                     >
                         Continue
-                        <ChevronRight size={15}  />
+                        <ChevronRight size={15} />
                     </button>
                 </div>
             </div>

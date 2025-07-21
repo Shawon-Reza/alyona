@@ -162,7 +162,7 @@ const Dashboard = () => {
 
                 {/* Sidebar */}
                 {(viewMode === 'sidebar' || viewMode === 'both') && (
-                    <aside className={`mt-10 w-full  md:w-[240px] lg:w-xs `}>
+                    <aside className={`sm:mt-10 mt-3 w-full  md:w-[240px] lg:w-xs `}>
 
                         {/* GENERAL */}
                         <h2 className="mt-2 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">General</h2>
