@@ -2,10 +2,13 @@
 
 import { Menu, User, ChevronDown } from "lucide-react"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
-export default function AdminDashboardNavbar() {
+export default function AdminDashboardNavbar({ toggleView }) {
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
 
+
+    const navigate = useNavigate()
     return (
         <nav className="w-full h-16 bg-white/50 rounded-xl border-b border-orange-100 px-4 md:px-6 flex items-center justify-between">
             <div>
@@ -14,7 +17,9 @@ export default function AdminDashboardNavbar() {
 
             {/* Mobile Menu Button - visible on small screens */}
             <button className="md:hidden p-2 rounded-lg hover:bg-orange-50 transition-colors">
-                <Menu className="w-6 h-6 text-gray-600 cursor-pointer" />
+                <Menu
+                onClick={toggleView}
+                className="w-6 h-6 text-gray-600 cursor-pointer" />
             </button>
 
             {/* Desktop User Profile Section - visible on medium screens and up */}
@@ -45,7 +50,8 @@ export default function AdminDashboardNavbar() {
                     {/* Dropdown Menu */}
                     {isProfileDropdownOpen && (
                         <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-orange-100 rounded-lg shadow-lg py-2 z-50">
-                            <a href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 transition-colors">
+                            <a href="/maindashboard"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 transition-colors">
                                 View Profile
                             </a>
                             <a

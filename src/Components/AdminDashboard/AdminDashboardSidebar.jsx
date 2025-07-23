@@ -1,6 +1,7 @@
-import { LayoutGrid, Users, ShoppingBag, UserPlus, LogOut } from "lucide-react"
+import { NavLink } from "react-router-dom"; // Import NavLink from react-router-dom
+import { LayoutGrid, Users, ShoppingBag, UserPlus, LogOut } from "lucide-react";
 
-export default function AdminDashboardSidebar() {
+export default function AdminDashboardSidebar({ handleSidebarItemClick }) {
     return (
         <div className="w-64 h-screen bg-white/50 border-r border-base-100 rounded-xl">
             <div className="p-6">
@@ -15,40 +16,53 @@ export default function AdminDashboardSidebar() {
                 {/* Navigation Items */}
                 <nav className="space-y-2">
                     {/* Dashboard - Active */}
-                    <a
-                        href="/admindashboard"
-                        className="flex items-center gap-3 px-4 py-3 rounded-lg bg-orange-100 text-gray-800 font-medium transition-colors"
+                    <NavLink
+                        to="/admindashboard"
+                        onClick={handleSidebarItemClick}
+                        end
+                        className={({ isActive }) =>
+                            `flex items-center gap-3 px-4 py-3 rounded-lg ${isActive ? 'bg-orange-100 text-gray-800 font-medium' : 'text-gray-600 hover:bg-orange-100 hover:text-gray-800'} transition-colors`
+                        }
                     >
                         <LayoutGrid className="w-5 h-5" />
                         <span>Dashboard</span>
-                    </a>
+                    </NavLink>
 
                     {/* Users */}
-                    <a
-                        href="/users"
-                        className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-orange-100 hover:text-gray-800 transition-colors"
+                    <NavLink
+                        to="/admindashboard/user-profile-layout"
+                        onClick={handleSidebarItemClick}
+                        className={({ isActive }) =>
+                            `flex items-center gap-3 px-4 py-3 rounded-lg ${isActive ? 'bg-orange-100 text-gray-800 font-medium' : 'text-gray-600 hover:bg-orange-100 hover:text-gray-800'} transition-colors`
+                        }
                     >
                         <Users className="w-5 h-5" />
                         <span>Users</span>
-                    </a>
+                    </NavLink>
 
                     {/* Products */}
-                    <a
-                        href="/products"
-                        className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-orange-100 hover:text-gray-800 transition-colors"
+                    <NavLink
+                        to="/products"
+                        onClick={handleSidebarItemClick}
+                        className={({ isActive }) =>
+                            `flex items-center gap-3 px-4 py-3 rounded-lg ${isActive ? 'bg-orange-100 text-gray-800 font-medium' : 'text-gray-600 hover:bg-orange-100 hover:text-gray-800'} transition-colors`
+                        }
                     >
                         <ShoppingBag className="w-5 h-5" />
                         <span>Products</span>
-                    </a>
+                    </NavLink>
 
                     {/* Create a mentor */}
-                    <a
-                        href="/create-mentor"
-                        className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-orange-100 hover:text-gray-800 transition-colors"
+                    <NavLink
+                        to="/create-mentor"
+                        onClick={handleSidebarItemClick}
+                        className={({ isActive }) =>
+                            `flex items-center gap-3 px-4 py-3 rounded-lg ${isActive ? 'bg-orange-100 text-gray-800 font-medium' : 'text-gray-600 hover:bg-orange-100 hover:text-gray-800'} transition-colors`
+                        }
                     >
                         <UserPlus className="w-5 h-5" />
                         <span>Create a mentor</span>
-                    </a>
+                    </NavLink>
 
                     {/* Log out */}
                     <button className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-orange-100 hover:text-gray-800 transition-colors w-full text-left">
@@ -58,5 +72,5 @@ export default function AdminDashboardSidebar() {
                 </nav>
             </div>
         </div>
-    )
+    );
 }

@@ -161,178 +161,181 @@ const Dashboard = () => {
 
 
                 {/* Sidebar */}
-                {(viewMode === 'sidebar' || viewMode === 'both') && (
-                    <aside className={`sm:mt-10 mt-3 w-full  md:w-[240px] lg:w-xs `}>
+                {(viewMode === 'sidebar' || viewMode === 'both')
+                    &&
+                    (
+                        <aside className={`sm:mt-10 mt-3 w-full  md:w-[240px] lg:w-xs `}>
 
-                        {/* GENERAL */}
-                        <h2 className="mt-2 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">General</h2>
+                            {/* GENERAL */}
+                            <h2 className="mt-2 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">General</h2>
 
-                        <div className=' bg-white shadow-md  border-r border-gray-200 border rounded-2xl'>
+                            <div className=' bg-white shadow-md  border-r border-gray-200 border rounded-2xl'>
 
-                            <ul className="text-sm text-gray-800 border border-gray-200 rounded-md overflow-hidden">
+                                <ul className="text-sm text-gray-800 border border-gray-200 rounded-md overflow-hidden">
 
-                                <li className="border-t border-gray-200 first:border-t-0">
-                                    <NavLink
-                                        to=""
-                                        onClick={handleSidebarItemClick}
-                                        className={({ isActive }) =>
-                                            `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                                        }>
+                                    <li className="border-t border-gray-200 first:border-t-0">
+                                        <NavLink
+                                            to=""
+                                            onClick={handleSidebarItemClick}
+                                            className={({ isActive }) =>
+                                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                            }>
+                                            <span className="flex items-center space-x-2">
+                                                <MdOutlineStarBorder className="text-lg" />
+                                                <span>Subscription Plan</span>
+                                            </span>
+                                            <span className="text-2xl font-light">›</span>
+                                        </NavLink>
+                                    </li>
+
+                                    <li className="border-t border-gray-300">
+                                        <NavLink
+                                            to="/edit-profile"
+                                            onClick={handleSidebarItemClick}
+                                            className={({ isActive }) =>
+                                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                            }>
+                                            <span className="flex items-center space-x-2">
+                                                <MdOutlineModeEdit className="text-lg" />                                      <span>Edit Profile</span>
+                                            </span>
+                                            <span className="text-2xl font-light">›</span>
+                                        </NavLink>
+                                    </li>
+
+                                    <li className="border-t border-gray-300">
+                                        <NavLink
+                                            to="/skin-type-test"
+                                            onClick={handleSidebarItemClick}
+                                            className={({ isActive }) =>
+                                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                            }>
+                                            <span className="flex items-center space-x-2">
+                                                <MdOutlineStarBorder className="text-lg" />
+                                                <span>Skin Type Test</span>
+                                            </span>
+                                            <span className="text-2xl font-light">›</span>
+                                        </NavLink>
+                                    </li>
+
+                                    <li className="border-t border-gray-300 flex justify-between items-center px-3 py-2 hover:bg-gray-100">
                                         <span className="flex items-center space-x-2">
-                                            <MdOutlineStarBorder className="text-lg" />
-                                            <span>Subscription Plan</span>
+                                            <PiBabyLight className="text-lg" />
+                                            <span>Pregnant or breastfeeding</span>
                                         </span>
-                                        <span className="text-2xl font-light">›</span>
-                                    </NavLink>
-                                </li>
+                                        <input type="checkbox" className="toggle toggle-sm scale-75" />
+                                    </li>
 
-                                <li className="border-t border-gray-300">
-                                    <NavLink
-                                        to="/edit-profile"
-                                        onClick={handleSidebarItemClick}
-                                        className={({ isActive }) =>
-                                            `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                                        }>
-                                        <span className="flex items-center space-x-2">
-                                            <MdOutlineModeEdit className="text-lg" />                                      <span>Edit Profile</span>
-                                        </span>
-                                        <span className="text-2xl font-light">›</span>
-                                    </NavLink>
-                                </li>
+                                    <li className="border-t border-gray-300">
+                                        <NavLink
+                                            to="about-my-skin"
+                                            onClick={handleSidebarItemClick}
+                                            className={({ isActive }) =>
+                                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                            }>
+                                            <span className="flex items-center space-x-2">
+                                                <PiHeartStraightBold className="text-lg" />
+                                                <span>About my skin</span>
+                                            </span>
+                                            <span className="text-2xl font-light">›</span>
+                                        </NavLink>
+                                    </li>
 
-                                <li className="border-t border-gray-300">
-                                    <NavLink
-                                        to="/skin-type-test"
-                                        onClick={handleSidebarItemClick}
-                                        className={({ isActive }) =>
-                                            `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                                        }>
-                                        <span className="flex items-center space-x-2">
-                                            <MdOutlineStarBorder className="text-lg" />
-                                            <span>Skin Type Test</span>
-                                        </span>
-                                        <span className="text-2xl font-light">›</span>
-                                    </NavLink>
-                                </li>
+                                    <li className="border-t border-gray-300">
+                                        <NavLink
+                                            to="monthly-report"
+                                            onClick={handleSidebarItemClick}
+                                            className={({ isActive }) =>
+                                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                            }>
+                                            <span className="flex items-center space-x-2">
+                                                <TbFileReport className="text-lg" />
+                                                <span>Monthly skin report</span>
+                                            </span>
+                                            <span className="text-2xl font-light">›</span>
+                                        </NavLink>
+                                    </li>
 
-                                <li className="border-t border-gray-300 flex justify-between items-center px-3 py-2 hover:bg-gray-100">
-                                    <span className="flex items-center space-x-2">
-                                        <PiBabyLight className="text-lg" />
-                                        <span>Pregnant or breastfeeding</span>
+                                    <li className="border-t border-gray-300">
+                                        <NavLink
+                                            to="/routine-analysis"
+                                            onClick={handleSidebarItemClick}
+                                            className={({ isActive }) =>
+                                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                            }>
+                                            <span className="flex items-center space-x-2">
+                                                <AiOutlineBarChart className="text-lg" />
+                                                <span>Routine analysis</span>
+                                            </span>
+                                            <span className="text-2xl font-light">›</span>
+                                        </NavLink>
+                                    </li>
+
+                                    <li className="border-t border-gray-300">
+                                        <NavLink
+                                            to="badges"
+                                            onClick={handleSidebarItemClick}
+                                            className={({ isActive }) =>
+                                                `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
+                                            }>
+                                            <span className="flex items-center space-x-2 z-10">
+                                                <HiOutlineBadgeCheck className="text-lg" />
+                                                <span>Badges</span>
+                                            </span>
+                                            <span className="text-2xl font-light">›</span>
+                                        </NavLink>
+                                    </li>
+                                </ul>
+
+
+                            </div>
+
+
+                            {/* NOTIFICATIONS */}
+                            <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Notifications</h2>
+
+                            <div className='bg-white shadow-md border-r border-gray-200 border rounded-2xl'>
+                                <div className="border-t border-gray-300 first:border-t-0 flex justify-between items-center px-3 py-4">
+                                    <span className="h-5 flex items-center space-x-2">
+                                        <AiOutlineProduct className="text-lg" />
+                                        <span>New products</span>
                                     </span>
                                     <input type="checkbox" className="toggle toggle-sm scale-75" />
-                                </li>
+                                </div>
 
-                                <li className="border-t border-gray-300">
-                                    <NavLink
-                                        to="about-my-skin"
-                                        onClick={handleSidebarItemClick}
-                                        className={({ isActive }) =>
-                                            `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                                        }>
-                                        <span className="flex items-center space-x-2">
-                                            <PiHeartStraightBold className="text-lg" />
-                                            <span>About my skin</span>
-                                        </span>
-                                        <span className="text-2xl font-light">›</span>
-                                    </NavLink>
-                                </li>
+                                <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
+                                    <span className="h-5 flex items-center space-x-2">
+                                        <PiSunLight className="text-lg" />
+                                        <span>UV alerts</span>
+                                    </span>
+                                    <input type="checkbox" className="toggle toggle-sm scale-75" />
+                                </div>
 
-                                <li className="border-t border-gray-300">
-                                    <NavLink
-                                        to="monthly-report"
-                                        onClick={handleSidebarItemClick}
-                                        className={({ isActive }) =>
-                                            `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                                        }>
-                                        <span className="flex items-center space-x-2">
-                                            <TbFileReport className="text-lg" />
-                                            <span>Monthly skin report</span>
-                                        </span>
-                                        <span className="text-2xl font-light">›</span>
-                                    </NavLink>
-                                </li>
+                                <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
+                                    <span className="h-5 flex items-center space-x-2">
 
-                                <li className="border-t border-gray-300">
-                                    <NavLink
-                                        to="/routine-analysis"
-                                        onClick={handleSidebarItemClick}
-                                        className={({ isActive }) =>
-                                            `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                                        }>
-                                        <span className="flex items-center space-x-2">
-                                            <AiOutlineBarChart className="text-lg" />
-                                            <span>Routine analysis</span>
-                                        </span>
-                                        <span className="text-2xl font-light">›</span>
-                                    </NavLink>
-                                </li>
-
-                                <li className="border-t border-gray-300">
-                                    <NavLink
-                                        to="badges"
-                                        onClick={handleSidebarItemClick}
-                                        className={({ isActive }) =>
-                                            `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                                        }>
-                                        <span className="flex items-center space-x-2 z-10">
-                                            <HiOutlineBadgeCheck className="text-lg" />
-                                            <span>Badges</span>
-                                        </span>
-                                        <span className="text-2xl font-light">›</span>
-                                    </NavLink>
-                                </li>
-                            </ul>
-
-
-                        </div>
-
-
-                        {/* NOTIFICATIONS */}
-                        <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Notifications</h2>
-
-                        <div className='bg-white shadow-md border-r border-gray-200 border rounded-2xl'>
-                            <div className="border-t border-gray-300 first:border-t-0 flex justify-between items-center px-3 py-4">
-                                <span className="h-5 flex items-center space-x-2">
-                                    <AiOutlineProduct className="text-lg" />
-                                    <span>New products</span>
-                                </span>
-                                <input type="checkbox" className="toggle toggle-sm scale-75" />
+                                        <WiStars className="text-lg" />
+                                        <span>AI recommendations</span>
+                                    </span>
+                                    <input type="checkbox" className="toggle toggle-sm scale-75" />
+                                </div>
                             </div>
 
-                            <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
-                                <span className="h-5 flex items-center space-x-2">
-                                    <PiSunLight className="text-lg" />
-                                    <span>UV alerts</span>
-                                </span>
-                                <input type="checkbox" className="toggle toggle-sm scale-75" />
+                            {/* HELP */}
+                            <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Help & Privacy</h2>
+                            <div className='bg-white shadow-md px-6 py-3 space-y-8 border-r border-gray-200 border rounded-2xl '>
+
+                                <div className="border-b border-gray-300 flex justify-between items-center  pb-1">
+                                    <span className="h-5 flex items-center space-x-2">
+
+                                        <IoCallOutline ars className="text-lg" />
+                                        <span>Support</span>
+                                    </span>
+                                    <input type="checkbox" className="toggle toggle-sm scale-75" />
+                                </div>
                             </div>
-
-                            <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
-                                <span className="h-5 flex items-center space-x-2">
-
-                                    <WiStars className="text-lg" />
-                                    <span>AI recommendations</span>
-                                </span>
-                                <input type="checkbox" className="toggle toggle-sm scale-75" />
-                            </div>
-                        </div>
-
-                        {/* HELP */}
-                        <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Help & Privacy</h2>
-                        <div className='bg-white shadow-md px-6 py-3 space-y-8 border-r border-gray-200 border rounded-2xl '>
-
-                            <div className="border-b border-gray-300 flex justify-between items-center  pb-1">
-                                <span className="h-5 flex items-center space-x-2">
-
-                                    <IoCallOutline ars className="text-lg" />
-                                    <span>Support</span>
-                                </span>
-                                <input type="checkbox" className="toggle toggle-sm scale-75" />
-                            </div>
-                        </div>
-                    </aside>
-                )}
+                        </aside>
+                    )
+                }
 
 
                 {/* Outlet / Main Content */}

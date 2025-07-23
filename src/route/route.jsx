@@ -42,6 +42,14 @@ import AdminDashboardComponent from "../Components/AdminDashboard/AdminDashboard
 import DashboardGeneralContent from "../Components/AdminDashboard/DashboardGeneralContent";
 import DashboardUserContent from "../Components/AdminDashboard/DashboardUserContent";
 import NewProductRequestPage from "../Pages/AdminDashboard/NewProductRequestPage";
+import FAQPage from "../Components/AdminDashboard/FAQPage";
+import EditAnswerPage from "../Components/AdminDashboard/EditAnswerPage";
+import UserManagementTable from "../Components/AdminDashboard/UserManagementTable";
+import UserProfilePage from "../Pages/AdminDashboard/UserProfilePage";
+import UserProfileLayout from "../Layout/UserProfileLayout";
+import UserAIContent from "../Components/AdminDashboard/UserAIContent";
+import UserProductContent from "../Components/AdminDashboard/UserProductsContent";
+import UserDashboardContent from "../Components/AdminDashboard/UserDashboardContent";
 
 const router = createBrowserRouter([
     {
@@ -254,15 +262,51 @@ const router = createBrowserRouter([
                         element: <DashboardUserContent></DashboardUserContent> // Content for the Users page
                     },
 
+
                 ]
             },
+
             {
                 path: 'newproduct-requestpage',
                 element: <NewProductRequestPage></NewProductRequestPage> // Content for the Users page
             },
             {
-                path: "users",
-                element: <div>Users Content</div>,
+                path: 'faq',
+                element: <FAQPage></FAQPage> // Content for the Users page
+            },
+            {
+                path: 'faq-edit-answare',
+                element: <EditAnswerPage></EditAnswerPage> // Content for the Users page
+            },
+            {
+                path: "user-management-table",
+                element: <UserManagementTable></UserManagementTable>,
+            },
+            {
+                path: 'user-profile-layout',
+                element: <UserProfileLayout></UserProfileLayout>,
+                children: [
+                    {
+                        path: '',
+                        element: <UserProfilePage></UserProfilePage>
+                    },
+                    {
+                        path: 'user/profile',
+                        element: <UserProfilePage></UserProfilePage>
+                    },
+                    {
+                        path: 'user/products',
+                        element: <UserProductContent></UserProductContent>
+                    },
+                    {
+                        path: 'user/ai',
+                        element: <UserAIContent></UserAIContent>
+                    },
+                    {
+                        path: 'user/dashboard',
+                        element: <UserDashboardContent></UserDashboardContent>
+                    },
+                ]
             },
             {
                 path: "products",

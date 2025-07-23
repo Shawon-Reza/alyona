@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 const monthlyEarnings = [
     { month: "ENE", amount: 300 },
@@ -48,6 +49,8 @@ const frequentQuestions = [
 export default function DashboardGeneralContent() {
     const [selectedYear, setSelectedYear] = useState("2025-1")
     const [selectedMonth, setSelectedMonth] = useState("MAR")
+
+    const navigate = useNavigate();
 
     return (
         <div className="p-6 space-y-6 min-h-screen">
@@ -304,7 +307,11 @@ export default function DashboardGeneralContent() {
                                 </button>
                             </div>
                         </div>
-                        <div className="space-y-3">
+                        <div
+                            onClick={() => {
+                                navigate('/admindashboard/faq')
+                            }}
+                            className="space-y-3 cursor-pointer">
                             {frequentQuestions.map((question, index) => (
                                 <div key={index} className="flex items-start justify-between gap-3">
                                     <span className="text-sm flex-1 leading-relaxed">{question.question}</span>
