@@ -256,7 +256,7 @@ export default function UserManagementTable() {
                     <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                 </div>
                 <button
-                    className="flex items-center px-4 py-2 border rounded-lg bg-gray-100 cursor-pointer"
+                    className="flex items-center px-4 py-2 border border-base-300 shadow-md rounded-lg bg-gray-100 cursor-pointer"
                     onClick={() => setShowFilterPanel(!showFilterPanel)}
                     data-filter-toggle
                 >
@@ -342,7 +342,9 @@ export default function UserManagementTable() {
                     <table className="w-full border-collap">
                         <thead>
                             <tr className="border-b-3 border-base-300">
-                                <th className="py-3 px-4 text-left cursor-pointer" onClick={() => requestSort("name")}>
+                                <th className="py-3 px-4 text-left cursor-pointer"
+
+                                    onClick={() => requestSort("name")}>
                                     <div className="flex items-center">
                                         Users
                                         {sortConfig.key === "name" &&
@@ -401,10 +403,10 @@ export default function UserManagementTable() {
                         </thead>
                         <tbody>
                             {currentUsers.map((user) => (
-                                <tr key={user.id} className="border-b border-base-300 hover:bg-gray-50">
+                                <tr key={user.id} className="border-b border-base-300 hover:bg-gray-50 ">
                                     <td
                                         onClick={() => {
-                                            navigate('/admindashboard/user-management-table/user-name')
+                                            navigate('user/profile')
                                         }}
                                         className="py-3 px-4 cursor-pointer">{user.name}</td>
                                     <td className="py-3 px-4">{user.email}</td>

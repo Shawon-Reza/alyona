@@ -50,6 +50,16 @@ import UserProfileLayout from "../Layout/UserProfileLayout";
 import UserAIContent from "../Components/AdminDashboard/UserAIContent";
 import UserProductContent from "../Components/AdminDashboard/UserProductsContent";
 import UserDashboardContent from "../Components/AdminDashboard/UserDashboardContent";
+import ProductManagementTable from "../Components/AdminDashboard/ProductManagementTable";
+import EditProductPage from "../Components/AdminDashboard/EditProductPage";
+import AdminProductDetailPage from "../Components/AdminDashboard/AdminProductDetailPage";
+import MentorManagementTable from "../Components/AdminDashboard/MentorManagementTable";
+import CreateUserMentor from "../Components/AdminDashboard/CreateUserMentor";
+import MentorDashboardLayout from "../Layout/MentorDashboardLayout";
+import NotificationComposer from "../Components/AdminDashboard/NotificationComposer";
+import ReportsTable from "../Components/AdminDashboard/ReportsTable";
+import ReportsDashboard from "../Components/AdminDashboard/ReportsDashboard";
+import CreateReport from "../Components/AdminDashboard/CreateReport";
 
 const router = createBrowserRouter([
     {
@@ -288,7 +298,7 @@ const router = createBrowserRouter([
                 children: [
                     {
                         path: '',
-                        element: <UserProfilePage></UserProfilePage>
+                        element: <UserManagementTable></UserManagementTable>
                     },
                     {
                         path: 'user/profile',
@@ -310,12 +320,47 @@ const router = createBrowserRouter([
             },
             {
                 path: "products",
-                element: <div>Products Content</div>,
+                element: <ProductManagementTable></ProductManagementTable>,
+            },
+            {
+                path: "products/edit-product",
+                element: <EditProductPage></EditProductPage>,
+            },
+            {
+                path: "products/details",
+                element: <AdminProductDetailPage></AdminProductDetailPage>,
             },
             {
                 path: "create-mentor",
-                element: <div>Create Mentor Content</div>,
+                element: <MentorManagementTable></MentorManagementTable>,
             },
+            {
+                path: "create-mentor/create-user-mentor",
+                element: <CreateUserMentor></CreateUserMentor>,
+            },
+        ]
+    },
+    {
+        path: "/mentordashboard",
+        element: <MentorDashboardLayout></MentorDashboardLayout>,
+        children: [
+            {
+                path: 'notification-composer',
+                element: <NotificationComposer></NotificationComposer>
+            },
+            {
+                path: 'reports',
+                element: <ReportsTable></ReportsTable>
+            },
+            {
+                path: 'user-reports',
+                element: <ReportsDashboard></ReportsDashboard>
+            },
+            {
+                path: 'create-reports',
+                element: <CreateReport></CreateReport>
+            },
+
         ]
     }
 

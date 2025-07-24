@@ -23,12 +23,12 @@ const AdminDashboard = () => {
             setViewMode((prev) => (prev === 'sidebar' ? 'outlet' : 'sidebar'));
         }
     };
-  const handleSidebarItemClick = () => {
-    if (isBelowMd) {
-        // Set to 'outlet' on small screens to hide sidebar and show content
-        setViewMode('outlet');
-    }
-};
+    const handleSidebarItemClick = () => {
+        if (isBelowMd) {
+            // Set to 'outlet' on small screens to hide sidebar and show content
+            setViewMode('outlet');
+        }
+    };
 
 
     return (
@@ -41,7 +41,10 @@ const AdminDashboard = () => {
                 &&
                 (
                     <div className='mt-6 '>
-                        <AdminDashboardSidebar handleSidebarItemClick={handleSidebarItemClick} />
+                        <AdminDashboardSidebar
+                            handleSidebarItemClick={handleSidebarItemClick}
+                            toggleView={toggleView}
+                        />
 
                     </div>
                 )
@@ -49,14 +52,15 @@ const AdminDashboard = () => {
 
 
 
-
-
             {/* Main Content Area */}
             <div className="flex-1 p-6 ">
+
 
                 <div>
                     <AdminDashboardNavbar toggleView={toggleView} />
                 </div>
+
+
 
 
 

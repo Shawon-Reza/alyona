@@ -1,10 +1,22 @@
 import { NavLink } from "react-router-dom"; // Import NavLink from react-router-dom
 import { LayoutGrid, Users, ShoppingBag, UserPlus, LogOut } from "lucide-react";
+import AdminDashboardNavbar from "./AdminDashboardNavbar";
+import useIsBelowMd from "../../hooks/useIsBelowMd";
 
-export default function AdminDashboardSidebar({ handleSidebarItemClick }) {
+export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleView }) {
+    const isBelowMd = useIsBelowMd();
+
     return (
-        <div className="w-64 h-screen bg-white/50 border-r border-base-100 rounded-xl">
+        <div className={`w-full h-screen bg-white/50 border-r border-base-100 rounded-xl ${isBelowMd ? "w-screen pr-10" : " "}`}>
             <div className="p-6">
+
+                {/* Navbar Show only when Device is below medium size. */}
+                {isBelowMd && (
+                    <div className="mb-5">
+                        <AdminDashboardNavbar toggleView={toggleView}></AdminDashboardNavbar>
+                    </div>
+                )}
+
                 {/* Logo/Brand */}
                 <div className="flex items-center gap-3 mb-8">
                     <div className="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center">
@@ -42,7 +54,7 @@ export default function AdminDashboardSidebar({ handleSidebarItemClick }) {
 
                     {/* Products */}
                     <NavLink
-                        to="/products"
+                        to="products"
                         onClick={handleSidebarItemClick}
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-4 py-3 rounded-lg ${isActive ? 'bg-orange-100 text-gray-800 font-medium' : 'text-gray-600 hover:bg-orange-100 hover:text-gray-800'} transition-colors`
@@ -54,7 +66,7 @@ export default function AdminDashboardSidebar({ handleSidebarItemClick }) {
 
                     {/* Create a mentor */}
                     <NavLink
-                        to="/create-mentor"
+                        to="create-mentor"
                         onClick={handleSidebarItemClick}
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-4 py-3 rounded-lg ${isActive ? 'bg-orange-100 text-gray-800 font-medium' : 'text-gray-600 hover:bg-orange-100 hover:text-gray-800'} transition-colors`

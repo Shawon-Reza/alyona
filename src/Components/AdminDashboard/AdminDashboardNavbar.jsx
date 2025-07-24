@@ -18,8 +18,8 @@ export default function AdminDashboardNavbar({ toggleView }) {
             {/* Mobile Menu Button - visible on small screens */}
             <button className="md:hidden p-2 rounded-lg hover:bg-orange-50 transition-colors">
                 <Menu
-                onClick={toggleView}
-                className="w-6 h-6 text-gray-600 cursor-pointer" />
+                    onClick={toggleView}
+                    className="w-6 h-6 text-gray-600 cursor-pointer" />
             </button>
 
             {/* Desktop User Profile Section - visible on medium screens and up */}
