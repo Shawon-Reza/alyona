@@ -56,7 +56,7 @@ const ReportsTable = () => {
 
     const navigate = useNavigate()
     return (
-        <div className="min-h-screen  p-6">
+        <div className="min-h-screen  sm:p-6">
             <div className="">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">

@@ -13,7 +13,7 @@ export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleVi
 
                 {/* Navbar Show only when Device is below medium size. */}
                 {isBelowMd && (
-                    <div className="mb-5">
+                    <div className="mb-5 -mt-6">
                         <AdminDashboardNavbar toggleView={toggleView}></AdminDashboardNavbar>
                     </div>
                 )}

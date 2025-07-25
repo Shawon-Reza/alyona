@@ -57,7 +57,7 @@ const MentorDashboardLayout = () => {
                     >
                         {/* Navbar for small screens (inside scrollable area) */}
                         {isBelowMd && (
-                            <div>
+                            <div className='mb-5'>
                                 <AdminDashboardNavbar toggleView={toggleView} />
                             </div>
                         )}
