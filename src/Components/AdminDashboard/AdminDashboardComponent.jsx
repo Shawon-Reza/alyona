@@ -34,7 +34,7 @@ const AdminDashboardComponent = () => {
                     Users
                 </NavLink>
             </div>
-            
+
             <div>
                 <NewProductRequestCard></NewProductRequestCard>
             </div>

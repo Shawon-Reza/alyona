@@ -41,7 +41,7 @@ const ReportsDashboard = () => {
                     <div className="flex items-center justify-between">
                         <span
                             onClick={() => {
-                                navigate('/mentordashboard/create-reports')
+                                navigate('/mentordashboard/reports/create-reports')
                             }}
                             className="font-bold text-white" >Create new report</span>
                         <Plus size={20} className="text-gray-600 group-hover:text-gray-700 transition-colors" />

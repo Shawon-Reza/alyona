@@ -140,7 +140,7 @@ const ReportsTable = () => {
                                         <tr key={user.id} className="hover:bg-gray-50">
                                             <td
                                                 onClick={() => {
-                                                    navigate('/mentordashboard/user-reports')
+                                                    navigate('/mentordashboard/reports/user-reports')
                                                 }}
                                                 className="text-gray-800 cursor-pointer">{user.name}</td>
                                             <td className="text-gray-600">{user.date}</td>

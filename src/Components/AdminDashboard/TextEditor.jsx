@@ -102,7 +102,7 @@ export default function TextEditor() {
         // Create the image element
         const img = document.createElement('img')
         img.src = imageUrl
-        img.style.maxWidth = '40%'  // Set to 40% of text field width
+        img.style.maxWidth = '30%'  // Set to 40% of text field width
         img.style.height = 'auto'
         img.style.borderRadius = '8px'
         img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)'

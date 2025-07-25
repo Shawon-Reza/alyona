@@ -1,2 +1,18 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@font-face {
+    font-family: satoshi;
+    src: url('/src/assets/fonts/Satoshi-Regular.woff');
+    font-display: swap;
+}
+
+@theme {
+    --font-satoshi: satoshi, 'sans-serif'
+}
+
+@layer base {
+    body {
+        @apply font-satoshi;
+    }
+}

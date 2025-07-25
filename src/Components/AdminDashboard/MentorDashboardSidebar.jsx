@@ -2,9 +2,9 @@ import React from 'react';
 import { NavLink } from 'react-router-dom'; // Importing NavLink for routing
 import { FaHome, FaComments, FaFileAlt, FaBell, FaSignOutAlt } from 'react-icons/fa'; // Icons for sidebar items
 
-const MentorDashboardSidebar = () => {
+const MentorDashboardSidebar = ({handleSidebarItemClick}) => {
     return (
-        <div className="h-full w-64 bg-white shadow-md p-6 rounded-2xl">
+        <div className="h-full w-[calc(100vw-50px)] md:w-64 bg-white shadow-md p-6 rounded-2xl">
             {/* Logo */}
             <div className="flex items-center mb-8">
                 <img
@@ -20,6 +20,7 @@ const MentorDashboardSidebar = () => {
                 <NavLink
                     to="/mentordashboard"
                     end // This is the correct path for Home
+                    onClick={handleSidebarItemClick}
                     className={({ isActive }) =>
                         isActive
                             ? "flex items-center space-x-3 py-3 px-4 text-gray-900 bg-[#F5EBE2] rounded-lg"
@@ -31,7 +32,8 @@ const MentorDashboardSidebar = () => {
                 </NavLink>
 
                 <NavLink
-                    to="/mentordashboard/chats"
+                    to="chats"
+                    onClick={handleSidebarItemClick}
                     className={({ isActive }) =>
                         isActive
                             ? "flex items-center space-x-3 py-3 px-4 text-gray-900 bg-[#f7f1ec] rounded-lg"
@@ -44,6 +46,7 @@ const MentorDashboardSidebar = () => {
 
                 <NavLink
                     to="reports"
+                    onClick={handleSidebarItemClick}
                     className={({ isActive }) =>
                         isActive
                             ? "flex items-center space-x-3 py-3 px-4 text-gray-900 bg-[#f7f1ec] rounded-lg"
@@ -57,6 +60,7 @@ const MentorDashboardSidebar = () => {
                 {/* Notification Composer Link */}
                 <NavLink
                     to="notification-composer"
+                    onClick={handleSidebarItemClick}
                     className={({ isActive }) =>
                         isActive
                             ? "flex items-center space-x-3 py-3 px-4 text-gray-900 bg-[#f7f1ec] rounded-lg"

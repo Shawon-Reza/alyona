@@ -1,10 +1,11 @@
-import { NavLink } from "react-router-dom"; // Import NavLink from react-router-dom
+import { NavLink, useNavigate } from "react-router-dom"; // Import NavLink from react-router-dom
 import { LayoutGrid, Users, ShoppingBag, UserPlus, LogOut } from "lucide-react";
 import AdminDashboardNavbar from "./AdminDashboardNavbar";
 import useIsBelowMd from "../../hooks/useIsBelowMd";
 
 export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleView }) {
     const isBelowMd = useIsBelowMd();
+    const navigate = useNavigate()
 
     return (
         <div className={`w-full h-screen bg-white/50 border-r border-base-100 rounded-xl ${isBelowMd ? "w-screen pr-10" : " "}`}>

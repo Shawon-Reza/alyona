@@ -42,16 +42,25 @@ const MentorDashboardLayout = () => {
 
             {/* Main Content */}
             <div className="flex-1 p-6">
+                {/* Navbar for large screens */}
                 {!isBelowMd && (
                     <div>
                         <AdminDashboardNavbar toggleView={toggleView} />
                     </div>
                 )}
 
+                {/* Content */}
                 {(viewMode === 'outlet' || viewMode === 'both') && (
                     <div
                         style={{ height: 'calc(100vh - 100px)' }}
-                        className=" overflow-auto">
+                        className="overflow-auto"
+                    >
+                        {/* Navbar for small screens (inside scrollable area) */}
+                        {isBelowMd && (
+                            <div>
+                                <AdminDashboardNavbar toggleView={toggleView} />
+                            </div>
+                        )}
                         <Outlet />
                     </div>
                 )}

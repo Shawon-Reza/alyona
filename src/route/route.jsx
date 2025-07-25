@@ -60,6 +60,11 @@ import NotificationComposer from "../Components/AdminDashboard/NotificationCompo
 import ReportsTable from "../Components/AdminDashboard/ReportsTable";
 import ReportsDashboard from "../Components/AdminDashboard/ReportsDashboard";
 import CreateReport from "../Components/AdminDashboard/CreateReport";
+import MentorInboxComponent from "../Components/AdminDashboard/MentorInboxComponent";
+import MentorChatPanel from "../Components/AdminDashboard/ChatWithUser";
+import ChatWithUser from "../Components/AdminDashboard/ChatWithUser";
+import VideoCallInterface from "../Components/AdminDashboard/VideoCallInterface";
+import MentorHome from "../Components/AdminDashboard/MentorHome";
 
 const router = createBrowserRouter([
     {
@@ -345,6 +350,10 @@ const router = createBrowserRouter([
         element: <MentorDashboardLayout></MentorDashboardLayout>,
         children: [
             {
+                path: '',
+                element: <MentorHome></MentorHome>
+            },
+            {
                 path: 'notification-composer',
                 element: <NotificationComposer></NotificationComposer>
             },
@@ -353,12 +362,24 @@ const router = createBrowserRouter([
                 element: <ReportsTable></ReportsTable>
             },
             {
-                path: 'user-reports',
+                path: 'reports/user-reports',
                 element: <ReportsDashboard></ReportsDashboard>
             },
             {
-                path: 'create-reports',
+                path: 'reports/create-reports',
                 element: <CreateReport></CreateReport>
+            },
+            {
+                path: 'chats',
+                element: <MentorInboxComponent></MentorInboxComponent>
+            },
+            {
+                path: 'chats/chatWithUser',
+                element: <ChatWithUser></ChatWithUser>
+            },
+            {
+                path: 'chats/chatWithUser/videocall',
+                element: <VideoCallInterface></VideoCallInterface>
             },
 
         ]

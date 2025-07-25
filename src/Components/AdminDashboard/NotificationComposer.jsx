@@ -107,8 +107,8 @@ const NotificationComposer = () => {
                 </div>
 
                 {/* Recommended Products */}
-                <div className="mb-8">
-                    <h3 className="text-lg font-medium text-gray-800 mb-4">Recommended for Sophia</h3>
+                <div className="mb-8"> 
+                    <h3 className="text-lg font-satoshi font-bold text-gray-800 mb-4">Popular products for this group</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {recommendedProducts.map((product) => (
                             <div key={product.id} className="card bg-white shadow-sm border border-gray-100">
@@ -188,7 +188,7 @@ const NotificationComposer = () => {
 
                 {/* Action Buttons */}
                 <div className="flex justify-end gap-3">
-                    <button className="btn btn-outline btn-neutral border-[#BB9777]">
+                    <button className="btn btn-outline btn-neutral border-[#BB9777] ">
                         Get back
                     </button>
                     <button className="btn bg-[#BB9777] hover:bg-amber-800 text-white border-none">

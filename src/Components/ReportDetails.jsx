@@ -30,7 +30,7 @@ const ReportDetails = () => {
             <div className="text-sm font-semibold mb-4">Reports &gt; <span className="text-gray-600">May 2025</span></div>
 
             {/* about my skin + Goal */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
                 {/* About my skin */}
                 <AboutMySkin></AboutMySkin>
                 {/* Goal */}
