@@ -319,23 +319,23 @@ export default function ProductManagementTable() {
             {/* Header */}
             <div className="mb-6">
                 <div className="p-4 border-b border-gray-200">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-5">
                         <div className="relative w-80">
                             <input
                                 type="text"
                                 placeholder="Search"
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs sm:text-xl"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
-                            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                            <Search className="absolute left-3  top-2.5 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                         </div>
 
                         <div className="flex gap-10 mb-3">
                             {/* Select Fields */}
                             <div className="relative" ref={selectFieldsRef}>
                                 <button
-                                    className="flex items-center px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50"
+                                    className="flex text-xs sm:text-xl items-center px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50"
                                     onClick={() => setShowSelectFields(!showSelectFields)}
                                 >
                                     Select Fields
@@ -371,7 +371,7 @@ export default function ProductManagementTable() {
                             {/* Filter */}
                             <div className="relative" ref={filterRef}>
                                 <button
-                                    className="flex items-center px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50"
+                                    className="flex items-center text-xs sm:text-xl px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50"
                                     onClick={() => setShowFilter(!showFilter)}
                                 >
                                     Filter
@@ -459,7 +459,7 @@ export default function ProductManagementTable() {
                             {/* Action Buttons */}
                             <button
                                 onClick={handleExportList}
-                                className="flex items-center px-4 py-2 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800"
+                                className="flex items-center px-4 py-2 bg-indigo-900 text-white text-xs sm:text-xl rounded-lg hover:bg-indigo-800"
                             >
                                 <Download className="w-4 h-4 mr-2" />
                                 Export list
@@ -467,18 +467,18 @@ export default function ProductManagementTable() {
 
                             <button
                                 onClick={handleBulkUpload}
-                                className="flex items-center px-4 py-2 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800"
+                                className="flex items-center px-4 py-2 bg-indigo-900 text-white text-xs sm:text-xl rounded-lg hover:bg-indigo-800"
                             >
                                 <Upload className="w-4 h-4 mr-2" />
                                 Bulk upload
                             </button>
 
                             <button
-                                onClick={()=>{
+                                onClick={() => {
                                     handleAddProduct();
                                     navigate('addproduct')
                                 }}
-                                className="flex items-center px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800"
+                                className="flex items-center px-4 py-2 bg-amber-700 text-white text-xs sm:text-xl rounded-lg hover:bg-amber-800"
                             >
                                 <Plus className="w-4 h-4 mr-2" />
                                 Add a product

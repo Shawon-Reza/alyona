@@ -308,11 +308,11 @@ export default function MentorManagementTable() {
                     <input
                         type="text"
                         placeholder="Search"
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg"
+                        className="w-full pl-10 pr-4 py-2 border rounded-lg text-xs sm:text-xl"
                         value={searchTerm}
                         onChange={handleSearch}
                     />
-                    <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -322,7 +322,7 @@ export default function MentorManagementTable() {
                             handleAddMentor()
                             navigate('create-user-mentor')
                         }}
-                        className="flex items-center px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors cursor-pointer"
+                        className="flex items-center px-4 py-2 bg-amber-600 text-xs sm:text-xl text-white rounded-lg hover:bg-amber-700 transition-colors cursor-pointer"
                     >
                         <Plus className="w-4 h-4 mr-2" />
                         Add a mentor
@@ -330,7 +330,7 @@ export default function MentorManagementTable() {
 
                     <div className="relative ">
                         <button
-                            className="flex items-center px-4 py-2 border rounded-lg bg-gray-100 cursor-pointer"
+                            className="flex items-center px-4 py-2 border rounded-lg bg-gray-100 cursor-pointer text-xs sm:text-xl"
                             onClick={() => setShowFilterPanel(!showFilterPanel)}
                             data-filter-toggle
                         >
