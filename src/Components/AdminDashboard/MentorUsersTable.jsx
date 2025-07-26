@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Search, ChevronDown, ChevronUp, Eye, Edit, Bell } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, Eye, Edit, Bell, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const MentorUsersTable = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
     const [filterOpen, setFilterOpen] = useState(false);
-
+    const [isSearchVisible, setIsSearchVisible] = useState(false);
+    
     const userData = [
         {
             id: 1,
@@ -154,51 +155,104 @@ const MentorUsersTable = () => {
         console.log(`${action} action for user:`, user.name);
     };
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen pr-6">
-            <div className="">
+        <div className=" pr-0 md:pr-6">
+            <div className=" md:px-0">
                 {/* Header */}
-                <div className="mb-6">
-                    <h1 className="text-2xl font-semibold text-gray-800 mb-4">Users</h1>
-
-                    <div className="flex items-center justify-between">
-                        {/* Search */}
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Search"
-                                className="input input-bordered bg-white pl-10 w-64"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                            <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                        </div>
-
-                        {/* Filter */}
-                        <div className="dropdown dropdown-end ">
-                            <div
-                                tabIndex={0}
-                                role="button"
-                                className="btn border shadow-md border-base-300  btn-outline bg-white flex items-center gap-2"
-                                onClick={() => setFilterOpen(!filterOpen)}
-                            >
-                                <span>Filter</span>
-                                <ChevronUp size={16} />
+                <div className=" md:mb-6">
+                    {/* Mobile Header */}
+                    <div className="md:hidden">
+                        {isSearchVisible ? (
+                            <div className="flex items-center gap-3 py-4">
+                                <button 
+                                    onClick={() => setIsSearchVisible(false)}
+                                    className="p-1"
+                                >
+                                    <ArrowLeft size={20} className="text-gray-600" />
+                                </button>
+                                <div className="relative flex-1">
+                                    <input
+                                        type="text"
+                                        placeholder="Search users..."
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        autoFocus
+                                    />
+                                    <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                </div>
                             </div>
-                            <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-white rounded-box w-32">
-                                <li><a>All Users</a></li>
-                                <li><a>Active</a></li>
-                                <li><a>Not subscribed</a></li>
-                                <li><a>New Users</a></li>
-                            </ul>
+                        ) : (
+                            <div className="flex items-center justify-between py-4">
+                                <h1 className="text-xl font-semibold text-gray-800">Users</h1>
+                                <div className="flex items-center gap-2">
+                                    <button 
+                                        onClick={() => setIsSearchVisible(true)}
+                                        className="p-2 hover:bg-gray-100 rounded-lg"
+                                    >
+                                        <Search size={20} className="text-gray-600" />
+                                    </button>
+                                    <div className="dropdown dropdown-end">
+                                        <div
+                                            tabIndex={0}
+                                            role="button"
+                                            className="btn btn-ghost btn-sm flex items-center gap-1"
+                                            onClick={() => setFilterOpen(!filterOpen)}
+                                        >
+                                            <span className="text-sm">Filter</span>
+                                            <ChevronUp size={14} />
+                                        </div>
+                                        <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-white rounded-box w-32 right-0">
+                                            <li><a>All Users</a></li>
+                                            <li><a>Active</a></li>
+                                            <li><a>Not subscribed</a></li>
+                                            <li><a>New Users</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Desktop Header */}
+                    <div className="hidden md:block">
+                        <h1 className="text-2xl font-semibold text-gray-800 mb-4">Users</h1>
+                        <div className="flex items-center justify-between">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Search"
+                                    className="input input-bordered bg-white pl-10 w-64"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                                <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            </div>
+                            <div className="dropdown dropdown-end">
+                                <div
+                                    tabIndex={0}
+                                    role="button"
+                                    className="btn border shadow-md border-base-300 btn-outline bg-white flex items-center gap-2"
+                                    onClick={() => setFilterOpen(!filterOpen)}
+                                >
+                                    <span>Filter</span>
+                                    <ChevronUp size={16} />
+                                </div>
+                                <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-white rounded-box w-32">
+                                    <li><a>All Users</a></li>
+                                    <li><a>Active</a></li>
+                                    <li><a>Not subscribed</a></li>
+                                    <li><a>New Users</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Table */}
-                <div className="card bg-white shadow-sm border border-gray-100">
+                <div className="card bg-white shadow-sm border border-gray-100 mx-0">
                     <div className="card-body p-0">
                         <div className="overflow-x-auto">
                             <table className="table w-full">
@@ -213,8 +267,9 @@ const MentorUsersTable = () => {
                                                 {getSortIcon('name')}
                                             </div>
                                         </th>
+                                        {/* Desktop only columns */}
                                         <th
-                                            className="cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
+                                            className="hidden md:table-cell cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
                                             onClick={() => handleSort('lastContact')}
                                         >
                                             <div className="flex items-center gap-2">
@@ -223,7 +278,7 @@ const MentorUsersTable = () => {
                                             </div>
                                         </th>
                                         <th
-                                            className="cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
+                                            className="hidden md:table-cell cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
                                             onClick={() => handleSort('nextMeeting')}
                                         >
                                             <div className="flex items-center gap-2">
@@ -232,7 +287,7 @@ const MentorUsersTable = () => {
                                             </div>
                                         </th>
                                         <th
-                                            className="cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
+                                            className="hidden md:table-cell cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
                                             onClick={() => handleSort('lastReport')}
                                         >
                                             <div className="flex items-center gap-2">
@@ -241,7 +296,7 @@ const MentorUsersTable = () => {
                                             </div>
                                         </th>
                                         <th
-                                            className="cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
+                                            className="hidden md:table-cell cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
                                             onClick={() => handleSort('status')}
                                         >
                                             <div className="flex items-center gap-2">
@@ -249,18 +304,13 @@ const MentorUsersTable = () => {
                                                 {getSortIcon('status')}
                                             </div>
                                         </th>
-                                        <th
-                                            className="cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
-                                            onClick={() => handleSort('actions')}
-                                        >
+                                        <th className="cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700">
                                             <div className="flex items-center gap-2">
                                                 Actions
-                                                {getSortIcon('actions')}
                                             </div>
                                         </th>
                                     </tr>
                                 </thead>
-
                                 <tbody>
                                     {filteredData.map((user) => (
                                         <tr key={user.id} className="hover:bg-gray-50">
@@ -268,20 +318,33 @@ const MentorUsersTable = () => {
                                                 onClick={() => {
                                                     navigate('notification-composer')
                                                 }}
-                                                className="text-gray-800 cursor-pointer">
-                                                <div className="flex items-center gap-2">
-                                                    {user.name}
-                                                    {user.isNew && (
-                                                        <span className="badge badge-sm bg-amber-100 text-amber-800 border-amber-200">
-                                                            New
+                                                className="text-gray-800 cursor-pointer"
+                                            >
+                                                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-medium">{user.name}</span>
+                                                        {user.isNew && (
+                                                            <span className="badge badge-sm bg-amber-100 text-amber-800 border-amber-200">
+                                                                New
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    {/* Mobile: Show status below name */}
+                                                    <div className="md:hidden">
+                                                        <span className={`badge badge-sm ${user.status === 'Active'
+                                                            ? 'bg-green-100 text-green-800 border-green-200'
+                                                            : 'bg-gray-100 text-gray-600 border-gray-200'
+                                                            }`}>
+                                                            {user.status}
                                                         </span>
-                                                    )}
+                                                    </div>
                                                 </div>
                                             </td>
-                                            <td className="text-gray-600">
+                                            {/* Desktop only columns */}
+                                            <td className="hidden md:table-cell text-gray-600">
                                                 {user.lastContact || '-'}
                                             </td>
-                                            <td className="text-gray-600">
+                                            <td className="hidden md:table-cell text-gray-600">
                                                 {user.nextMeeting ? (
                                                     <div className="flex items-center gap-2">
                                                         {typeof user.nextMeeting === 'object' ? user.nextMeeting.date : user.nextMeeting}
@@ -293,10 +356,10 @@ const MentorUsersTable = () => {
                                                     </div>
                                                 ) : '-'}
                                             </td>
-                                            <td className="text-gray-600">
+                                            <td className="hidden md:table-cell text-gray-600">
                                                 {user.lastReport || '-'}
                                             </td>
-                                            <td>
+                                            <td className="hidden md:table-cell">
                                                 <span className={`badge badge-sm ${user.status === 'Active'
                                                     ? 'bg-green-100 text-green-800 border-green-200'
                                                     : 'bg-gray-100 text-gray-600 border-gray-200'
@@ -305,27 +368,27 @@ const MentorUsersTable = () => {
                                                 </span>
                                             </td>
                                             <td>
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-1 md:gap-2">
                                                     <button
-                                                        className="btn btn-ghost btn-sm p-2"
+                                                        className="btn btn-ghost btn-sm p-1 md:p-2"
                                                         onClick={() => handleAction('view', user)}
                                                         title="View user"
                                                     >
-                                                        <Eye size={16} className="text-gray-500" />
+                                                        <Eye size={14} className="md:w-4 md:h-4 text-gray-500" />
                                                     </button>
                                                     <button
-                                                        className="btn btn-ghost btn-sm p-2"
+                                                        className="btn btn-ghost btn-sm p-1 md:p-2"
                                                         onClick={() => handleAction('edit', user)}
                                                         title="Edit user"
                                                     >
-                                                        <Edit size={16} className="text-gray-500" />
+                                                        <Edit size={14} className="md:w-4 md:h-4 text-gray-500" />
                                                     </button>
                                                     <button
-                                                        className="btn btn-ghost btn-sm p-2"
+                                                        className="btn btn-ghost btn-sm p-1 md:p-2"
                                                         onClick={() => handleAction('notify', user)}
                                                         title="Send notification"
                                                     >
-                                                        <Bell size={16} className="text-gray-500" />
+                                                        <Bell size={14} className="md:w-4 md:h-4 text-gray-500" />
                                                     </button>
                                                 </div>
                                             </td>
@@ -339,8 +402,21 @@ const MentorUsersTable = () => {
 
                 {/* Empty State */}
                 {filteredData.length === 0 && (
-                    <div className="text-center py-12">
-                        <p className="text-gray-500">No users found</p>
+                    <div className="text-center py-8 md:py-12">
+                        <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-gray-100 rounded-full mb-3 md:mb-4">
+                            <Search size={20} className="text-gray-400 md:w-6 md:h-6" />
+                        </div>
+                        <p className="text-gray-500 text-sm md:text-base">
+                            {searchTerm ? 'No users found matching your search' : 'No users found'}
+                        </p>
+                        {searchTerm && (
+                            <button 
+                                onClick={() => setSearchTerm('')}
+                                className="mt-2 md:mt-3 text-blue-600 text-sm hover:text-blue-700"
+                            >
+                                Clear search
+                            </button>
+                        )}
                     </div>
                 )}
             </div>

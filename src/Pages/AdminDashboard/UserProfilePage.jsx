@@ -1,7 +1,5 @@
 "use client"
-
-import { Download } from "lucide-react"
-
+import { Download } from 'lucide-react'
 
 const userData = {
     id: "77-80-0001-2025-05-0",
@@ -39,92 +37,115 @@ export default function ProfileContent() {
     }
 
     return (
-        <div className="">
+        <div className="px-4 md:px-0">
             {/* General Section */}
-            <div className="mb-4">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">General</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="">
+            <div className="mb-6 md:mb-8">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4 md:mb-6">General</h2>
+                
+                {/* Mobile: Single column, Desktop: Two columns */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                    <div className="space-y-0">
                         {/* ID */}
-                        <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="font-medium text-gray-700 w-1/4">ID</span>
-                            <span className="text-[#5B5B5B] w-3/4">{userData.id}</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                            <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">ID</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base break-all sm:w-2/3 lg:w-3/4">{userData.id}</span>
                         </div>
-
                         {/* Age */}
-                        <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="font-medium text-gray-700 w-1/4">Age</span>
-                            <span className="text-[#5B5B5B] w-3/4">{userData.age}</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                            <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Age</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{userData.age}</span>
                         </div>
-
                         {/* Location */}
-                        <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="font-medium text-gray-700 w-1/4">Location</span>
-                            <span className="text-[#5B5B5B] w-3/4">{userData.location}</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                            <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Location</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{userData.location}</span>
                         </div>
-
                         {/* Subscription */}
-                        <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="font-medium text-gray-700 w-1/4">Subscription</span>
-                            <span className="text-[#5B5B5B] w-3/4">{userData.subscription}</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                            <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Subscription</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">
+                                <span className="inline-block px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs md:text-sm font-medium">
+                                    {userData.subscription}
+                                </span>
+                            </span>
                         </div>
                     </div>
-
-                    <div className="">
+                    
+                    <div className="space-y-0 mt-4 lg:mt-0">
                         {/* Creation Date */}
-                        <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="font-medium text-gray-700 w-1/4">{/* 1/4 width for label */}Creation date</span>
-                            <span className="text-[#5B5B5B] w-3/4">{/* 3/4 width for value */}{userData.creationDate}</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                            <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Creation date</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{userData.creationDate}</span>
                         </div>
-
                         {/* Gender */}
-                        <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="font-medium text-gray-700 w-1/4">{/* 1/4 width for label */}Gender</span>
-                            <span className="text-[#5B5B5B] w-3/4">{/* 3/4 width for value */}{userData.gender}</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                            <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Gender</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{userData.gender}</span>
                         </div>
-
                         {/* Last Login */}
-                        <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="font-medium text-gray-700 w-1/4">{/* 1/4 width for label */}Last login</span>
-                            <span className="text-[#5B5B5B] w-3/4">{/* 3/4 width for value */}{userData.lastLogin}</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                            <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Last login</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{userData.lastLogin}</span>
                         </div>
                     </div>
-
                 </div>
             </div>
 
             {/* Profile Section */}
-            <div className="mb-4">
-                <h2 className="text-lg border-b-2 border-base-300 text-[#5B5B5B] mb-4">PROFILE</h2>
-                <div className="">
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                        <span className="font-medium text-gray-700 w-1/4">Lifestyle</span>
-                        <span className="text-[#5B5B5B]  w-3/4">{userData.lifestyle}</span>
+            <div className="mb-6 md:mb-8">
+                <h2 className="text-lg md:text-xl border-b-2 border-base-300 text-[#5B5B5B] mb-4 md:mb-6 pb-2">PROFILE</h2>
+                <div className="space-y-0">
+                    <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Lifestyle</span>
+                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{userData.lifestyle}</span>
                     </div>
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                        <span className="font-medium text-gray-700 w-1/4">Habits</span>
-                        <span className="text-[#5B5B5B] w-3/4">{userData.habits}</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Habits</span>
+                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{userData.habits}</span>
                     </div>
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                        <span className="font-medium text-gray-700 w-1/4">Dieta</span>
-                        <span className="text-[#5B5B5B] w-3/4">{userData.dieta || "-"}</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Dieta</span>
+                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{userData.dieta || "-"}</span>
                     </div>
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                        <span className="font-medium text-gray-700 w-1/4">Actividad</span>
-                        <span className="text-[#5B5B5B] w-3/4">{userData.actividad || "-"}</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Actividad</span>
+                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{userData.actividad || "-"}</span>
                     </div>
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                        <span className="font-medium text-gray-700 w-1/4">Pregnancy</span>
-                        <span className="text-[#5B5B5B] w-3/4">{userData.pregnancy}</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Pregnancy</span>
+                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{userData.pregnancy}</span>
                     </div>
                 </div>
-
             </div>
 
             {/* Payment History Section */}
-            <div className="mb-6">
-                <h2 className="text-lg  border-b-2 border-base-300 text-[#5B5B5B] mb-5">Payment History</h2>
-                <div className="overflow-x-auto">
+            <div className="mb-6 md:mb-8">
+                <h2 className="text-lg md:text-xl border-b-2 border-base-300 text-[#5B5B5B] mb-4 md:mb-6 pb-2">Payment History</h2>
+                
+                {/* Mobile: Card Layout, Desktop: Table Layout */}
+                <div className="md:hidden space-y-3">
+                    {userData.paymentHistory.map((payment) => (
+                        <div key={payment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center">
+                                    <span className="font-medium text-gray-700 text-sm">Plan</span>
+                                    <span className="text-gray-900 text-sm font-medium">{payment.subscriptionPlan}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="font-medium text-gray-700 text-sm">Date</span>
+                                    <span className="text-gray-900 text-sm">{payment.paymentDate}</span>
+                                </div>
+                                <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                                    <span className="font-medium text-gray-700 text-sm">Total</span>
+                                    <span className="text-gray-900 text-sm font-semibold">{payment.total}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Desktop: Table Layout */}
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full table-auto bg-white rounded-xl shadow-lg">
                         <thead className="bg-[#f8f8f8] rounded-t-xl">
                             <tr className="border-b border-gray-200">
@@ -146,12 +167,11 @@ export default function ProfileContent() {
                 </div>
             </div>
 
-
             {/* Download Button */}
-            <div className="flex justify-end">
+            <div className="flex justify-center md:justify-end">
                 <button
                     onClick={handleDownloadQuiz}
-                    className="flex items-center px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold cursor-pointer"
+                    className="flex items-center px-4 md:px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold cursor-pointer text-sm md:text-base w-full md:w-auto justify-center md:justify-start"
                 >
                     Download user quiz
                     <Download className="w-4 h-4 ml-2" />

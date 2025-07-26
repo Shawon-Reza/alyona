@@ -265,7 +265,7 @@ const router = createBrowserRouter([
                 element: <AdminDashboardComponent />, // This will render when "/admindashboard" is accessed
                 children: [
                     {
-                        index: true,  // This makes the "general" tab show up by default when accessing /admindashboard
+                        path: '',  // This makes the "general" tab show up by default when accessing /admindashboard
                         element: <DashboardGeneralContent /> // Default content for the General page
                     },
                     {

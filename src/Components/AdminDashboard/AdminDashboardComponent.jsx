@@ -12,11 +12,12 @@ const AdminDashboardComponent = () => {
 
 
             {/* Tab Navigation */}
-            <div className="flex justify-between items-center border- border-[#9e7e6b]  w-full px-6">
+            <div className="flex justify-between items-center border-b-2 border-base-300  w-full px-6">
 
                 {/* General Tab */}
                 <NavLink
                     to="general" // This is the relative path for the "General" tab
+                    end
                     className={({ isActive }) =>
                         `text-xl font-medium w-1/2 text-center ${isActive ? 'text-[#9e7e6b] border-b-2 border-[#9e7e6b] pb-2' : 'text-[#181818]'}` // Add padding-bottom when active
                     }

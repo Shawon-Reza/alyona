@@ -19,7 +19,7 @@ const ChatPanel = () => {
                     {/* Product Card */}
                     <div className="flex items-center gap-3 bg-white rounded-xl px-3 py-2 shadow w-full max-w-[270px]">
                         <img
-                            src="https://via.placeholder.com/40x100"
+                            src="https://nypost.com/wp-content/uploads/sites/2/2022/04/best-korean-skincare.jpg?quality=75&strip=all"
                             alt="Product"
                             className="w-10 h-20 object-contain rounded-lg"
                         />
@@ -44,12 +44,12 @@ const ChatPanel = () => {
                     {/* Images */}
                     <div className="flex gap-2 mt-1">
                         <img
-                            src="https://via.placeholder.com/60"
+                            src="https://nypost.com/wp-content/uploads/sites/2/2022/04/best-korean-skincare.jpg?quality=75&strip=all"
                             alt="Upload 1"
                             className="w-14 h-14 rounded-lg object-cover"
                         />
                         <img
-                            src="https://via.placeholder.com/60"
+                            src="https://nypost.com/wp-content/uploads/sites/2/2022/04/best-korean-skincare.jpg?quality=75&strip=all"
                             alt="Upload 2"
                             className="w-14 h-14 rounded-lg object-cover"
                         />
