@@ -303,7 +303,7 @@ export default function MentorManagementTable() {
     return (
         <div className=" rounded-lg shadow relative mt-4">
             {/* Header with Search, Add Mentor, and Filter */}
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between gap-2 items-center mb-4">
                 <div className="relative w-64">
                     <input
                         type="text"
@@ -342,14 +342,14 @@ export default function MentorManagementTable() {
                         {showFilterPanel && (
                             <div
                                 ref={filterPanelRef}
-                                className="absolute right-0 top-full mt-2 p-6 bg-white rounded-lg shadow-lg border z-10 w-[400px]"
+                                className="absolute right-0 top-full mt-2 p-6 bg-white rounded-lg shadow-lg border border-base-300 z-10 w-[390px]"
                             >
                                 <div className="grid grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium mb-2">Region</label>
                                         <div className="relative">
                                             <select
-                                                className="w-full p-2 border rounded-md appearance-none pl-3 pr-10"
+                                                className="w-full p-2 border border-base-300 rounded-md appearance-none pl-3 pr-10"
                                                 value={filters.region}
                                                 onChange={(e) => setFilters({ ...filters, region: e.target.value })}
                                             >
@@ -367,7 +367,7 @@ export default function MentorManagementTable() {
                                         <label className="block text-sm font-medium mb-2">Status</label>
                                         <div className="relative">
                                             <select
-                                                className="w-full p-2 border rounded-md appearance-none pl-3 pr-10"
+                                                className="w-full p-2 border border-base-300 rounded-md appearance-none pl-3 pr-10"
                                                 value={filters.status}
                                                 onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                                             >
@@ -478,12 +478,12 @@ export default function MentorManagementTable() {
                     <tbody>
                         {currentMentors.map((mentor) => (
                             <tr key={mentor.id} className="border-b border-base-300 hover:bg-gray-50">
-                                <td className="py-3 px-4">{mentor.name}</td>
-                                <td className="py-3 px-4">{mentor.email}</td>
-                                <td className="py-3 px-4">{mentor.users}</td>
-                                <td className="py-3 px-4">{mentor.region}</td>
-                                <td className="py-3 px-4">{mentor.mentor}</td>
-                                <td className="py-3 px-4">
+                                <td className="sm:py-3 px-4">{mentor.name}</td>
+                                <td className="sm:py-3 px-4">{mentor.email}</td>
+                                <td className="sm:py-3 px-4">{mentor.users}</td>
+                                <td className="sm:py-3 px-4">{mentor.region}</td>
+                                <td className="sm:py-3 px-4">{mentor.mentor}</td>
+                                <td className="sm:py-3 px-4">
                                     {editingStatus === mentor.id ? (
                                         <div className="relative">
                                             <select

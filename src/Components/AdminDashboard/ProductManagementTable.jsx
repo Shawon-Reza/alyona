@@ -474,7 +474,10 @@ export default function ProductManagementTable() {
                             </button>
 
                             <button
-                                onClick={handleAddProduct}
+                                onClick={()=>{
+                                    handleAddProduct();
+                                    navigate('addproduct')
+                                }}
                                 className="flex items-center px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800"
                             >
                                 <Plus className="w-4 h-4 mr-2" />

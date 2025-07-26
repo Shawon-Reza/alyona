@@ -65,6 +65,7 @@ import MentorChatPanel from "../Components/AdminDashboard/ChatWithUser";
 import ChatWithUser from "../Components/AdminDashboard/ChatWithUser";
 import VideoCallInterface from "../Components/AdminDashboard/VideoCallInterface";
 import MentorHome from "../Components/AdminDashboard/MentorHome";
+import AddProductRequestPage from "../Pages/AdminDashboard/AddProductRequestPage";
 
 const router = createBrowserRouter([
     {
@@ -326,6 +327,10 @@ const router = createBrowserRouter([
             {
                 path: "products",
                 element: <ProductManagementTable></ProductManagementTable>,
+            },
+            {
+                path: "products/addproduct",
+                element:<AddProductRequestPage></AddProductRequestPage>,
             },
             {
                 path: "products/edit-product",

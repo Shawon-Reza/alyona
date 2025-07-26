@@ -18,6 +18,7 @@ import annaImg from '../assets/annaImg.png';
 import NotificationPopup from '../Components/NotificationPopup';
 import useIsBelowMd from '../hooks/useIsBelowMd';
 import { BsLayoutSidebarInset } from 'react-icons/bs';
+import Swal from 'sweetalert2';
 
 const plans = [
     {
@@ -317,20 +318,31 @@ const Dashboard = () => {
                                         <span className="text-2xl font-light">›</span>
                                     </NavLink>
                                 </li>
-                                <li className="border-t border-gray-300">
-                                    <NavLink
-                                        to="/routine-analysis"
-                                        onClick={handleSidebarItemClick}
-                                        className={({ isActive }) =>
-                                            `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#f5f5f5] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                                        }>
-                                        <span className="flex items-center space-x-2">
+                                <li
+                                    onClick={() => {
+                                        Swal.fire({
+                                            position: "top-end",
+                                            icon: "success",
+                                            title: "Your skin routine analysis request has been sent",
+                                            text: "We'll notify you when it's ready.",
+                                            showConfirmButton: false,
+                                            timer: 3500, // Hide after 2.5 seconds
+                                        });
+                                    }}
+                                    className="border-t border-gray-300 cursor-pointer">
+                                    <div className="flex items-center justify-between px-3 py-2">
+                                        <span
+                                            className="flex items-center space-x-2 "
+                                        >
                                             <AiOutlineBarChart className="text-lg" />
                                             <span>Routine analysis</span>
                                         </span>
                                         <span className="text-2xl font-light">›</span>
-                                    </NavLink>
+                                    </div>
                                 </li>
+
+
+
                                 <li className="border-t border-gray-300">
                                     <NavLink
                                         to="badges"

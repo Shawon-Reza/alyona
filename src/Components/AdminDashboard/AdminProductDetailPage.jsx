@@ -19,7 +19,7 @@ import {
 const productData = {
     id: "YB0001",
     name: "Hydrating Toner",
-    image: "/placeholder.svg?height=60&width=60",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQH-BKNmTsmJC4pILiOuLVKw3XOV8CTEQCIkQ&s",
     status: "Available",
     insights: {
         avgSatisfaction: 87,
@@ -115,38 +115,40 @@ export default function AdminProductDetailPage() {
 
             <div className="">
                 {/* Product Header */}
-                <div className="p-6 border-b border-gray-200">
-                    <div className="flex items-center justify-between">
+                <div className="p-3 md:p-6 border-b border-gray-200">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-center">
                             <img
                                 src={productData.image || "/placeholder.svg"}
                                 alt={productData.name}
-                                className="w-12 h-12 object-cover mr-4"
+                                className="w-10 h-10 md:w-12 md:h-12 object-cover mr-3 md:mr-4 rounded"
                             />
-                            <h1 className="text-2xl font-semibold text-gray-900">{productData.name}</h1>
+                            <h1 className="text-xl md:text-2xl font-semibold text-gray-900 truncate">{productData.name}</h1>
                         </div>
-                        <div className="flex items-center gap-4">
+
+                        {/* Mobile Actions */}
+                        <div className="flex items-center gap-2 md:gap-4 flex-wrap">
                             <button
                                 onClick={() => handleManageReviews("primary")}
-                                className="px-4 py-2 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 transition-colors"
+                                className="flex-1 md:flex-none px-3 md:px-4 py-2 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 transition-colors text-sm"
                             >
                                 Manage reviews
                             </button>
                             <button
                                 onClick={() => handleManageReviews("secondary")}
-                                className="px-4 py-2 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 transition-colors"
+                                className="flex-1 md:flex-none px-3 md:px-4 py-2 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 transition-colors text-sm"
                             >
                                 Manage reviews
                             </button>
                             <div className="relative">
                                 <button
                                     onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-                                    className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusClass(
+                                    className={`inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium ${getStatusClass(
                                         currentStatus,
                                     )}`}
                                 >
                                     {currentStatus}
-                                    <ChevronDown className="w-4 h-4 ml-1" />
+                                    <ChevronDown className="w-3 h-3 md:w-4 md:h-4 ml-1" />
                                 </button>
                                 {showStatusDropdown && (
                                     <div className="absolute right-0 top-full mt-2 py-2 bg-white rounded-lg shadow-lg border z-10 min-w-[150px]">
@@ -201,82 +203,83 @@ export default function AdminProductDetailPage() {
 
                 {/* Product Data */}
                 <div className="px-6 py-3">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-6">product data</h2>
+                    <h2 className="text-lg font-semibold text-gray-900 mb-6">Product Data</h2>
                     <div className="">
                         <div className="">
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">ID</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.id}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">ID</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.id}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Category</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.category}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Category</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.category}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Pregnancy Safe</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.pregnancySafe}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Pregnancy Safe</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.pregnancySafe}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Brand</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.brand}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Brand</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.brand}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Product type</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.productType}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Product type</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.productType}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Concerns</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.concerns}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Concerns</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.concerns}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Skin type</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.skinType}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Skin type</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.skinType}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Features</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.features}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Features</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.features}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Ingredients</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.ingredients}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Ingredients</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.ingredients}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Texture</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.texture}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Texture</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.texture}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">INCI</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.inci}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">INCI</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.inci}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Natural</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.natural}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Natural</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.natural}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Organic</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.organic}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Organic</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.organic}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Price range</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.priceRange}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Price range</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.priceRange}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Fragrance</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.fragrance}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Fragrance</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.fragrance}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Fragrance notes</span>
-                                <span className="text-gray-900 w-[90%]">{productData.details.fragranceNotes}</span>
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Fragrance notes</span>
+                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.fragranceNotes}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[10%] text-left">Product URL</span>
-                                <span className="text-blue-600 hover:text-blue-800 cursor-pointer w-[90%]">
+                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Product URL</span>
+                                <span className="text-blue-600 hover:text-blue-800 cursor-pointer w-[60%] md:w-[90%]">
                                     {productData.details.productUrl}
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 {/* Stats Section */}
                 <div className="px-6 py-2 border-t border-gray-200">
