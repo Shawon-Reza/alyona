@@ -1,9 +1,11 @@
 import React from 'react';
 import SubscribersBySubscription from './SubscribersBySubscription'; // Assuming this is the correct path
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import NewProductRequestCard from './NewProductRequestCard';
 
 const AdminDashboardComponent = () => {
+    const location = useLocation()
+
     return (
         <div>
             {/* Displaying Subscribers By Subscription */}
@@ -19,7 +21,10 @@ const AdminDashboardComponent = () => {
                     to="general" // This is the relative path for the "General" tab
                     end
                     className={({ isActive }) =>
-                        `text-xl font-medium w-1/2 text-center ${isActive ? 'text-[#9e7e6b] border-b-2 border-[#9e7e6b] pb-2' : 'text-[#181818]'}` // Add padding-bottom when active
+                        `text-xl font-medium w-1/2 text-center ${isActive || location.pathname === "/admindashboard"
+                            ? 'text-[#9e7e6b] border-b-2 border-[#9e7e6b] pb-2'
+                            : 'text-[#181818]'
+                        }` // Add padding-bottom when active
                     }
                 >
                     General

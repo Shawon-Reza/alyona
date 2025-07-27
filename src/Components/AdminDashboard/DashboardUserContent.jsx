@@ -20,7 +20,7 @@ const ageData = [
     { age: "25-34", female: 5800, male: 2500 },
     { age: "35-44", female: 4000, male: 800 },
     { age: "45-54", female: 1500, male: 500 },
-    { age: "55-", female: 1200, male: 800 },
+    { age: "55-",   female: 1200, male: 800 },
 ]
 
 const skinTypeData = [
@@ -85,8 +85,10 @@ export default function DashboardUserContent() {
                                 </button>
                             </div>
                         </div>
-                        <ResponsiveContainer width="100%" height={180} className="md:h-[200px]">
-                            <BarChart data={ageData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                        
+                        <ResponsiveContainer width="100%" height={200} className="md:h-[200px]">
+                            
+                            <BarChart data={ageData} margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                 <XAxis dataKey="age" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
@@ -94,7 +96,7 @@ export default function DashboardUserContent() {
                                 <Legend
                                     verticalAlign="top"
                                     align="right"
-                                    wrapperStyle={{ top: -20, right: 0, fontSize: "12px" }}
+                                    wrapperStyle={{ top: -10, right: 0, fontSize: "12px" }}
                                     formatter={(value) => <span className="text-xs md:text-sm font-medium text-gray-600">{value}</span>}
                                 />
                                 <Bar dataKey="female" fill="#db2777" barSize={16} className="md:barSize-16" />
@@ -127,15 +129,14 @@ export default function DashboardUserContent() {
                                 </button>
                             </div>
                         </div>
-                        <ResponsiveContainer width="100%" height={180} className="md:h-[200px]">
-                            <BarChart data={skinTypeData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                        <ResponsiveContainer width="100%" height={200} className="md:h-[200px]">
+                            <BarChart data={skinTypeData} margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                 <XAxis
                                     dataKey="type"
                                     axisLine={false}
                                     tickLine={false}
                                     tick={{ fontSize: 10 }}
-                                    angle={-45}
                                     textAnchor="end"
                                     height={60}
                                 />
@@ -224,10 +225,10 @@ export default function DashboardUserContent() {
                                         <span className="text-xs md:text-sm font-medium">{concern.count}</span>
                                         <div
                                             className={`badge badge-sm text-xs ${concern.percentage.startsWith("+")
-                                                    ? "badge-success"
-                                                    : concern.percentage === "-"
-                                                        ? "badge-neutral"
-                                                        : "badge-error"
+                                                ? "badge-success"
+                                                : concern.percentage === "-"
+                                                    ? "badge-neutral"
+                                                    : "badge-error"
                                                 }`}
                                         >
                                             {concern.percentage}

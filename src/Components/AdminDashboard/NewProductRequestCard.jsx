@@ -37,7 +37,7 @@ export default function NewProductRequestCard() {
                             <div key={request.id} className="rounded-lg border border-base-100/50 bg-white/50 p-4">
 
                                 <div className="flex items-center justify-between text-sm">
-                                    <div className="flex items-center gap-20">
+                                    <div className="flex items-center sm:gap-20 gap-5">
                                         <p className="font-bold">{request.product}</p>
                                         <a href="#" className="link link-primary text-[#5B5B5B] text-sm underline">
                                             {request.brand}
@@ -50,11 +50,11 @@ export default function NewProductRequestCard() {
                                         <button className="btn btn-ghost btn-sm btn-circle">
                                             <Trash2 className="w-4 h-4" />
                                         </button>
-                                        <button 
-                                        onClick={()=>{
-                                            navigate('/admindashboard/newproduct-requestpage')
-                                        }}
-                                        className="btn btn-ghost btn-sm btn-circle">
+                                        <button
+                                            onClick={() => {
+                                                navigate('/admindashboard/newproduct-requestpage')
+                                            }}
+                                            className="btn btn-ghost btn-sm btn-circle">
                                             <Plus className="w-4 h-4" />
                                         </button>
                                     </div>
