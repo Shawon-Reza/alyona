@@ -488,9 +488,9 @@ export default function ProductManagementTable() {
                 </div>
 
                 {/* Table */}
-                <div className="overflow-x-auto bg-white">
-                    <table className="w-full">
-                        <thead className="bg-gray-50">
+                <div className="overflow-x-auto bg-white rounded-2xl">
+                    <table className="w-full rounded-2xl">
+                        <thead className="bg-gray-50 ">
                             <tr>
                                 {selectedFields.id && (
                                     <th className="py-3 px-4 text-left cursor-pointer" onClick={() => requestSort("id")}>
@@ -573,7 +573,8 @@ export default function ProductManagementTable() {
                                 {selectedFields.actions && <th className="py-3 px-4 text-left">Actions</th>}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        
+                        <tbody className="divide-y divide-gray-200 rounded-2xl">
                             {currentProducts.map((product) => (
                                 <tr key={product.id} className="hover:bg-gray-50">
                                     {selectedFields.id && <td className="py-3 px-4 font-medium text-gray-900">{product.id}</td>}

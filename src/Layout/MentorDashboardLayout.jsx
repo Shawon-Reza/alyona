@@ -29,10 +29,10 @@ const MentorDashboardLayout = () => {
     };
 
     return (
-        <div className="px-6 flex min-h-screen bg-gradient-to-br from-white via-[#f7f1ec] to-white">
+        <div className="sm:px-6 flex min-h-screen bg-gradient-to-br from-white via-[#f7f1ec] to-white">
             {/* Sidebar */}
             {(viewMode === 'sidebar' || viewMode === 'both') && (
-                <div className="mt-6">
+                <div className="mt-6 mx-6">
                     <MentorDashboardSidebar
                         toggleView={toggleView}
                         handleSidebarItemClick={handleSidebarItemClick}

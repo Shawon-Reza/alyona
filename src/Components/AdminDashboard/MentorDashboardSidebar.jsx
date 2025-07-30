@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom'; // Importing NavLink for routing
 import { FaHome, FaComments, FaFileAlt, FaBell, FaSignOutAlt } from 'react-icons/fa'; // Icons for sidebar items
+import logo from '../../assets/logo.png'
 
 const MentorDashboardSidebar = ({handleSidebarItemClick}) => {
     return (
@@ -8,9 +9,9 @@ const MentorDashboardSidebar = ({handleSidebarItemClick}) => {
             {/* Logo */}
             <div className="flex items-center mb-8">
                 <img
-                    src="path_to_logo" // Replace with your actual logo path
+                    src={logo} // Replace with your actual logo path
                     alt="Logo"
-                    className="w-8 h-8 rounded-full"
+                    className="w-10 h-12 rounded-full"
                 />
                 <span className="ml-3 font-semibold text-lg text-gray-700">YOURSELF BEAUTY</span>
             </div>

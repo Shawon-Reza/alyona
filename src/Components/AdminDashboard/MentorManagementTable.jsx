@@ -499,7 +499,7 @@ export default function MentorManagementTable() {
                                                     </option>
                                                 ))}
                                             </select>
-                                            <ChevronDown className="absolute right-2 top-3 h-4 w-4 pointer-events-none" />
+                                           
                                         </div>
                                     ) : (
                                         <div

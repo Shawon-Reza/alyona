@@ -54,21 +54,21 @@ const ReportsTable = () => {
         user.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     return (
-        <div className="min-h-screen  sm:p-6">
-            <div className="">
+        <div className="min-h-screen sm:p-6">
+            <div>
                 {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                    <h1 className="text-2xl font-semibold text-gray-800">Reports</h1>
+                <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
+                    <h1 className="text-2xl font-semibold text-gray-800 mb-4 sm:mb-0">Reports</h1>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                         {/* Search */}
-                        <div className="relative ">
+                        <div className="relative w-full sm:w-64">
                             <input
                                 type="text"
                                 placeholder="Search"
-                                className="input input-bordered bg-white pl-10 w-64 rounded-lg shadow-md"
+                                className="input input-bordered bg-white pl-10 w-full rounded-lg shadow-md"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -77,7 +77,7 @@ const ReportsTable = () => {
 
                         {/* Time Filter */}
                         <select
-                            className="select select-bordered bg-white rounded-lg shadow-md"
+                            className="select select-bordered bg-white rounded-lg shadow-md mt-4 sm:mt-0 w-full sm:w-auto"
                             value={timeFilter}
                             onChange={(e) => setTimeFilter(e.target.value)}
                         >
@@ -140,7 +140,7 @@ const ReportsTable = () => {
                                         <tr key={user.id} className="hover:bg-gray-50">
                                             <td
                                                 onClick={() => {
-                                                    navigate('/mentordashboard/reports/user-reports')
+                                                    navigate('/mentordashboard/reports/user-reports');
                                                 }}
                                                 className="text-gray-800 cursor-pointer">{user.name}</td>
                                             <td className="text-gray-600">{user.date}</td>
@@ -163,8 +163,8 @@ const ReportsTable = () => {
                 </div>
 
                 {/* Pagination */}
-                <div className="flex items-center justify-between mt-6">
-                    <div className="text-sm text-gray-600">
+                <div className="flex items-center justify-between mt-6 flex-col sm:flex-row">
+                    <div className="text-sm text-gray-600 mb-4 sm:mb-0">
                         1 to {recordsPerPage} of {totalRecords.toLocaleString()}
                     </div>
 

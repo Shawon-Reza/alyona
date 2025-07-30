@@ -105,6 +105,7 @@ const subscriptionTypes = ["Premium", "Free", "Producto"]
 
 // Update the component function to include filter panel state and functionality
 export default function UserManagementTable() {
+
     const [users, setUsers] = useState(initialUsers)
     const [searchTerm, setSearchTerm] = useState("")
     const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" })
@@ -324,6 +325,7 @@ export default function UserManagementTable() {
                     </div>
                 )}
             </div>
+            
             <div
                 style={{ height: 'calc(100vh - 210px)' }}
                 className="p-4 bg-white rounded-lg shadow relative overflow-auto">
@@ -427,7 +429,7 @@ export default function UserManagementTable() {
                                                         </option>
                                                     ))}
                                                 </select>
-                                                <ChevronDown className="absolute right-2 top-3 h-4 w-4 pointer-events-none" />
+                                                {/* <ChevronDown className="absolute right-2 top-3 h-4 w-4 pointer-events-none" /> */}
                                             </div>
                                         ) : (
                                             <div className="cursor-pointer" onClick={() => setEditingMentor(user.id)}>
@@ -451,7 +453,7 @@ export default function UserManagementTable() {
                                                         </option>
                                                     ))}
                                                 </select>
-                                                <ChevronDown className="absolute right-2 top-3 h-4 w-4 pointer-events-none" />
+                                                {/* <ChevronDown className="absolute right-2 top-3 h-4 w-4 pointer-events-none" /> */}
                                             </div>
                                         ) : (
                                             <div

@@ -126,7 +126,7 @@ export default function UserProfileLayout() {
                 )}
 
                 {/* Content Area - This is where child components will render */}
-                <div className="py-4 md:p-6">
+                <div className="py-4 xl:p-6">
                     <Outlet />
                 </div>
             </div>

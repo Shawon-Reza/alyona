@@ -105,7 +105,7 @@ export default function SkinAnalysis() {
     );
     
     return (
-        <div className="relative min-h-screen bg-gradient-to-br from-[#fdf8f3] to-[#e8e3de] p-4 ">
+        <div className="relative min-h-screen bg-gradient-to-br from-[#fdf8f3] to-[#e8e3de] p-4 pb-20 ">
             <div>
                 <AuthenticationNav></AuthenticationNav>
             </div>
@@ -170,7 +170,7 @@ export default function SkinAnalysis() {
                                 ))}
                             </div>
                         </div>
-                        <div className="absolute bottom-5 right-8 md:right-14 md:bottom-7 lg:bottom-20 lg:right-20 cursor-pointer">
+                        <div className="absolute bottom-10 right-8 md:right-14 md:bottom-7 lg:bottom-10  lg:right-20 cursor-pointer">
                             <RowButton
                                 text="Let's get started"
                                 onClick={() => {

@@ -13,7 +13,7 @@ const MentorInboxComponent = () => {
             name: 'Janet Arias',
             message: 'Hi, I have a question',
             time: '9:30',
-            avatar: '/placeholder.svg?height=40&width=40',
+            avatar: 'https://wallpapers.com/images/hd/pretty-profile-pictures-i1rumnm6oi0lry1s.jpg',
             isOnline: true
         },
         {
@@ -21,7 +21,7 @@ const MentorInboxComponent = () => {
             name: 'Aaron Diaz',
             message: 'Today is perfect, thanks!',
             time: '21:30',
-            avatar: '/placeholder.svg?height=40&width=40',
+            avatar: 'https://wallpapers.com/images/hd/pretty-profile-pictures-i1rumnm6oi0lry1s.jpg',
             isOnline: true
         },
         {
@@ -29,7 +29,7 @@ const MentorInboxComponent = () => {
             name: 'Gabriel H.',
             message: 'Of course!',
             time: '4pm',
-            avatar: '/placeholder.svg?height=40&width=40',
+            avatar: 'https://wallpapers.com/images/hd/pretty-profile-pictures-i1rumnm6oi0lry1s.jpg',
             isOnline: false
         }
     ];

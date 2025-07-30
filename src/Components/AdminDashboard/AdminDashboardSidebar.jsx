@@ -2,13 +2,14 @@ import { NavLink, useNavigate } from "react-router-dom"; // Import NavLink from 
 import { LayoutGrid, Users, ShoppingBag, UserPlus, LogOut } from "lucide-react";
 import AdminDashboardNavbar from "./AdminDashboardNavbar";
 import useIsBelowMd from "../../hooks/useIsBelowMd";
+import logo from "../../assets/logo.png"
 
 export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleView }) {
     const isBelowMd = useIsBelowMd();
     const navigate = useNavigate()
 
     return (
-        <div className={`w-full h-screen bg-white/50 border-r border-base-100 rounded-xl ${isBelowMd ? "w-screen pr-10" : " "}`}>
+        <div className={`w-full min-h-screen shadow-lg  bg-white/50 border-r border-base-100 rounded-2xl ${isBelowMd ? "w-screen pr-10" : " "}`}>
             <div className="p-6">
 
                 {/* Navbar Show only when Device is below medium size. */}
@@ -20,8 +21,9 @@ export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleVi
 
                 {/* Logo/Brand */}
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center">
-                        <div className="w-4 h-4 bg-orange-400 rounded-full"></div>
+                    <div className="w-10 h-12  rounded-full flex items-center justify-center">
+                        <img src={logo} alt="" />
+                        {/* <div className="w-4 h-4 bg-orange-400 rounded-full"></div> */}
                     </div>
                     <span className="font-medium text-gray-800 text-sm tracking-wide">YOURSELF BEAUTY</span>
                 </div>
