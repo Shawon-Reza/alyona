@@ -268,7 +268,7 @@ export default function UserManagementTable() {
                 {showFilterPanel && (
                     <div
                         ref={filterPanelRef}
-                        className="absolute right-0 top-full mt-2 p-6 bg-white rounded-xl shadow-lg  z-10 w-[500px]"
+                        className="absolute right-0 top-full mt-2 p-6 bg-white rounded-xl shadow-lg  z-10 w-[380px] sm:w-[500px]"
                     >
                         <div className="grid grid-cols-2 gap-6">
                             <div>
