@@ -223,7 +223,7 @@ export default function NewProductRequestPage() {
 
 
                 <h2 className="text-xl font-semibold ">Fragrance</h2>
-                <hr className="my-6 border-gray-200" />
+                <hr className="my-2 border-gray-200" />
                 {/* Fragrance Free */}
                 <div className="flex items-center gap-10 col-span-full md:col-span-1">
                     <label htmlFor="fragrance-free" className="label cursor-pointer">
@@ -238,7 +238,7 @@ export default function NewProductRequestPage() {
                     />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
 
                     {/* Fragrance */}
@@ -246,7 +246,7 @@ export default function NewProductRequestPage() {
                         <label htmlFor="fragrance" className="label">
                             <span className="label-text">Fragrance</span>
                         </label>
-                        <select id="fragrance" className="select select-bordered w-full bg-white/50 rounded-lg">
+                        <select id="fragrance" className="select select-bordered w-full bg-white/50 rounded-lg mt-2">
                             <option disabled selected>
                                 Choose an option
                             </option>
@@ -256,17 +256,17 @@ export default function NewProductRequestPage() {
                     </div>
 
                     {/* Fragrance notes */}
-                    <div>
+                    <div className="">
                         <label htmlFor="fragrance-notes" className="label">
                             <span className="label-text">Fragrance notes</span>
                         </label>
-                        <input type="text" id="fragrance-notes" className="input input-bordered w-full bg-white/50 rounded-lg" />
+                        <input type="text" id="fragrance-notes" className="input input-bordered w-full bg-white/50 rounded-lg my-2" />
                     </div>
                 </div>
 
-                <hr className="my-6 border-gray-200" />
+                <hr className="my-2 border-gray-200" />
 
-                <h2 className="text-xl font-semibold mb-6">URL</h2>
+                <h2 className="text-xl font-semibold mb-2">URL</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     {/* Product_URL */}

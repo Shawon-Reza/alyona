@@ -9,7 +9,7 @@ export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleVi
     const navigate = useNavigate()
 
     return (
-        <div className={`w-full min-h-screen shadow-lg  bg-white/50 border-r border-base-100 rounded-2xl ${isBelowMd ? "w-screen pr-10" : " "}`}>
+        <div className={`w-72 min-h-screen shadow-lg  bg-white/50 border-r border-base-100 rounded-2xl ${isBelowMd ? "w-screen pr-10" : " "}`}>
             <div className="p-6">
 
                 {/* Navbar Show only when Device is below medium size. */}
@@ -19,14 +19,15 @@ export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleVi
                     </div>
                 )}
 
-                {/* Logo/Brand */}
-                <div className="flex items-center gap-3 mb-8">
-                    <div className="w-10 h-12  rounded-full flex items-center justify-center">
-                        <img src={logo} alt="" />
-                        {/* <div className="w-4 h-4 bg-orange-400 rounded-full"></div> */}
-                    </div>
-                    <span className="font-medium text-gray-800 text-sm tracking-wide">YOURSELF BEAUTY</span>
-                </div>
+                 {/* Logo */}
+                            <div className="flex items-center mb-8">
+                                <img
+                                    src={logo} // Replace with your actual logo path
+                                    alt="Logo"
+                                    className="w-10 md:w-12 h-12 md:h-15 rounded-full"
+                                />
+                                <span className="ml-3 font-semibold text-lg text-gray-700">YOURSELF BEAUTY</span>
+                            </div>
 
                 {/* Navigation Items */}
                 <nav className="space-y-2">

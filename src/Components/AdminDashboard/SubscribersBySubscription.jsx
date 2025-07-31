@@ -87,15 +87,15 @@ export default function SubscribersBySubscription() {
                     return (
                         <div
                             key={index}
-                            className="border border-gray-200 rounded-lg p-6 bg-white/50 shadow-sm hover:shadow-md transition-shadow"
+                            className="border border-gray-200 rounded-xl p-6 bg-white/50 shadow-lg hover:shadow-xl transition-shadow"
                         >
                             <div className="flex items-center gap-5">
                                 <div className={`p-2 rounded-lg ${plan.bgColor}`}>
                                     <IconComponent className={`w-7 h-7 ${plan.iconColor}`} />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium text-gray-600 mb-1">{plan.name}</p>
-                                    <p className="text-2xl font-bold text-gray-900">{plan.subscribers}</p>
+                                    <p className="text-xl font-bold text-gray-600 mb-1">{plan.name}</p>
+                                    <p className="text-lg text-gray-900">{plan.subscribers}</p>
                                 </div>
                             </div>
                         </div>

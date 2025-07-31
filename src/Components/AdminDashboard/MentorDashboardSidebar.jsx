@@ -5,13 +5,13 @@ import logo from '../../assets/logo.png'
 
 const MentorDashboardSidebar = ({handleSidebarItemClick}) => {
     return (
-        <div className="h-full w-[calc(100vw-50px)] md:w-64 bg-white shadow-md p-6 rounded-2xl">
+        <div className="h-full w-[calc(100vw-50px)] md:w-72 bg-white shadow-md p-6 rounded-2xl">
             {/* Logo */}
             <div className="flex items-center mb-8">
                 <img
                     src={logo} // Replace with your actual logo path
                     alt="Logo"
-                    className="w-10 h-12 rounded-full"
+                    className="w-10 md:w-12 h-12 md:h-15 rounded-full"
                 />
                 <span className="ml-3 font-semibold text-lg text-gray-700">YOURSELF BEAUTY</span>
             </div>
