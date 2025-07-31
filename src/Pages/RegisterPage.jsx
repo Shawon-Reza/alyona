@@ -117,11 +117,16 @@ const RegisterPage = () => {
                             placeholder="📧 Email"
                             className="w-full px-4 py-2 rounded-md bg-white border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                         />
-                        <input
-                            type="date"
-                            name="date"
-                            className="w-full px-4 py-2 rounded-md bg-white border border-base-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                        />
+                        <div className="relative">
+                            <input
+                                id="date"
+                                type="date"
+                                name="date"
+                                placeholder="mm/dd/yyyy"
+                                className="w-full px-4 py-2 rounded-md bg-white border border-base-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                            />
+                        </div>
+
                         <div className="relative">
                             <input
                                 type={showPassword ? 'text' : 'password'}

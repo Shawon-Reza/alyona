@@ -34,7 +34,7 @@ const SimpleRegisterPage = () => {
             </div>
 
             {/* Centered Form */}
-            <div className=" flex items-center justify-center mt-30 px-4 pb-10">
+            <div className=" flex items-center justify-center mt-20 sm:mt-30 px-4 pb-10 ">
                 <div className="w-full max-w-lg space-y-6 text-center z-10">
                     <div className='py-5'>
                         <h2 className="text-4xl font-semibold">Hi Anna,</h2>
