@@ -8,6 +8,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import axios from 'axios';
 
 const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +20,23 @@ const RegisterPage = () => {
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
         console.log(data);
-        setTimeout(() => navigate('/SimpleRegisterPage'), 2000);
+
+
+        // Registration Post Requiest 
+        axios.post('http://10.10.13.59:8000/accounts/api/v1/register', data)
+            .then(res => {
+                console.log('Registered:', res.data);
+                alert("Registration Succesfull")
+                setTimeout(() => navigate('/SimpleRegisterPage'), 1000);
+            })
+            .catch(err => {
+                console.error('Registration error:', err.response?.data || err.message);
+
+            });
+
+
+
+
     };
 
     const slides = [
@@ -100,18 +117,21 @@ const RegisterPage = () => {
                     {/* Form */}
                     <form onSubmit={handleRegistration} className="space-y-4">
                         <input
+                            required
                             type="text"
-                            name="nickName"
+                            name="username"
                             placeholder="👤 Nickname"
                             className="w-full px-4 py-2 rounded-md bg-white/50 border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                         />
                         <input
+                            required
                             type="text"
-                            name="name"
+                            name="full_name"
                             placeholder="🪪 Name"
                             className="w-full px-4 py-2 rounded-md bg-white border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                         />
                         <input
+                            required
                             type="email"
                             name="email"
                             placeholder="📧 Email"
@@ -121,14 +141,15 @@ const RegisterPage = () => {
                             <input
                                 id="date"
                                 type="date"
-                                name="date"
-                                placeholder="mm/dd/yyyy"
+                                name="birthday"
+                                placeholder="Birthday"
                                 className="w-full px-4 py-2 rounded-md bg-white border border-base-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                             />
                         </div>
 
                         <div className="relative">
                             <input
+                                required
                                 type={showPassword ? 'text' : 'password'}
                                 name="password"
                                 placeholder="🔒 Password"

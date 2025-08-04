@@ -234,6 +234,8 @@ const Dashboard = () => {
                     <img src={LoginPageOverLap || "/placeholder.svg"} alt="OverlapIMG" />
                 </div>
 
+               
+
                 {/* Sidebar */}
                 {(viewMode === 'sidebar' || viewMode === 'both') && (
                     <aside className={`sm:mt-10 mt-3 w-full md:w-[240px] lg:w-xs`}>
@@ -412,3 +414,32 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
