@@ -5,12 +5,38 @@ import { Search, X } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 export default function AddProductRequestPage() {
-    const [pregnancySafe, setPregnancySafe] = useState(false)
-    const [fragranceFree, setFragranceFree] = useState(false)
-    const [inciIngredients, setInciIngredients] = useState(["Leaf Juice", "Glycerin"])
+    const [formData, setFormData] = useState({
+        pregnancySafe: false,
+        fragranceFree: false,
+        inciIngredients: ["Leaf Juice", "Glycerin"],
+        productId: "YB001",
+        category: "",
+        brand: "",
+        productName: "",
+        productType: "",
+        skinTypes: [],
+        concerns: [],
+        ingredients: [],
+        texture: "",
+        features: [],
+        natural: "",
+        organic: "",
+        priceRange: "",
+        fragrance: "",
+        fragranceNotes: "",
+        productUrl: "",
+        imageUrl: ""
+    })
 
     const removeInciIngredient = (ingredientToRemove) => {
-        setInciIngredients(inciIngredients.filter((ingredient) => ingredient !== ingredientToRemove))
+        setFormData(prevData => ({
+            ...prevData,
+            inciIngredients: prevData.inciIngredients.filter((ingredient) => ingredient !== ingredientToRemove)
+        }))
+    }
+
+    const handleSave = () => {
+        console.log(formData)
     }
 
     const navigate = useNavigate()
@@ -18,7 +44,6 @@ export default function AddProductRequestPage() {
     return (
         <div className="min-h-screen p-6">
             {/* Breadcrumbs */}
-
             <div className="text-sm breadcrumbs mb-6">
                 <ul>
                     <li onClick={() => {
@@ -34,28 +59,39 @@ export default function AddProductRequestPage() {
                 <h2 className="text-xl font-semibold mb-6">General</h2>
 
                 {/* Pregnancy/Breastfeeding Safe */}
-                <div className="flex items-center  gap-10 col-span-full md:col-span-1">
+                <div className="flex items-center gap-10 col-span-full md:col-span-1">
                     <label htmlFor="pregnancy-safe" className="label cursor-pointer">
                         <span className="label-text text-[#181818] font-medium">Pregnancy/ Breastfeeding Safe: No</span>
                     </label>
                     <input
-                        id="pregnancy-safe" F
+                        id="pregnancy-safe" 
                         type="checkbox"
                         className="toggle toggle-sm"
-                        checked={pregnancySafe}
-                        onChange={() => setPregnancySafe(!pregnancySafe)}
+                        checked={formData.pregnancySafe}
+                        onChange={() => setFormData(prevData => ({
+                            ...prevData,
+                            pregnancySafe: !prevData.pregnancySafe
+                        }))}
                     />
                 </div>
 
+                {/* ID, Category, Brand, Product Name, Product Type, etc. */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 text-[#181818]" >
-
-
                     {/* ID */}
                     <div>
                         <label htmlFor="id" className="label">
                             <span className="text-[#181818] font-bold mb-1">ID</span>
                         </label>
-                        <input type="text" id="id" defaultValue="YB001" className="input  w-full rounded-xl bg-white/50" />
+                        <input
+                            type="text"
+                            id="id"
+                            value={formData.productId}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                productId: e.target.value
+                            }))}
+                            className="input  w-full rounded-xl bg-white/50"
+                        />
                     </div>
 
                     {/* Category */}
@@ -63,7 +99,16 @@ export default function AddProductRequestPage() {
                         <label htmlFor="category" className="label">
                             <span className="text-[#181818] font-bold mb-1">Category</span>
                         </label>
-                        <input type="text" id="category" className="input input-bordered w-full rounded-xl bg-white/50" />
+                        <input
+                            type="text"
+                            id="category"
+                            value={formData.category}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                category: e.target.value
+                            }))}
+                            className="input input-bordered w-full rounded-xl bg-white/50"
+                        />
                     </div>
 
                     {/* Brand */}
@@ -71,12 +116,18 @@ export default function AddProductRequestPage() {
                         <label htmlFor="brand" className="label">
                             <span className="text-[#181818] font-bold mb-1">Brand</span>
                         </label>
-                        <select id="brand" className="select select-bordered w-full rounded-xl bg-white/50">
-                            <option disabled selected>
-                                Choose an option
-                            </option>
-                            <option>Brand A</option>
-                            <option>Brand B</option>
+                        <select
+                            id="brand"
+                            value={formData.brand}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                brand: e.target.value
+                            }))}
+                            className="select select-bordered w-full rounded-xl bg-white/50"
+                        >
+                            <option value="">Choose an option</option>
+                            <option value="Brand A">Brand A</option>
+                            <option value="Brand B">Brand B</option>
                         </select>
                     </div>
 
@@ -85,7 +136,16 @@ export default function AddProductRequestPage() {
                         <label htmlFor="product-name" className="label">
                             <span className="text-[#181818] font-bold mb-1 ">Product name</span>
                         </label>
-                        <input type="text" id="product-name" className="input input-bordered w-full rounded-xl bg-white/50" />
+                        <input
+                            type="text"
+                            id="product-name"
+                            value={formData.productName}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                productName: e.target.value
+                            }))}
+                            className="input input-bordered w-full rounded-xl bg-white/50"
+                        />
                     </div>
 
                     {/* Product type */}
@@ -93,12 +153,18 @@ export default function AddProductRequestPage() {
                         <label htmlFor="product-type" className="label">
                             <span className="text-[#181818] font-bold mb-1">Product type</span>
                         </label>
-                        <select id="product-type" className="select select-bordered w-full rounded-xl bg-white/50">
-                            <option disabled selected>
-                                Choose multiple options
-                            </option>
-                            <option>Type 1</option>
-                            <option>Type 2</option>
+                        <select
+                            id="product-type"
+                            value={formData.productType}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                productType: e.target.value
+                            }))}
+                            className="select select-bordered w-full rounded-xl bg-white/50"
+                        >
+                            <option value="">Choose an option</option>
+                            <option value="Type 1">Type 1</option>
+                            <option value="Type 2">Type 2</option>
                         </select>
                     </div>
 
@@ -107,12 +173,18 @@ export default function AddProductRequestPage() {
                         <label htmlFor="skin-types" className="label">
                             <span className="text-[#181818] font-bold mb-1">Skin types</span>
                         </label>
-                        <select id="skin-types" className="select select-bordered w-full bg-white/50 rounded-lg">
-                            <option disabled selected>
-                                Choose multiple options
-                            </option>
-                            <option>Normal</option>
-                            <option>Oily</option>
+                        <select
+                            id="skin-types"
+                            value={formData.skinTypes}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                skinTypes: e.target.value.split(',')
+                            }))}
+                            className="select select-bordered w-full bg-white/50 rounded-lg"
+                        >
+                            <option value="">Choose multiple options</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Oily">Oily</option>
                         </select>
                     </div>
 
@@ -121,12 +193,18 @@ export default function AddProductRequestPage() {
                         <label htmlFor="concerns" className="label">
                             <span className="text-[#181818] font-bold mb-1">Concerns</span>
                         </label>
-                        <select id="concerns" className="select select-bordered w-full bg-white/50 rounded-lg">
-                            <option disabled selected>
-                                Choose multiple options
-                            </option>
-                            <option>Acne</option>
-                            <option>Aging</option>
+                        <select
+                            id="concerns"
+                            value={formData.concerns}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                concerns: e.target.value.split(',')
+                            }))}
+                            className="select select-bordered w-full bg-white/50 rounded-lg"
+                        >
+                            <option value="">Choose multiple options</option>
+                            <option value="Acne">Acne</option>
+                            <option value="Aging">Aging</option>
                         </select>
                     </div>
 
@@ -135,12 +213,18 @@ export default function AddProductRequestPage() {
                         <label htmlFor="ingredients" className="label">
                             <span className="text-[#181818] font-bold mb-1">Ingredients</span>
                         </label>
-                        <select id="ingredients" className="select select-bordered w-full bg-white/50 rounded-lg">
-                            <option disabled selected>
-                                Choose multiple options
-                            </option>
-                            <option>Ingredient A</option>
-                            <option>Ingredient B</option>
+                        <select
+                            id="ingredients"
+                            value={formData.ingredients}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                ingredients: e.target.value.split(',')
+                            }))}
+                            className="select select-bordered w-full bg-white/50 rounded-lg"
+                        >
+                            <option value="">Choose multiple options</option>
+                            <option value="Ingredient A">Ingredient A</option>
+                            <option value="Ingredient B">Ingredient B</option>
                         </select>
                     </div>
 
@@ -150,7 +234,7 @@ export default function AddProductRequestPage() {
                             <span className="text-[#181818] font-bold mb-1">INCI</span>
                         </label>
                         <div className="relative flex items-center input input-bordered w-full flex-wrap gap-2 p-2 min-h-[3rem] bg-white/50 rounded-lg">
-                            {inciIngredients.map((ingredient, index) => (
+                            {formData.inciIngredients.map((ingredient, index) => (
                                 <div key={index} className=" bg-white/50 rounded-lg badge badge-lg gap-2  text-gray-800">
                                     {ingredient}
                                     <button
@@ -172,12 +256,18 @@ export default function AddProductRequestPage() {
                         <label htmlFor="texture" className="label">
                             <span className="text-[#181818] font-bold mb-1">Texture</span>
                         </label>
-                        <select id="texture" className="select select-bordered w-full bg-white/50 rounded-lg">
-                            <option disabled selected>
-                                Choose an option
-                            </option>
-                            <option>Cream</option>
-                            <option>Gel</option>
+                        <select
+                            id="texture"
+                            value={formData.texture}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                texture: e.target.value
+                            }))}
+                            className="select select-bordered w-full bg-white/50 rounded-lg"
+                        >
+                            <option value="">Choose an option</option>
+                            <option value="Cream">Cream</option>
+                            <option value="Gel">Gel</option>
                         </select>
                     </div>
 
@@ -186,12 +276,18 @@ export default function AddProductRequestPage() {
                         <label htmlFor="features" className="label">
                             <span className="text-[#181818] font-bold mb-1">Features</span>
                         </label>
-                        <select id="features" className="select select-bordered w-full bg-white/50 rounded-lg">
-                            <option disabled selected>
-                                Choose multiple options
-                            </option>
-                            <option>Feature 1</option>
-                            <option>Feature 2</option>
+                        <select
+                            id="features"
+                            value={formData.features}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                features: e.target.value.split(',')
+                            }))}
+                            className="select select-bordered w-full bg-white/50 rounded-lg"
+                        >
+                            <option value="">Choose multiple options</option>
+                            <option value="Feature 1">Feature 1</option>
+                            <option value="Feature 2">Feature 2</option>
                         </select>
                     </div>
 
@@ -200,7 +296,16 @@ export default function AddProductRequestPage() {
                         <label htmlFor="natural" className="label">
                             <span className="text-[#181818] font-bold mb-1">Natural</span>
                         </label>
-                        <input type="text" id="natural" className="input input-bordered w-full bg-white/50 rounded-lg" />
+                        <input
+                            type="text"
+                            id="natural"
+                            value={formData.natural}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                natural: e.target.value
+                            }))}
+                            className="input input-bordered w-full bg-white/50 rounded-lg"
+                        />
                     </div>
 
                     {/* Organic */}
@@ -208,7 +313,16 @@ export default function AddProductRequestPage() {
                         <label htmlFor="organic" className="label">
                             <span className="text-[#181818] font-bold mb-1">Organic</span>
                         </label>
-                        <input type="text" id="organic" className="input input-bordered w-full bg-white/50 rounded-lg" />
+                        <input
+                            type="text"
+                            id="organic"
+                            value={formData.organic}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                organic: e.target.value
+                            }))}
+                            className="input input-bordered w-full bg-white/50 rounded-lg"
+                        />
                     </div>
 
                     {/* Price range */}
@@ -216,14 +330,22 @@ export default function AddProductRequestPage() {
                         <label htmlFor="price-range" className="label">
                             <span className="text-[#181818] font-bold mb-1">Price range</span>
                         </label>
-                        <input type="text" id="price-range" className="input input-bordered w-full bg-white/50 rounded-lg" />
+                        <input
+                            type="text"
+                            id="price-range"
+                            value={formData.priceRange}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                priceRange: e.target.value
+                            }))}
+                            className="input input-bordered w-full bg-white/50 rounded-lg"
+                        />
                     </div>
                 </div>
 
-
-
                 <h2 className="text-xl font-semibold ">Fragrance</h2>
                 <hr className="my-6 border-gray-200" />
+
                 {/* Fragrance Free */}
                 <div className="flex items-center gap-10 col-span-full md:col-span-1">
                     <label htmlFor="fragrance-free" className="label cursor-pointer">
@@ -233,25 +355,32 @@ export default function AddProductRequestPage() {
                         id="fragrance-free"
                         type="checkbox"
                         className="toggle toggle-sm "
-                        checked={fragranceFree}
-                        onChange={() => setFragranceFree(!fragranceFree)}
+                        checked={formData.fragranceFree}
+                        onChange={() => setFormData(prevData => ({
+                            ...prevData,
+                            fragranceFree: !prevData.fragranceFree
+                        }))}
                     />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-
-
                     {/* Fragrance */}
                     <div>
                         <label htmlFor="fragrance" className="label">
                             <span className="label-text">Fragrance</span>
                         </label>
-                        <select id="fragrance" className="select select-bordered w-full bg-white/50 rounded-lg">
-                            <option disabled selected>
-                                Choose an option
-                            </option>
-                            <option>Floral</option>
-                            <option>Citrus</option>
+                        <select
+                            id="fragrance"
+                            value={formData.fragrance}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                fragrance: e.target.value
+                            }))}
+                            className="select select-bordered w-full bg-white/50 rounded-lg"
+                        >
+                            <option value="">Choose an option</option>
+                            <option value="Floral">Floral</option>
+                            <option value="Citrus">Citrus</option>
                         </select>
                     </div>
 
@@ -260,7 +389,16 @@ export default function AddProductRequestPage() {
                         <label htmlFor="fragrance-notes" className="label">
                             <span className="label-text">Fragrance notes</span>
                         </label>
-                        <input type="text" id="fragrance-notes" className="input input-bordered w-full bg-white/50 rounded-lg" />
+                        <input
+                            type="text"
+                            id="fragrance-notes"
+                            value={formData.fragranceNotes}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                fragranceNotes: e.target.value
+                            }))}
+                            className="input input-bordered w-full bg-white/50 rounded-lg"
+                        />
                     </div>
                 </div>
 
@@ -274,7 +412,16 @@ export default function AddProductRequestPage() {
                         <label htmlFor="product-url" className="label">
                             <span className="label-text">Product_URL</span>
                         </label>
-                        <input type="text" id="product-url" className="bg-white/50 rounded-lg input input-bordered w-full" />
+                        <input
+                            type="text"
+                            id="product-url"
+                            value={formData.productUrl}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                productUrl: e.target.value
+                            }))}
+                            className="bg-white/50 rounded-lg input input-bordered w-full"
+                        />
                     </div>
 
                     {/* Image_URL */}
@@ -282,7 +429,16 @@ export default function AddProductRequestPage() {
                         <label htmlFor="image-url" className="label">
                             <span className="label-text">Image_URL</span>
                         </label>
-                        <input type="text" id="image-url" className="input input-bordered w-full bg-white/50 rounded-lg" />
+                        <input
+                            type="text"
+                            id="image-url"
+                            value={formData.imageUrl}
+                            onChange={(e) => setFormData(prevData => ({
+                                ...prevData,
+                                imageUrl: e.target.value
+                            }))}
+                            className="input input-bordered w-full bg-white/50 rounded-lg"
+                        />
                     </div>
                 </div>
 
@@ -294,7 +450,10 @@ export default function AddProductRequestPage() {
                     </button>
 
                     {/* Save and Notify Button */}
-                    <button className="btn bg-[#BB9777] text-white hover:bg-purple-700 rounded-lg">
+                    <button
+                        className="btn bg-[#BB9777] text-white hover:bg-purple-700 rounded-lg"
+                        onClick={handleSave}
+                    >
                         Save
                     </button>
                 </div>

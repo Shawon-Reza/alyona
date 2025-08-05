@@ -30,8 +30,13 @@ const RegisterPage = () => {
                 setTimeout(() => navigate('/SimpleRegisterPage'), 1000);
             })
             .catch(err => {
-                console.error('Registration error:', err.response?.data || err.message);
-
+                if (err.response) {
+                    console.error('Server responded with error:', err.response.data);
+                    alert("Registration failed: " + JSON.stringify(err.response.data));
+                } else {
+                    console.error('Network or unknown error:', err.message);
+                    alert("Registration failed: Network error");
+                }
             });
 
 

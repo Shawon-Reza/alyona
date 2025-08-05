@@ -6,7 +6,7 @@ import useIsMobile from '../hooks/useIsMobile';
 
 const AuthenticationNav = () => {
     const isMobile = useIsMobile();
-    console.log(isMobile);
+    // console.log(isMobile);
 
     return (
         <div className="w-full flex justify-between items-center px-6 py-4  from-white via-[#f3ebe6] to-white text-sm sm:text-lg">

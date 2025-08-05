@@ -3,7 +3,7 @@
 
 @font-face {
     font-family: satoshi;
-    src: url('/src/assets/fonts/Satoshi-Regular.woff');
+    src: url('/public/fonts/Satoshi-Regular.woff') format('woff');
     font-display: swap;
 }
 
@@ -16,3 +16,5 @@
         @apply font-satoshi;
     }
 }
+
+/* url('/src/assets/fonts/Satoshi-Regular.woff') format('woff'); */
