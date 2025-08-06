@@ -5,6 +5,9 @@ import login from '../assets/loginPageIMG.png';
 import { Link, useNavigate } from 'react-router-dom';
 import LoginPageOverLap from '../assets/LoginPageOverLap.png'
 import NavbarLogo from '../assets/NavbarLogo.png'
+import Magnet from '../CustomComponent/Magnet';
+
+
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -16,7 +19,8 @@ const LoginPage = () => {
     };
 
     return (
-        <div className=" h-screen flex flex-col md:flex-row border-15 border-white rounded-3xl shadow-2xl">
+        <div className=" h-screen flex flex-col md:flex-row border-15 border-white rounded-3xl shadow-2xl relative">
+          
 
             {/* Left Side Image */}
             <div className="md:w-1/2 w-full h-96 md:h-auto hidden sm:block ">
@@ -88,12 +92,22 @@ const LoginPage = () => {
                             </label>
                         </div>
 
-                        <button
+                        <Magnet padding={100} disabled={false} magnetStrength={10} className='w-full'>
+                            <button
+                                type="submit"
+                                className="w-full bg-[#0c0a3e] text-white py-3 lg:py-4 text-base lg:text-lg rounded-md hover:bg-[#191670] transition cursor-pointer"
+                            >
+                                Log In
+                            </button>
+                        </Magnet>
+
+                        {/* <button
                             type="submit"
                             className="w-full bg-[#0c0a3e] text-white py-3 lg:py-4 text-base lg:text-lg rounded-md hover:bg-[#191670] transition cursor-pointer"
                         >
                             Log In
-                        </button>
+                        </button> */}
+
                     </form>
 
                     {/* Bottom Links */}

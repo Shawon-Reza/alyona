@@ -56,10 +56,10 @@ export default function Stepper({
             {...rest}
         >
             <div
-                className={`mx-auto w-full max-w-xl rounded-4xl ${stepCircleContainerClassName}`}
+                className={`mx-auto w-full max-w-4xl rounded-4xl ${stepCircleContainerClassName}`}
                
             >
-                <div className={`${stepContainerClassName} flex w-full items-center p-8`}>
+                <div className={`${stepContainerClassName} flex w-full items-center p-8 overflow-x-auto`}>
                     {stepsArray.map((_, index) => {
                         const stepNumber = index + 1;
                         const isNotLastStep = index < totalSteps - 1;

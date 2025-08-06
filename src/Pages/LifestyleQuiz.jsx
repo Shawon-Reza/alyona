@@ -115,6 +115,21 @@ const skincareTimeOptions = [
     { value: "morning_focus", label: "I prefer extra effort in the morning and simpler night routine" },
 ];
 
+// supplementOptions time options
+const supplementOptions = [
+    { value: "no", label: "No" },
+    { value: "yes", label: "Yes" },
+    { value: "yes_which", label: "Yes; if yes, which ones" }
+];
+
+// pregnancyBreastfeedingOptions time options
+const pregnancyBreastfeedingOptions = [
+    { value: "pregnant", label: "Yes, I am expecting" },
+    { value: "breastfeeding", label: "Yes, I am on breastfeeding journey" },
+    { value: "none", label: "No, neither of two" }
+];
+
+
 
 
 const LifestyleQuizStepper = () => {
@@ -132,6 +147,8 @@ const LifestyleQuizStepper = () => {
         selectedSleepQuality: [],
         selectedDailyActivity: [],
         selectedSkincareTime: [],
+        selectedSupplement: '',  // To track supplement choice
+        selectedPregnancyBreastfeeding: '',  // To track pregnancy or breastfeeding choice
     });
 
     const navigate = useNavigate();
@@ -299,6 +316,23 @@ const LifestyleQuizStepper = () => {
             };
         });
     };
+
+    // Toggle the supplement options
+    const toggleSupplementOption = (option) => {
+        setQuizDetails(prevState => ({
+            ...prevState,
+            selectedSupplement: prevState.selectedSupplement === option ? '' : option
+        }));
+    };
+
+    // Toggle the pregnancy/breastfeeding options
+    const togglePregnancyBreastfeedingOption = (option) => {
+        setQuizDetails(prevState => ({
+            ...prevState,
+            selectedPregnancyBreastfeeding: prevState.selectedPregnancyBreastfeeding === option ? '' : option
+        }));
+    };
+
 
 
 
@@ -548,7 +582,7 @@ const LifestyleQuizStepper = () => {
                         <div className="mt-8 w-full space-y-4">
                             <h3 className="text-[28px] font-bold">What is your sleep quality like?</h3>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* Two-column grid layout */}
+                            <div className="grid grid-cols-1 sm:grid-cols- gap-4"> {/* Two-column grid layout */}
                                 {sleepQualityOptions.map((option, index) => (
                                     <button
                                         key={index}
@@ -606,6 +640,48 @@ const LifestyleQuizStepper = () => {
                                     >
                                         {option.label}
                                         {QuizDetails.selectedSkincareTime.includes(option.value) && (
+                                            <span className="text-[#BB9777] font-bold z-10 border border-[#BB9777] p-1 px-2 rounded-lg">✓</span>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </Step>
+                    {/* Step:11 supplementOptions  pregnancyBreastfeedingOptions Options */}
+                    <Step>
+                        <div className="mt-8 w-full space-y-4">
+                            <h3 className="text-[28px] font-bold">Do you take supplements and/or are you pregnant/breastfeeding?</h3>
+
+                            {/* Supplements Options */}
+                            <div className="space-y-4">
+                                <h4 className="text-xl font-semibold">Do you take any supplements?</h4>
+                                {supplementOptions.map((option, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => toggleSupplementOption(option.value)}
+                                        className={`w-full px-4 py-3 text-left rounded-md border flex justify-between items-center transition cursor-pointer
+                    ${QuizDetails.selectedSupplement === option.value ? 'bg-[#f0e5d9] border-[#c4a484]' : 'bg-white border-gray-300'}`}
+                                    >
+                                        {option.label}
+                                        {QuizDetails.selectedSupplement === option.value && (
+                                            <span className="text-[#BB9777] font-bold z-10 border border-[#BB9777] p-1 px-2 rounded-lg">✓</span>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Pregnancy/Breastfeeding Options */}
+                            <div className="space-y-4 mt-6">
+                                <h4 className="text-xl font-semibold">Are you pregnant or breastfeeding?</h4>
+                                {pregnancyBreastfeedingOptions.map((option, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => togglePregnancyBreastfeedingOption(option.value)}
+                                        className={`w-full px-4 py-3 text-left rounded-md border flex justify-between items-center transition cursor-pointer
+                    ${QuizDetails.selectedPregnancyBreastfeeding === option.value ? 'bg-[#f0e5d9] border-[#c4a484]' : 'bg-white border-gray-300'}`}
+                                    >
+                                        {option.label}
+                                        {QuizDetails.selectedPregnancyBreastfeeding === option.value && (
                                             <span className="text-[#BB9777] font-bold z-10 border border-[#BB9777] p-1 px-2 rounded-lg">✓</span>
                                         )}
                                     </button>
@@ -702,9 +778,6 @@ const LifestyleQuizStepper = () => {
                         </div>
                     </Step>
 
-                    <Step className='h-[400px] w-auto'>
-                        <LocationSelector></LocationSelector>
-                    </Step>
                 </Stepper>
             </div>
         </div>

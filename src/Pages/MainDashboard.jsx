@@ -11,6 +11,7 @@ import { FaPlus } from "react-icons/fa6";
 import { format, startOfMonth, getDay, addDays, getDaysInMonth } from 'date-fns';
 import Navbar from "../Components/Navbar";
 import RecomendationsForUser from "../Components/RecomendationsForUser";
+import ProfileImageUploader from "../Components/ProfileImageUploader";
 
 const user = {
     name: "Anna",
@@ -80,11 +81,12 @@ export default function MainDashboard() {
                     {/* User Card */}
                     <div className="mx-auto p-4 rounded-2xl shadow-md bg-gradient-to-b from-[#FAFAFA] to-[#EDDBCB]">
                         <div className="flex flex-col items-center">
-                            <img
+                            {/* <img
                                 src={user.profileImage}
                                 alt="Profile"
                                 className="w-20 h-20 rounded-full object-cover mb-4"
-                            />
+                            /> */}
+                            <ProfileImageUploader></ProfileImageUploader>
                             <h2 className="text-lg font-semibold mb-2">Hello {user.name}!</h2>
 
                             <div className="flex gap-3 items-center mb-3">
