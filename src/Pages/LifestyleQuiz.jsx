@@ -5,6 +5,9 @@ import AuthenticationNav from '../Components/AuthenticationNav';
 import { ChevronRight } from 'lucide-react';
 import Stepper, { Step } from '../CustomComponent/Stepper'; // Import Stepper
 import LocationSelector from './LocationSelector';
+import { useDispatch, useSelector } from 'react-redux';
+import { setField } from '@/store/formSlice';
+import axios from 'axios';
 
 // Array of lifestyle options with labels and values
 const lifestyleOptions = [
@@ -137,19 +140,24 @@ const LifestyleQuizStepper = () => {
     const [QuizDetails, setQuizDetails] = useState({
         name: '', // User's name
         age: '', // User's age
-        selectedLifestyle: [], // Selected lifestyle options
-        selectedEatingHabits: [], // Selected eating habits
-        selectedMood: [], // New field to track mood options
-        selectedWaterIntake: '', // Selected water intake options (new)
-        selectedSweetConsumption: [], // Store selected sweet consumption as an array
-        selectedSkinConcerns: [], // Track selected skin concerns in an array
+        selectedLifestyle: [],
+        selectedEatingHabits: [],
+        selectedMood: '',  // Change from [] to ''
+        selectedWaterIntake: '',
+        selectedSweetConsumption: [],
+        selectedSkinConcerns: [],
         selectedSkincareGoals: [],
-        selectedSleepQuality: [],
-        selectedDailyActivity: [],
+        selectedSleepQuality: '',  // Change from [] to ''
+        selectedDailyActivity: '',  // Change from [] to ''
         selectedSkincareTime: [],
-        selectedSupplement: '',  // To track supplement choice
-        selectedPregnancyBreastfeeding: '',  // To track pregnancy or breastfeeding choice
+        selectedSupplement: '',
+        selectedPregnancyBreastfeeding: '',
     });
+
+    const handleSave = () => {
+
+    }
+
 
     const navigate = useNavigate();
 
@@ -188,17 +196,12 @@ const LifestyleQuizStepper = () => {
 
     // Toggle the selection of mood options
     const toggleMoodOption = (mood) => {
-        setQuizDetails(prevState => {
-            const updatedMood = prevState.selectedMood.includes(mood)
-                ? prevState.selectedMood.filter(item => item !== mood)
-                : [...prevState.selectedMood, mood];
-
-            return {
-                ...prevState,
-                selectedMood: updatedMood
-            };
-        });
+        setQuizDetails(prevState => ({
+            ...prevState,
+            selectedMood: prevState.selectedMood === mood ? '' : mood // If selected, deselect it, otherwise select the new one
+        }));
     };
+
 
     // Toggle the selection of water intake options (Allow only one selection)
     const toggleWaterIntakeOption = (option) => {
@@ -277,31 +280,21 @@ const LifestyleQuizStepper = () => {
 
     // Toggle the selection of sleep quality options (allowing multiple selections)
     const toggleSleepQuality = (option) => {
-        setQuizDetails(prevState => {
-            const updatedSleepQuality = prevState.selectedSleepQuality.includes(option)
-                ? prevState.selectedSleepQuality.filter(item => item !== option)  // Deselect if already selected
-                : [...prevState.selectedSleepQuality, option];  // Select the new option
-
-            return {
-                ...prevState,
-                selectedSleepQuality: updatedSleepQuality
-            };
-        });
+        setQuizDetails(prevState => ({
+            ...prevState,
+            selectedSleepQuality: prevState.selectedSleepQuality === option ? '' : option // If selected, deselect it, otherwise select the new one
+        }));
     };
+
 
     // Toggle the selection of daily activity options (allowing multiple selections)
     const toggleDailyActivityOption = (option) => {
-        setQuizDetails(prevState => {
-            const updatedActivity = prevState.selectedDailyActivity.includes(option)
-                ? prevState.selectedDailyActivity.filter(item => item !== option)  // Deselect if already selected
-                : [...prevState.selectedDailyActivity, option]; // Select if not selected
-
-            return {
-                ...prevState,
-                selectedDailyActivity: updatedActivity
-            };
-        });
+        setQuizDetails(prevState => ({
+            ...prevState,
+            selectedDailyActivity: prevState.selectedDailyActivity === option ? '' : option // If selected, deselect it, otherwise select the new one
+        }));
     };
+
 
     // Toggle the selection of skincare time options (allowing multiple selections)
     const toggleSkincareTimeOption = (option) => {
@@ -370,6 +363,45 @@ const LifestyleQuizStepper = () => {
         console.log("Current QuizDetails:", QuizDetails);
     }, [QuizDetails]);  // Logs whenever QuizDetails changes
 
+
+    // Redux..........................
+
+    const formData = useSelector((state) => state.form);
+    console.log('Redux data', formData)
+
+    const dispatch = useDispatch();
+
+    const handleQuizePostRequest = () => {
+        console.log(formData)
+
+        const finalQuizeData = {
+            location_area: formData.location_area,
+            area: formData.area,
+            country: formData.country,
+            city: formData.city,
+            age: formData.age,
+            daily_period: formData.daily_period,
+            last_period: formData["month-1"], 
+            next_period: formData["month-2"],
+            pregnant_or_breastfeeding: formData.selectedPregnancyBreastfeeding,
+            life_styles: formData.selectedLifestyle,
+            mood_choices: formData.selectedMood,
+            water_intake: formData.selectedWaterIntake,
+            sweet_consumptions: formData.selectedSweetConsumption,
+            skin_concerns: formData.selectedSkinConcerns,
+            eating_habits: formData.selectedEatingHabits,
+            take_supplements: formData.selectedSupplement,
+            sleep_quality: formData.selectedSleepQuality,
+            daily_activity: formData.selectedDailyActivity,
+            skincare_times: formData.selectedSkincareTime,
+            skincare_goals: formData.selectedSkincareGoals,
+        };
+
+        console.log("This is reva : ", finalQuizeData)
+
+    }
+
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-white via-[#f7f1ec] to-white relative px-4">
             {/* Top Nav */}
@@ -388,7 +420,17 @@ const LifestyleQuizStepper = () => {
                     onStepChange={(step) => {
                         console.log(step);
                     }}
-                    onFinalStepCompleted={() => console.log("All steps completed!")}
+                    onFinalStepCompleted={() => {
+                        // Save data on Redux storage.......................
+                        Object.entries(QuizDetails).forEach(([field, value]) => {
+                            dispatch(setField({ field, value }));
+                        });
+
+                        handleQuizePostRequest()
+
+                        navigate("/QuizGreetings")
+                        console.log("All steps completed!")
+                    }}
                     backButtonText="Back"
                     nextButtonText="Continue"
                 >
@@ -694,89 +736,6 @@ const LifestyleQuizStepper = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    {/* Step 4: Display all selected options */}
-                    <Step>
-                        <div className="text-center">
-                            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-                                You selected:
-                            </h2>
-
-                            <h3 className="text-lg font-semibold text-gray-800 mb-2">Lifestyle Options:</h3>
-                            <ul className="text-sm text-gray-600">
-                                {QuizDetails.selectedLifestyle.length > 0 ? (
-                                    QuizDetails.selectedLifestyle.map((option, index) => (
-                                        <li key={index}>{lifestyleOptions.find(o => o.value === option)?.label}</li>
-                                    ))
-                                ) : (
-                                    <li>No lifestyle options selected</li>
-                                )}
-                            </ul>
-
-                            <h3 className="text-lg font-semibold text-gray-800 mb-2">Eating Habits:</h3>
-                            <ul className="text-sm text-gray-600">
-                                {QuizDetails.selectedEatingHabits.length > 0 ? (
-                                    QuizDetails.selectedEatingHabits.map((habit, index) => (
-                                        <li key={index}>{EATING_HABITS_CHOICES.find(([value]) => value === habit)?.[1]}</li>
-                                    ))
-                                ) : (
-                                    <li>No eating habits selected</li>
-                                )}
-                            </ul>
-                        </div>
-                    </Step>
-
-
-
-
-
-
-
-                    {/* Step 5: Confirmation and continue */}
-                    <Step>
-                        <div className="text-center">
-                            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-                                Ready to continue?
-                            </h2>
-                            <p className="text-sm text-gray-600">
-                                Your lifestyle choices and eating habits will help us recommend the best options for your well-being.
-                            </p>
-                        </div>
-
-                        {/* Navigation Buttons */}
-                        <div className="flex gap-4 mt-10 mx-auto w-full">
-                            <button
-                                onClick={handleContinue}
-                                disabled={!isNameAndAgeValid}  // Disable button if name or age is not filled
-                                className={`px-6 py-2 rounded-md text-sm text-white transition z-10 cursor-pointer flex justify-between items-center gap-10 w-full
-                                    ${isNameAndAgeValid ? 'bg-[#0c0c36] hover:bg-[#1c1c4f]' : 'bg-gray-400 cursor-not-allowed'}`}
-                            >
-                                Continue
-                                <ChevronRight size={15} />
-                            </button>
-                        </div>
-                    </Step>
 
                 </Stepper>
             </div>

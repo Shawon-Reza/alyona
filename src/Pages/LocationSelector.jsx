@@ -7,6 +7,8 @@ import { ChevronRight, Search } from 'lucide-react';
 import AuthenticationNav from '../Components/AuthenticationNav';
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import MapProgressBar from '../Components/MapProgressBar';
+import { useDispatch } from 'react-redux';
+import { setField } from '@/store/formSlice';
 
 // Custom marker icon
 const markerIcon = new L.Icon({
@@ -41,11 +43,18 @@ const LocationSelector = () => {
         try {
             const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
             const data = await res.json();
+            console.log(data)
+
+
             setAddress({
                 street: data.address.road || '',
                 city: data.address.city || data.address.town || data.address.village || '',
                 country: data.address.country || '',
             });
+
+
+
+
         } catch (err) {
             console.error("Error fetching address:", err);
         }
@@ -86,6 +95,27 @@ const LocationSelector = () => {
             }
         );
     }, []);
+
+    // Send Data to Redux store
+    const [livingArea, setLivingArea] = useState('');
+    useEffect(() => {
+        console.log("Living area updated:", livingArea);
+    }, [livingArea]);
+    
+
+    const dispatch = useDispatch();
+console.log(address)
+    const handleSave = () => {
+        dispatch(setField({ field: 'location_area', value: livingArea }));
+        dispatch(setField({ field: 'area', value: address.street }));
+        dispatch(setField({ field: 'city', value: address.city }));
+        dispatch(setField({ field: 'country', value: address.country }));
+
+        navigate('/PeriodDatePicker');
+
+        console.log("Save on Redux store")
+    };
+
 
     return (
         <div className='min-h-screen bg-gradient-to-b from-white via-[#f3ebe6] to-white relative'>
@@ -159,14 +189,34 @@ const LocationSelector = () => {
                                 <p><strong>City:</strong> {address.city || 'City'}</p>
                                 <p><strong>Country:</strong> {address.country || 'Country'}</p>
                             </div>
+
+                            <div className="bg-[#efdfcf] p-4 rounded-md mb-6 space-y-1 text-sm">
+                                <label htmlFor="location" className="block font-bold mb-1">
+                                    Where do you live?
+                                </label>
+                                <select
+                                    name="location"
+                                    id="location"
+                                    value={livingArea}
+                                    onChange={(e) => {
+                                        setLivingArea(e.target.value);
+                                    }}
+                                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4a373]"
+                                >
+                                    <option value="">-- Select --</option>
+                                    <option value="city">City</option>
+                                    <option value="countryside">Countryside</option>
+                                    <option value="half and a half">Half and a half</option>
+                                </select>
+
+                            </div>
+
                         </div>
 
                         {/* Save Button fixed at bottom */}
                         <button
-                            onClick={() => {
-                                alert('Location saved!');
-                                navigate('/LifestyleQuiz');
-                            }}
+
+                            onClick={handleSave}
                             className="bg-[#0c0c36] text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-[#1c1c4f] w-full flex justify-between cursor-pointer "
                         >
                             Save my location

@@ -9,6 +9,11 @@ import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import axios from 'axios';
+import SplitText from '../CustomComponent/SplitText';
+import { fadeSlide } from '@/CustomComponent/fadeSlide';
+import { motion } from 'framer-motion';
+
+
 
 const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -63,7 +68,13 @@ const RegisterPage = () => {
     ];
 
     return (
-        <div className="h-screen flex flex-col md:flex-row font-sans bg-white overflow-hidden">
+
+        <motion.div
+            variants={fadeSlide}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="h-screen flex flex-col md:flex-row font-sans bg-white overflow-hidden">
             {/* Left Side Swiper */}
             <div className="md:w-1/2 hidden sm:block h-full min-h-screen relative">
                 <Swiper
@@ -98,9 +109,41 @@ const RegisterPage = () => {
 
                 {/* Form content */}
                 <div className="w-full max-w-md space-y-6 z-10">
+
+
                     <div className="text-left space-y-1">
-                        <h2 className="text-2xl font-semibold text-gray-800">Hi Anna,</h2>
-                        <p className="text-sm text-gray-600">Add necessary fields to create your account</p>
+                        <SplitText
+                            text="Hi Anna"
+                            className="text-2xl font-semibold text-gray-800"
+                            delay={100}
+                            duration={0.6}
+                            ease="power3.out"
+                            splitType="chars"
+                            from={{ opacity: 0, y: 40 }}
+                            to={{ opacity: 1, y: 0 }}
+                            threshold={0.1}
+                            rootMargin="-100px"
+                            textAlign="center"
+                        // onLetterAnimationComplete={handleAnimationComplete}
+                        />
+                        <div>
+                            <SplitText
+                                text="Add necessary fields to create your account"
+                                className="text-sm text-gray-600"
+                                delay={20}
+                                duration={0.6}
+                                ease="power3.out"
+                                splitType="chars"
+                                from={{ opacity: 0, y: 40 }}
+                                to={{ opacity: 1, y: 0 }}
+                                threshold={0.1}
+                                rootMargin="-100px"
+                                textAlign="center"
+                            // onLetterAnimationComplete={handleAnimationComplete}
+                            />
+                        </div>
+                        {/* <h2 className="text-2xl font-semibold text-gray-800">Hi Anna,</h2> */}
+                        {/* <p className="text-sm text-gray-600">Add necessary fields to create your account</p> */}
                     </div>
 
                     {/* Social Login */}
@@ -194,7 +237,7 @@ const RegisterPage = () => {
                     </form>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
