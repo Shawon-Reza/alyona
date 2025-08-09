@@ -43,10 +43,6 @@ const LoginPage = () => {
                     navigate('/maindashboard')
                 }, 2000);
             }
-
-
-
-
             // Example: Save access token to localStorage
             localStorage.setItem('accessToken', JSON.stringify(response.data));
 
