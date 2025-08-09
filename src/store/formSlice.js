@@ -11,22 +11,23 @@ const initialState = {
     name: '',
 
     daily_period: false,
-    // last_period: '',
-    // next_period: '',
+    last_period: '',
+    next_period: '',
 
-    // pregnant_or_breastfeeding: false,
-    // life_styles: '',
-    // mood_choices: '',
-    // water_intake: '',
-    // sweet_consumptions: [],
-    // skin_concerns: [],
-    // eating_habits: [],
-    // take_supplements: false,
-    // sleep_quality: '',
-    // daily_activity: '',
-    // skincare_times: [],
-    // skincare_goals: [],
+    pregnant_or_breastfeeding: false,
+    selectedLifestyle: '',
+    selectedMood: '',
+    selectedWaterIntake: '',
+    selectedSweetConsumption: [],
+    selectedSkinConcerns: [],
+    selectedEatingHabits: [],
+    selectedSupplement: false,
+    selectedSleepQuality: '',
+    selectedDailyActivity: '',
+    selectedSkincareTime: [],
+    selectedSkincareGoals: [],
 };
+
 
 const formSlice = createSlice({
     name: 'form',

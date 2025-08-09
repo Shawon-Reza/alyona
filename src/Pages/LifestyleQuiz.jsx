@@ -127,9 +127,9 @@ const supplementOptions = [
 
 // pregnancyBreastfeedingOptions time options
 const pregnancyBreastfeedingOptions = [
-    { value: "pregnant", label: "Yes, I am expecting" },
-    { value: "breastfeeding", label: "Yes, I am on breastfeeding journey" },
-    { value: "none", label: "No, neither of two" }
+    { value: "Yes, I am expecting", label: "Yes, I am expecting" },
+    { value: "Yes, I am on breastfeeding journey", label: "Yes, I am on breastfeeding journey" },
+    { value: "No, neither of two', 'No, neither of two", label: "No, neither of two" }
 ];
 
 
@@ -140,7 +140,7 @@ const LifestyleQuizStepper = () => {
     const [QuizDetails, setQuizDetails] = useState({
         name: '', // User's name
         age: '', // User's age
-        selectedLifestyle: [],
+        selectedLifestyle: '',
         selectedEatingHabits: [],
         selectedMood: '',  // Change from [] to ''
         selectedWaterIntake: '',
@@ -167,18 +167,16 @@ const LifestyleQuizStepper = () => {
     // Toggle the selection of a lifestyle option
     const toggleLifestyleOption = (option) => {
         setQuizDetails(prevState => {
-            const updatedLifestyle = prevState.selectedLifestyle.includes(option.value)
-                ? prevState.selectedLifestyle.filter(item => item !== option.value)
-                : [...prevState.selectedLifestyle, option.value];
+            // If the selected option is the same, we reset it to an empty string (deselect)
+            const updatedLifestyle = prevState.selectedLifestyle === option.value ? '' : option.value;
 
-            console.log("Updated Lifestyle Options: ", updatedLifestyle); // Log selected lifestyle options
+            console.log("Updated Lifestyle Option: ", updatedLifestyle); // Log selected lifestyle option
             return {
                 ...prevState,
                 selectedLifestyle: updatedLifestyle
             };
         });
     };
-
     // Toggle the selection of eating habits
     const toggleEatingHabit = (habit) => {
         setQuizDetails(prevState => {
@@ -381,20 +379,20 @@ const LifestyleQuizStepper = () => {
             city: formData.city,
             age: formData.age,
             daily_period: formData.daily_period,
-            last_period: formData["month-1"], 
+            last_period: formData["month-1"],
             next_period: formData["month-2"],
-            pregnant_or_breastfeeding: formData.selectedPregnancyBreastfeeding,
-            life_styles: formData.selectedLifestyle,
-            mood_choices: formData.selectedMood,
-            water_intake: formData.selectedWaterIntake,
-            sweet_consumptions: formData.selectedSweetConsumption,
-            skin_concerns: formData.selectedSkinConcerns,
-            eating_habits: formData.selectedEatingHabits,
-            take_supplements: formData.selectedSupplement,
-            sleep_quality: formData.selectedSleepQuality,
-            daily_activity: formData.selectedDailyActivity,
-            skincare_times: formData.selectedSkincareTime,
-            skincare_goals: formData.selectedSkincareGoals,
+            pregnant_or_breastfeeding: QuizDetails.selectedPregnancyBreastfeeding,
+            life_styles: QuizDetails.selectedLifestyle,
+            mood_choices: QuizDetails.selectedMood,
+            water_intake: QuizDetails.selectedWaterIntake,
+            sweet_consumptions: QuizDetails.selectedSweetConsumption,
+            skin_concerns: QuizDetails.selectedSkinConcerns,
+            eating_habits: QuizDetails.selectedEatingHabits,
+            take_supplements: QuizDetails.selectedSupplement,
+            sleep_quality: QuizDetails.selectedSleepQuality,
+            daily_activity: QuizDetails.selectedDailyActivity,
+            skincare_times: QuizDetails.selectedSkincareTime,
+            skincare_goals: QuizDetails.selectedSkincareGoals,
         };
 
         console.log("This is reva : ", finalQuizeData)
@@ -420,6 +418,8 @@ const LifestyleQuizStepper = () => {
                     onStepChange={(step) => {
                         console.log(step);
                     }}
+
+
                     onFinalStepCompleted={() => {
                         // Save data on Redux storage.......................
                         Object.entries(QuizDetails).forEach(([field, value]) => {
@@ -431,6 +431,11 @@ const LifestyleQuizStepper = () => {
                         navigate("/QuizGreetings")
                         console.log("All steps completed!")
                     }}
+
+
+
+
+
                     backButtonText="Back"
                     nextButtonText="Continue"
                 >
@@ -467,7 +472,8 @@ const LifestyleQuizStepper = () => {
                         </div>
                     </Step>
 
-                    {/* Step 2: Lifestyle options */}
+
+                    {/* // Step 2: Lifestyle options */}
                     <Step>
                         <div className="mt-8 w-full space-y-4">
                             <h3 className='text-[28px] font-bold'>What is your lifestyle?</h3>
@@ -476,10 +482,10 @@ const LifestyleQuizStepper = () => {
                                     key={index}
                                     onClick={() => toggleLifestyleOption(option)} // Use the option object here
                                     className={`w-full px-4 py-3 text-left rounded-md border flex justify-between items-center transition cursor-pointer
-                                        ${QuizDetails.selectedLifestyle.includes(option.value) ? 'bg-[#f0e5d9] border-[#c4a484]' : 'bg-white border-gray-300'}`}
+                    ${QuizDetails.selectedLifestyle === option.value ? 'bg-[#f0e5d9] border-[#c4a484]' : 'bg-white border-gray-300'}`}
                                 >
                                     {option.label}
-                                    {QuizDetails.selectedLifestyle.includes(option.value) && (
+                                    {QuizDetails.selectedLifestyle === option.value && (
                                         <span className="text-[#BB9777] font-bold z-10 border border-[#BB9777] p-1 px-2 rounded-lg">✓</span>
                                     )}
                                 </button>
@@ -702,7 +708,7 @@ const LifestyleQuizStepper = () => {
                                         key={index}
                                         onClick={() => toggleSupplementOption(option.value)}
                                         className={`w-full px-4 py-3 text-left rounded-md border flex justify-between items-center transition cursor-pointer
-                    ${QuizDetails.selectedSupplement === option.value ? 'bg-[#f0e5d9] border-[#c4a484]' : 'bg-white border-gray-300'}`}
+                                        ${QuizDetails.selectedSupplement === option.value ? 'bg-[#f0e5d9] border-[#c4a484]' : 'bg-white border-gray-300'}`}
                                     >
                                         {option.label}
                                         {QuizDetails.selectedSupplement === option.value && (
@@ -720,7 +726,7 @@ const LifestyleQuizStepper = () => {
                                         key={index}
                                         onClick={() => togglePregnancyBreastfeedingOption(option.value)}
                                         className={`w-full px-4 py-3 text-left rounded-md border flex justify-between items-center transition cursor-pointer
-                    ${QuizDetails.selectedPregnancyBreastfeeding === option.value ? 'bg-[#f0e5d9] border-[#c4a484]' : 'bg-white border-gray-300'}`}
+                                        ${QuizDetails.selectedPregnancyBreastfeeding === option.value ? 'bg-[#f0e5d9] border-[#c4a484]' : 'bg-white border-gray-300'}`}
                                     >
                                         {option.label}
                                         {QuizDetails.selectedPregnancyBreastfeeding === option.value && (

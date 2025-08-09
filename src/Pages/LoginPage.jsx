@@ -29,17 +29,25 @@ const LoginPage = () => {
         console.log("Password:", password);
 
         try {
+
             const response = await axios.post('http://10.10.13.59:8000/accounts/api/v1/login', {
                 email,
                 password
             });
             toast.success("Login Successfull")
-            setTimeout(() => {
-                navigate('/SimpleRegisterPage')
-            }, 2000);
             console.log("Login Successful:", response.data);
+
+            if (response?.data?.login_user_info?.quiz_status) {
+                setTimeout(() => {
+                    console.log('statuse', response?.login_user_info?.quiz_status)
+                    navigate('/maindashboard')
+                }, 2000);
+            }
+
+
+
+
             // Example: Save access token to localStorage
-            
             localStorage.setItem('accessToken', JSON.stringify(response.data));
 
 
