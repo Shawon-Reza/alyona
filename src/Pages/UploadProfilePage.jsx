@@ -4,19 +4,34 @@ import { useNavigate } from 'react-router-dom';
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import AuthenticationNav from '../Components/AuthenticationNav';
 import { ChevronRight } from 'lucide-react';
-
+import axios from 'axios'; // Import axios for making API requests
+import axiosApi from '@/api/axiosApi';
+import { toast } from 'react-toastify';
 
 const UploadProfilePage = () => {
     const [imagePreview, setImagePreview] = useState(null);
+    const [imageFile, setImageFile] = useState(null); // State to store the image file
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
+
+        // Basic validation for file type and size
         if (file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload a valid image.');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                alert('File size should not exceed 5MB.');
+                return;
+            }
+
             const reader = new FileReader();
             reader.onloadend = () => setImagePreview(reader.result);
             reader.readAsDataURL(file);
+            setImageFile(file); // Store the file in the state
         }
     };
 
@@ -24,14 +39,44 @@ const UploadProfilePage = () => {
         if (fileInputRef.current) fileInputRef.current.click();
     };
 
-    const handleContinue = () => {
-        if (!imagePreview) {
-            alert("Please upload your picture");
+    // Function to send the image to the backend
+    const uploadImage = async () => {
+        if (!imageFile) {
+            alert('Please upload your picture');
             return;
         }
 
-        console.log("Image selected:", imagePreview);
-        setTimeout(() => navigate('/StartQuizPage'), 1000);
+        const formData = new FormData();
+        formData.append('image', imageFile); // Append the image file to FormData
+
+        console.log('Final Image Data:', imageFile); // Log the image file before sending
+
+        // Make the API call to upload the image
+        // Adjust the URL based on your backend setup
+        try {
+            const response = await axiosApi.patch('/accounts/api/v1/profile-image', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            // Assuming the backend returns some success message or data
+            console.log('Image uploaded successfully:', response.data);
+            toast.success('Image uploaded successfully!');
+            // Redirect to the next page after successful upload
+            setTimeout(() => navigate('/StartQuizPage'), 1000);
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            if (error.response && error.response.data) {
+                alert(`Error: ${error.response.data.message || 'Failed to upload image. Please try again.'}`);
+            } else {
+                alert('Failed to upload image. Please try again.');
+            }
+        }
+    };
+
+    const handleContinue = () => {
+        uploadImage();
     };
 
     return (
@@ -75,7 +120,7 @@ const UploadProfilePage = () => {
                 />
 
                 {/* Upload Options */}
-                <div className="flex  sm:flex-row gap-3 justify-center mb-8">
+                <div className="flex sm:flex-row gap-3 justify-center mb-8">
                     <button
                         onClick={() => fileInputRef.current.click()}
                         className="flex items-center cursor-pointer justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition"

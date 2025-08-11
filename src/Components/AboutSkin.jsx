@@ -72,10 +72,11 @@ export default function AboutSkin() {
 
 
   return (
-    <div className="sm:mt-10 mt-3  w-full bg-gradient-to-b from-[#fafafa] via-[#ffffff] to-[#f5eadf] rounded-2xl">
+    <div className="sm:mt-5 mt-3  w-full bg-gradient-to-b from-[#fafafa] via-[#ffffff] to-[#f5eadf] rounded-2xl">
       {/* Skin type summary */}
       <div className="bg-white p-5 rounded-xl shadow-sm mb-6 border-base-300 text-sm text-gray-800 gap-10">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-10">
+
+        <div className="flex sm:flex-col lg:flex-row items-start sm:items-center gap-10">
           <img
             src={SkinAnalysisPageIMG}
             alt="Skin Type Icon"
