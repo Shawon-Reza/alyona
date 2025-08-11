@@ -3,19 +3,15 @@ import { PieChart, Pie, Cell } from "recharts";
 import { FaLightbulb } from "react-icons/fa";
 import SkinAnalysisPageIMG from "../assets/SkinAnalysisPageIMG.png";
 import SkinSatisfactionChart from "./SkinSatisfactionChart"; // Keep this as-is if already using Recharts or update separately
+import useQuizResult from "@/hooks/useQuizResult";
 
-// Mock data
-const progressItems = [
-  { label: "Current level of stress", value: 79 },
-  { label: "Level of activity", value: 79 },
-  { label: "Beauty sleep quality", value: 50 },
-];
 
-const recommendations = [
-  "Practice daily meditation or deep breathing exercises",
-  "Avoid screens 1 hour before bed",
-  "Practice daily meditation or deep breathing exercises",
-];
+
+// const recommendations = [
+//   "Practice daily meditation or deep breathing exercises",
+//   "Avoid screens 1 hour before bed",
+//   "Practice daily meditation or deep breathing exercises",
+// ];
 
 const CircularProgress = ({ value, size = 80 }) => {
   const data = [
@@ -52,6 +48,29 @@ const CircularProgress = ({ value, size = 80 }) => {
 };
 
 export default function AboutSkin() {
+  // Get Skin Analysis All data based on quiz
+  const { isLoading, error, data } = useQuizResult();
+
+
+  // Handle loading and error states
+  if (isLoading) return 'Loading...';
+  if (error) return 'An error has occurred on skinAnalysis Page: ' + error.message;
+
+  console.log(data)
+  // Mock data
+  const progressItems = [
+    { label: "Current level of stress", value: data?.stress?.score || 50 },
+    { label: "Level of activity", value: data?.activity?.score || 50 },
+    {
+      label: "Beauty sleep quality", value: data?.sleep?.score || 50
+    },
+  ];
+  // First three recommendations
+  const recommendations = Object.entries(data)
+    .filter(([key, value]) => typeof value === 'object' && value.recommendation)
+    .slice(0, 3);
+
+
   return (
     <div className="sm:mt-10 mt-3  w-full bg-gradient-to-b from-[#fafafa] via-[#ffffff] to-[#f5eadf] rounded-2xl">
       {/* Skin type summary */}
@@ -97,7 +116,18 @@ export default function AboutSkin() {
         <div>
           <h3 className="font-bold text-lg mb-3">Recommendations</h3>
           <div className="space-y-3">
-            {recommendations.map((tip, idx) => (
+
+            {
+
+              recommendations.map(([key, value], idx) => (
+                <div key={key} className="bg-white/50 border border-gray-200 p-4 rounded-xl shadow-sm text-sm flex items-start gap-2">
+                  <span className="text-yellow-500">💡</span> {value.recommendation}
+                </div>
+              ))
+
+            }
+
+            {/* {recommendations.map((tip, idx) => (
               <div
                 key={idx}
                 className="flex items-start bg-[#EFEBEB] text-xl text-gray-700 px-4 py-2 rounded-md"
@@ -105,12 +135,12 @@ export default function AboutSkin() {
                 <FaLightbulb className="text-[#b5764f] mt-1 mr-2" />
                 <span>{tip}</span>
               </div>
-            ))}
+            ))} */}
           </div>
         </div>
 
         {/* Skin satisfaction chart */}
-        <div className="flex-1">
+        <div className="flex-1 mt-10">
           <SkinSatisfactionChart />
         </div>
       </div>

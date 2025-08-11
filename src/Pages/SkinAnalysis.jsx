@@ -4,8 +4,6 @@ import RowButton from "../Components/RowButton";
 import LoginPageOverLap from "../assets/LoginPageOverLap.png";
 import { useNavigate } from "react-router-dom";
 import AuthenticationNav from "../Components/AuthenticationNav";
-import axiosApi from "@/api/axiosApi";
-import { useQuery } from "@tanstack/react-query";
 import useQuizResult from "@/hooks/useQuizResult";
 
 const RadialProgress = ({ value, delay = 0 }) => {
@@ -71,14 +69,13 @@ export default function SkinAnalysis() {
 
   // Handle loading and error states
   if (isLoading) return 'Loading...';
-  if (error) return 'An error has occurred: ' + error.message;
+  if (error) return 'An error has occurred on skinAnalysis Page: ' + error.message;
 
 
   // First Four recommendations
   const recommendations = Object.entries(data)
     .filter(([key, value]) => typeof value === 'object' && value.recommendation)
-    .slice(0, 4);  // Take first 4
-    console.log(recommendations)
+    .slice(0, 3);  // Take first 4
   // L:ast two recommendations
   const recommendations2 = Object.entries(data)
     .filter(([key, value]) => typeof value === 'object' && value.recommendation)
