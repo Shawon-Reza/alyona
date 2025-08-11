@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import AuthenticationNav from "../Components/AuthenticationNav";
 import axiosApi from "@/api/axiosApi";
 import { useQuery } from "@tanstack/react-query";
+import useQuizResult from "@/hooks/useQuizResult";
 
 const RadialProgress = ({ value, delay = 0 }) => {
   const [animatedValue, setAnimatedValue] = useState(0);
@@ -58,11 +59,7 @@ export default function SkinAnalysis() {
   const [isVisible, setIsVisible] = useState(false);
 
   // Get Skin Analysis All data based on quiz
-  const { isLoading, error, data } = useQuery({
-    queryKey: ['quizResult'],
-    queryFn: () => axiosApi.get('/accounts/api/v1/quiz-result').then(res => res.data),
-    retry: 3,
-  });
+  const { isLoading, error, data } = useQuizResult();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -75,6 +72,18 @@ export default function SkinAnalysis() {
   // Handle loading and error states
   if (isLoading) return 'Loading...';
   if (error) return 'An error has occurred: ' + error.message;
+
+
+  // First Four recommendations
+  const recommendations = Object.entries(data)
+    .filter(([key, value]) => typeof value === 'object' && value.recommendation)
+    .slice(0, 4);  // Take first 4
+    console.log(recommendations)
+  // L:ast two recommendations
+  const recommendations2 = Object.entries(data)
+    .filter(([key, value]) => typeof value === 'object' && value.recommendation)
+    .slice(-2);
+
 
   // Conditional rendering of sections based on fetched data
   const section1 = [
@@ -132,13 +141,21 @@ export default function SkinAnalysis() {
             {/* Recommendations 1 */}
             <div className="my-10">
               <div className="text-sm font-bold text-gray-700 mb-2">Recommendations</div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {["Practice daily meditation or deep breathing exercises", "Avoid screens 1 hour before bed", "Include protein in every meal", "Create a relaxing bedtime routine"].map((rec, idx) => (
-                  <div key={idx} className="bg-white/50 border border-gray-200 p-4 rounded-xl shadow-sm text-sm flex items-start gap-2">
-                    <span className="text-yellow-500">💡</span> {rec}
-                  </div>
-                ))}
+
+                {
+
+                  recommendations.map(([key, value], idx) => (
+                    <div key={key} className="bg-white/50 border border-gray-200 p-4 rounded-xl shadow-sm text-sm flex items-start gap-2">
+                      <span className="text-yellow-500">💡</span> {value.recommendation}
+                    </div>
+                  ))
+
+                }
+
               </div>
+
             </div>
             <div className="w-full my-6 border-t-[2px] border-dashed border-[#BB9777] border-image-[repeating-linear-gradient(to_right,#BB9777_0_80px,transparent_20px_120px)] border-image-slice-[1]" />
             {renderProgressGroup(section2, 800)} {/* Second section starts after 800ms delay */}
@@ -146,11 +163,17 @@ export default function SkinAnalysis() {
             <div className="my-10">
               <div className="text-sm font-bold text-gray-700 mb-2">Recommendations</div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {["Practice daily meditation or deep breathing exercises", "Avoid screens 1 hour before bed"].map((rec, idx) => (
-                  <div key={idx} className="bg-white/50 border border-gray-200 p-4 rounded-xl shadow-sm text-sm flex items-start gap-2">
-                    <span className="text-yellow-500">💡</span> {rec}
-                  </div>
-                ))}
+
+                {
+
+                  recommendations2.map(([key, value], idx) => (
+                    <div key={key} className="bg-white/50 border border-gray-200 p-4 rounded-xl shadow-sm text-sm flex items-start gap-2">
+                      <span className="text-yellow-500">💡</span> {value.recommendation}
+                    </div>
+                  ))
+
+                }
+
               </div>
             </div>
             <div className="absolute bottom-10 right-8 md:right-14 md:bottom-7 lg:bottom-10 lg:right-20 cursor-pointer">
