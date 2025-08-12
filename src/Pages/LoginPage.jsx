@@ -35,7 +35,7 @@ const LoginPage = () => {
                 password
             });
             toast.success("Login Successfull")
-            console.log("Login Successful:", response.data);
+            console.log("Login Successful:", response.data.access);
 
             if (response?.data?.login_user_info?.quiz_status) {
                 setTimeout(() => {
@@ -43,8 +43,10 @@ const LoginPage = () => {
                     navigate('/maindashboard')
                 }, 2000);
             }
+            console.log('first', response?.data)
             // Example: Save access token to localStorage
             localStorage.setItem('accessToken', JSON.stringify(response.data));
+            localStorage.setItem('token', JSON.stringify(response?.data?.access));
 
 
 

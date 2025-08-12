@@ -475,7 +475,7 @@ const LifestyleQuizStepper = () => {
 
                     {/* // Step 2: Lifestyle options */}
                     <Step>
-                        <div className="mt-8 w-full space-y-4">
+                        <div className=" w-full space-y-4">
                             <h3 className='text-[28px] font-bold'>What is your lifestyle?</h3>
                             {lifestyleOptions.map((option, index) => (
                                 <button
@@ -497,7 +497,7 @@ const LifestyleQuizStepper = () => {
                     <Step>
                         <h3 className='text-[28px] font-bold'>What are your eating habits?</h3>
 
-                        <div className="mt-8 w-full space-y-4">
+                        <div className=" w-full space-y-4">
                             {EATING_HABITS_CHOICES.map(([value, label], index) => (
                                 <button
                                     key={index}

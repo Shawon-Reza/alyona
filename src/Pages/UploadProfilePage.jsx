@@ -23,7 +23,7 @@ const UploadProfilePage = () => {
                 alert('Please upload a valid image.');
                 return;
             }
-            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+            if (file.size > 15 * 1024 * 1024) { // 15MB limit
                 alert('File size should not exceed 5MB.');
                 return;
             }
@@ -68,9 +68,9 @@ const UploadProfilePage = () => {
         } catch (error) {
             console.error('Error uploading image:', error);
             if (error.response && error.response.data) {
-                alert(`Error: ${error.response.data.message || 'Failed to upload image. Please try again.'}`);
+                toast.error(`Error: ${error.response.data.message || 'Failed to upload image. Please try again.'}`);
             } else {
-                alert('Failed to upload image. Please try again.');
+                toast.error('Failed to upload image. Please try again.');
             }
         }
     };
@@ -113,7 +113,7 @@ const UploadProfilePage = () => {
                 <input
                     type="file"
                     accept="image/*"
-                    capture="environment"
+                    capture="camera"
                     ref={fileInputRef}
                     className="hidden"
                     onChange={handleImageChange}

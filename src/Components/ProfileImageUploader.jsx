@@ -1,49 +1,94 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CircleUserRoundIcon, XIcon } from "lucide-react";
-import { useFileUpload } from "../hooks/useFileUpload"; // Custom hook
-import axios from "axios"; // Axios for making HTTP requests
+import axiosApi from "@/api/axiosApi"; // Assuming axiosApi is configured for your API
+import { toast } from 'react-toastify';
+import { data, useNavigate } from "react-router-dom";
 import img from '../assets/annaImg.png'; // Default image if not uploaded
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 export default function ProfileImageUploader() {
-    // Use the custom hook for file upload functionality
-    const [{ files }, { removeFile, openFileDialog }] = useFileUpload({
-        accept: "image/*",  // Accept image files only
-    });
+    const [imagePreview, setImagePreview] = useState(null); // Preview image before upload
+    const [imageFile, setImageFile] = useState(null); // Store the image file
+    const [isUploading, setIsUploading] = useState(false); // Track uploading state
+    const [error, setError] = useState(null); // Track error messages
+    const { user, loading } = useCurrentUser();
+    const fileInputRef = useRef(null);
+    const navigate = useNavigate();
 
-    const previewUrl = files[0]?.preview || img; // Default image if no preview URL
-    const fileName = files[0]?.file.name || null;
+console.log(user)
+    // Handle the image file change (when a file is selected from file input)
+    const handleImageChange = (e) => {
+        const selectedFile = e.target.files[0]; // Get the selected file
+        if (selectedFile) {
+            // Basic validation for file type and size
+            if (!selectedFile.type.startsWith('image/')) {
+                alert('Please upload a valid image.');
+                return;
+            }
+            if (selectedFile.size > 15 * 1024 * 1024) { // 15MB limit
+                alert('File size should not exceed 15MB.');
+                return;
+            }
 
-    // Function to handle image upload to the backend
-    const handleUpload = async (file) => {
-        if (!file) return; // If no file is selected
+            const reader = new FileReader();
+            reader.onloadend = () => setImagePreview(reader.result);
+            reader.readAsDataURL(selectedFile);
+            setImageFile(selectedFile); // Store the file in the state
 
-        const formData = new FormData();
-        formData.append("file", file); // Attach the file to the FormData object
-
-        console.log('Uploading image:', file); // Log the original image before upload
-
-        try {
-            const response = await axios.post("/upload-endpoint", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
-            console.log("Image uploaded successfully:", response.data);
-            // You can handle the response data, such as saving the image URL in your state or DB
-        } catch (error) {
-            console.error("Error uploading image:", error);
+            // Automatically call the upload function
+            uploadImage(selectedFile); // Trigger the upload immediately after the file is selected
         }
     };
 
-    // Trigger upload as soon as a file is selected
-    const handleFileChange = (e) => {
-        const file = e.target.files[0]; // Get the first file selected
-        openFileDialog(e.target.files);  // Open file dialog
-        if (file) {
-            handleUpload(file);  // Automatically upload the selected file
+    // Function to send the image to the backend
+    const uploadImage = async (file) => {
+        if (!file) {
+            alert('Please upload your picture');
+            return;
         }
+
+        const formData = new FormData();
+        formData.append('image', file); // Append the image file to FormData
+
+        console.log('Final Image Data:', file); // Log the image file before sending
+
+        setIsUploading(true); // Start uploading
+
+        try {
+            const response = await axiosApi.patch('/accounts/api/v1/profile-image', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            console.log('Image uploaded successfully:', response.data);
+            toast.success('Image uploaded successfully!');
+
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            if (error.response && error.response.data) {
+                toast.error(`Error: ${error.response.data.message || 'Failed to upload image. Please try again.'}`);
+            } else {
+                toast.error('Failed to upload image. Please try again.');
+            }
+        } finally {
+            setIsUploading(false); // Stop uploading once done
+        }
+    };
+
+    // Trigger file input when image icon is clicked
+    const handleIconClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click(); // Opens the file dialog
+        }
+    };
+
+    // Remove the uploaded image and reset the state
+    const handleRemoveImage = () => {
+        setImageFile(null);
+        setImagePreview(null); // Reset the preview URL
     };
 
     return (
@@ -52,37 +97,42 @@ export default function ProfileImageUploader() {
                 {/* Custom Tailwind button */}
                 <button
                     className="relative rounded-full overflow-hidden shadow-md"
-                    onClick={openFileDialog}
-                    aria-label={previewUrl ? "Change image" : "Upload image"}
+                    onClick={handleIconClick} // Trigger file input dialog when the image icon is clicked
+                    aria-label={imageFile ? "Change image" : "Upload image"}
                 >
-                    {previewUrl ? (
+                    {imageFile ? (
                         <img
                             className="w-18 h-18 object-cover rounded-full"
-                            src={previewUrl}
+                            src={imagePreview}
                             alt="Preview of uploaded image"
                         />
                     ) : (
                         <CircleUserRoundIcon className="w-8 h-8 opacity-60" />
                     )}
                 </button>
-                {previewUrl && (
+                {imageFile && (
                     <button
-                        onClick={() => removeFile(files[0]?.id)}
+                        onClick={handleRemoveImage}
                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
                         aria-label="Remove image"
                     >
                         <XIcon className="w-4 h-4" />
                     </button>
                 )}
+                {/* Hidden File Input */}
                 <input
                     type="file"
-                    className="sr-only"
                     accept="image/*"
-                    onChange={handleFileChange}  // Trigger file change and upload
+                    capture="camera"
+                    ref={fileInputRef}
+                    className="hidden"
+                    onChange={handleImageChange} // Trigger file change and upload
                 />
             </div>
 
-            {/* {fileName && <p className="text-muted-foreground text-xs">{fileName}</p>} */}
+            {isUploading && <div className="text-xs text-blue-500">Uploading...</div>} {/* Uploading feedback */}
+            {error && <div className="text-xs text-red-500">{error}</div>} {/* Error message */}
+
             <p
                 aria-live="polite"
                 role="region"

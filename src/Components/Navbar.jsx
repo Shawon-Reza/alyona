@@ -6,6 +6,7 @@ import useIsMobile from '../hooks/useIsMobile';
 import annaImg from '../assets/annaImg.png';
 import { Bell, ChevronRight, Info, LogOut, Pencil, Phone } from 'lucide-react';
 import NotificationPopup from './NotificationPopup'; // Import the popup component
+import useCurrentUser from '../hooks/useCurrentUser'; // Custom hook to fetch current user info
 
 const Navbar = () => {
     const isMobile = useIsMobile();
@@ -26,6 +27,7 @@ const Navbar = () => {
         }
         setIsPopupOpen(!isPopupOpen); // Toggle notification popup visibility
     };
+
 
     // Toggle profile menu visibility
     const toggleProfileMenu = () => {

@@ -21,6 +21,7 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.12",
     "gsap": "^3.13.0",
+    "jwt-decode": "^4.0.0",
     "leaflet": "^1.9.4",
     "localforage": "^1.10.0",
     "lottie-react": "^2.4.1",
