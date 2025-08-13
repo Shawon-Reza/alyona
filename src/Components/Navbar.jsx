@@ -8,6 +8,7 @@ import { Bell, ChevronRight, Info, LogOut, Pencil, Phone } from 'lucide-react';
 import NotificationPopup from './NotificationPopup'; // Import the popup component
 import useCurrentUser from '../hooks/useCurrentUser'; // Custom hook to fetch current user info
 
+
 const Navbar = () => {
     const isMobile = useIsMobile();
     const [isPopupOpen, setIsPopupOpen] = useState(false); // State to manage popup visibility
@@ -17,6 +18,8 @@ const Navbar = () => {
     const mobileMenuRef = useRef(null);
     const mobileButtonRef = useRef(null);
 
+    const { user, loading } = useCurrentUser(); // Fetch current user info using custom hook
+console.log(user)
     // Toggle notification popup visibility
     const togglePopup = () => {
         if (isProfileMenuOpen) {
@@ -157,7 +160,16 @@ const Navbar = () => {
                                 {/* Log out */}
                                 <li className="py-2 px-3 hover:bg-gray-300 rounded-md cursor-pointer flex gap-5">
                                     <LogOut size={18} />
-                                    <span className="flex-1">Log out</span>
+                                    <span
+                                        onClick={() => {
+                                            console.log('clicked logout');
+                                            localStorage.removeItem("token");
+                                            // Reload the page to reflect the logout
+                                            window.location.reload();
+                                            setIsProfileMenuOpen(false);
+                                        }}
+                                        className="flex-1"
+                                    >Log out</span>
                                     <ChevronRight size={18} />
                                 </li>
                             </ul>

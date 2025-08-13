@@ -106,7 +106,7 @@ export default function ProfileImageUploader() {
                     ) : (
                         <img
                             className="w-18 h-18 object-cover rounded-full"
-                            src={`http://10.10.13.59:8000/${user.image}`}
+                            src={`http://10.10.13.59:8000/${user?.image}`}
 
                             alt="Preview of uploaded image"
                         />

@@ -235,7 +235,15 @@ const Dashboard = () => {
                                         </li>
 
                                         {/* Log out */}
-                                        <li className="py-2 px-3 hover:bg-gray-300 rounded-md cursor-pointer flex gap-5">
+                                        <li
+                                            onClick={() => {
+                                                console.log('clicked logout');
+                                                localStorage.removeItem("token");
+                                                // Reload the page to reflect the logout
+                                                window.location.reload();
+                                                setIsProfileMenuOpen(false);
+                                            }}
+                                            className="py-2 px-3 hover:bg-gray-300 rounded-md cursor-pointer flex gap-5">
                                             <LogOut size={18} />
                                             <span className="flex-1">Log out</span>
                                             <ChevronRight size={18} />

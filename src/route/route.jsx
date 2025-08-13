@@ -67,6 +67,7 @@ import VideoCallInterface from "../Components/AdminDashboard/VideoCallInterface"
 import MentorHome from "../Components/AdminDashboard/MentorHome";
 import AddProductRequestPage from "../Pages/AdminDashboard/AddProductRequestPage";
 import { version } from "react";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
     {
@@ -119,12 +120,12 @@ const router = createBrowserRouter([
     },
     {
         path: "/maindashboard",
-        element: <MainDashboard></MainDashboard>
+        element: <PrivateRoute><MainDashboard></MainDashboard></PrivateRoute>
     },
     // Dashboard or Home route
     {
         path: "Dashboard",
-        element: <Dashboard></Dashboard>,
+        element: <PrivateRoute><Dashboard></Dashboard></PrivateRoute>,
         children: [
             {
                 path: "", // default child route (dashboard/)
@@ -159,11 +160,11 @@ const router = createBrowserRouter([
     },
     {
         path: "/library",
-        element: <ProductLibrary></ProductLibrary>
+        element: <PrivateRoute><ProductLibrary></ProductLibrary></PrivateRoute>,
     },
     {
         path: "/library/product-detail",
-        element: <ProductDetailPage></ProductDetailPage>,
+        element: <PrivateRoute><ProductDetailPage></ProductDetailPage></PrivateRoute>,
         children: [
             {
                 path: "",
@@ -181,7 +182,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/chat",
-        element: <ChatPage></ChatPage>,
+        element: <PrivateRoute><ChatPage></ChatPage></PrivateRoute>,
         children: [
             {
                 path: "",
@@ -199,7 +200,7 @@ const router = createBrowserRouter([
 
     {
         path: "/tracker",
-        element: <TrackerLayout />,
+        element: <PrivateRoute><TrackerLayout></TrackerLayout></PrivateRoute>,
         children: [
             {
                 index: true,
@@ -252,7 +253,7 @@ const router = createBrowserRouter([
         element: <PageNotFound></PageNotFound>
     },
 
-  
+
 
     // Admin Dashboard......................................................
     {
@@ -339,7 +340,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "products/addproduct",
-                element:<AddProductRequestPage></AddProductRequestPage>,
+                element: <AddProductRequestPage></AddProductRequestPage>,
             },
             {
                 path: "products/edit-product",
