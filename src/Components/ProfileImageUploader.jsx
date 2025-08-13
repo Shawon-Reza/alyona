@@ -5,7 +5,6 @@ import { CircleUserRoundIcon, XIcon } from "lucide-react";
 import axiosApi from "@/api/axiosApi"; // Assuming axiosApi is configured for your API
 import { toast } from 'react-toastify';
 import { data, useNavigate } from "react-router-dom";
-import img from '../assets/annaImg.png'; // Default image if not uploaded
 import useCurrentUser from "@/hooks/useCurrentUser";
 
 export default function ProfileImageUploader() {
@@ -17,7 +16,10 @@ export default function ProfileImageUploader() {
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
-console.log(user)
+    console.log(user)
+    if (loading) {
+        return <div>Loading...</div>; // Show loading state while fetching user data
+    }
     // Handle the image file change (when a file is selected from file input)
     const handleImageChange = (e) => {
         const selectedFile = e.target.files[0]; // Get the selected file
@@ -85,11 +87,6 @@ console.log(user)
         }
     };
 
-    // Remove the uploaded image and reset the state
-    const handleRemoveImage = () => {
-        setImageFile(null);
-        setImagePreview(null); // Reset the preview URL
-    };
 
     return (
         <div className="flex flex-col items-center gap-2">
@@ -107,18 +104,15 @@ console.log(user)
                             alt="Preview of uploaded image"
                         />
                     ) : (
-                        <CircleUserRoundIcon className="w-8 h-8 opacity-60" />
+                        <img
+                            className="w-18 h-18 object-cover rounded-full"
+                            src={`http://10.10.13.59:8000/${user.image}`}
+
+                            alt="Preview of uploaded image"
+                        />
                     )}
                 </button>
-                {imageFile && (
-                    <button
-                        onClick={handleRemoveImage}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                        aria-label="Remove image"
-                    >
-                        <XIcon className="w-4 h-4" />
-                    </button>
-                )}
+              
                 {/* Hidden File Input */}
                 <input
                     type="file"
@@ -133,13 +127,7 @@ console.log(user)
             {isUploading && <div className="text-xs text-blue-500">Uploading...</div>} {/* Uploading feedback */}
             {error && <div className="text-xs text-red-500">{error}</div>} {/* Error message */}
 
-            <p
-                aria-live="polite"
-                role="region"
-                className="text-muted-foreground mt-2 text-xs"
-            >
-                Avatar upload button
-            </p>
+            
         </div>
     );
 }
