@@ -47,6 +47,7 @@ const LoginPage = () => {
             // Example: Save access token to localStorage
             localStorage.setItem('accessToken', JSON.stringify(response.data));
             localStorage.setItem('token', JSON.stringify(response?.data?.access));
+            localStorage.removeItem("adtoken");
 
 
 

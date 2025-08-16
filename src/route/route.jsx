@@ -68,6 +68,7 @@ import MentorHome from "../Components/AdminDashboard/MentorHome";
 import AddProductRequestPage from "../Pages/AdminDashboard/AddProductRequestPage";
 import { version } from "react";
 import PrivateRoute from "./PrivateRoute";
+import PrivetAdminRoute from "./PrivetAdminRoute";
 
 const router = createBrowserRouter([
     {
@@ -269,7 +270,7 @@ const router = createBrowserRouter([
 
     {
         path: '/admindashboard',
-        element: <AdminDashboard />,
+        element: <PrivetAdminRoute><AdminDashboard></AdminDashboard></PrivetAdminRoute>,
         children: [
             {
                 path: "",

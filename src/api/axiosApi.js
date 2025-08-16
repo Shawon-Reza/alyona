@@ -10,13 +10,19 @@ const axiosApi = axios.create({
 // Add a request interceptor to include Bearer token automatically
 axiosApi.interceptors.request.use(
     (config) => {
-        // Get accesstoken from localstorage.........................
-        const token = JSON.parse(localStorage.getItem('accessToken'));
+        let token = null;  // Declare the token variable here
 
+        try {
+            // Get access token from localStorage
+            token = JSON.parse(localStorage.getItem('token')) || JSON.parse(localStorage.getItem('adtoken'));
+        } catch (error) {
+            console.error("Error parsing token from localStorage", error);
+        }
 
         if (token) {
-            config.headers.Authorization = `Bearer ${token.access}`;
+            config.headers.Authorization = `Bearer ${token}`;
         }
+
         return config;
     },
     (error) => Promise.reject(error)

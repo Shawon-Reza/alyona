@@ -14,6 +14,7 @@ const UploadProfilePage = () => {
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
+    
     const handleImageChange = (e) => {
         const file = e.target.files[0];
 

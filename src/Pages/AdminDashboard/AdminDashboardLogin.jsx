@@ -5,6 +5,8 @@ import login from '../../assets/loginPageIMG.png';
 import { useNavigate } from 'react-router-dom';
 import LoginPageOverLap from '../../assets/LoginPageOverLap.png'
 import NavbarLogo from '../../assets/NavbarLogo.png'
+import axiosApi from '@/api/axiosApi';
+import { toast } from 'react-toastify';
 
 const AdminDashboardLogin = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +16,41 @@ const AdminDashboardLogin = () => {
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
+
+    const handleAdminLoginForm = (e) => {
+        e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        console.log('Email:', email, 'Password:', password)
+
+        // Here you would typically send the email and password to your backend for authentication
+
+
+
+
+
+        axiosApi.post('/accounts/api/v1/login', { email, password })
+            .then((response) => {
+                toast.success('Login successful!');
+                navigate('/admindashboard');
+                localStorage.setItem("adtoken", JSON.stringify(response.data.access));
+                console.log('Login successful:', response.data);
+                localStorage.removeItem("token");
+                
+
+            })
+            .catch((error) => {
+                console.error('Login failed:', error);
+                toast.error('Login failed. Please check your credentials : ' + error.response.data.detail);
+            });
+
+
+
+
+
+    }
+
+
 
     return (
         <div className="relative h-screen flex flex-col md:flex-row border-15 border-white rounded-3xl shadow-2xl">
@@ -89,9 +126,12 @@ const AdminDashboardLogin = () => {
                     <div className="text-center text-gray-500 text-sm lg:text-base">Or</div>
 
                     {/* Email and Password Form */}
-                    <form className="space-y-5 lg:space-y-6">
+                    <form
+                        onSubmit={handleAdminLoginForm}
+                        className="space-y-5 lg:space-y-6">
                         <input
                             type="email"
+                            name='email'
                             placeholder="Email"
                             className="w-full px-4 lg:px-6 py-3 lg:py-4 text-base lg:text-lg  bg-white/50 rounded-xl border border-base-200  focus:outline-none focus:ring-2 focus:ring-indigo-200"
                         />
@@ -99,6 +139,7 @@ const AdminDashboardLogin = () => {
                             <input
                                 type={showPassword ? 'text' : 'password'}
                                 placeholder="Password"
+                                name='password'
                                 className="w-full px-4 lg:px-6 py-3 lg:py-4 pr-10 text-base lg:text-lg rounded-xl bg-white/50 border border-base-200  focus:outline-none focus:ring-2 focus:ring-indigo-200"
                             />
                             <button
