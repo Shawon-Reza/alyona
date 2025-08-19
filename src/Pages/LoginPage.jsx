@@ -42,6 +42,10 @@ const LoginPage = () => {
                     console.log('statuse', response?.login_user_info?.quiz_status)
                     navigate('/maindashboard')
                 }, 2000);
+            } else {
+                setTimeout(() => {
+                    navigate('/SimpleRegisterPage');
+                }, 2000);
             }
             console.log('first', response?.data)
             // Example: Save access token to localStorage

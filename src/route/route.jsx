@@ -318,7 +318,7 @@ const router = createBrowserRouter([
                         element: <UserManagementTable></UserManagementTable>
                     },
                     {
-                        path: 'user/profile',
+                        path: 'user/profile/:id',
                         element: <UserProfilePage></UserProfilePage>
                     },
                     {

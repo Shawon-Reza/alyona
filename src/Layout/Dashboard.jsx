@@ -19,6 +19,7 @@ import NotificationPopup from '../Components/NotificationPopup';
 import useIsBelowMd from '../hooks/useIsBelowMd';
 import { BsLayoutSidebarInset } from 'react-icons/bs';
 import Swal from 'sweetalert2';
+import useCurrentUser from '@/hooks/useCurrentUser';
 
 const plans = [
     {
@@ -71,6 +72,8 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const navMenuRef = useRef(null);
     const menuButtonRef = useRef(null);
+
+    const { user, loading } = useCurrentUser();
 
     // Toggle notification popup visibility
     const togglePopup = () => {
@@ -196,7 +199,7 @@ const Dashboard = () => {
                                 className="rounded-full w-10 h-10 overflow-hidden cursor-pointer"
                                 onClick={toggleProfileMenu}
                             >
-                                <img src={annaImg || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
+                                <img src={`http://10.10.13.59:8000/${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
                             </div>
 
                             {/* Profile Menu Popup */}

@@ -2,6 +2,7 @@
 
 import { Diamond, Star, Heart, Filter, Download, ChevronDown } from "lucide-react"
 import { useState } from "react"
+import { BorderBeam } from "../magicui/border-beam"
 
 export default function SubscribersBySubscription() {
     const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -87,8 +88,15 @@ export default function SubscribersBySubscription() {
                     return (
                         <div
                             key={index}
-                            className="border border-gray-200 rounded-xl p-6 bg-white/50 shadow-lg hover:shadow-xl transition-shadow"
+
+                            className="border border-gray-200 rounded-xl p-6 bg-white/50 shadow-lg transition-all duration-300 ease-out hover:shadow-xl  relative cursor-pointer hover:scale-103"
                         >
+                            <BorderBeam
+                                duration={15}
+                                size={500}
+                                reverse
+
+                            />
                             <div className="flex items-center gap-5">
                                 <div className={`p-2 rounded-lg ${plan.bgColor}`}>
                                     <IconComponent className={`w-7 h-7 ${plan.iconColor}`} />

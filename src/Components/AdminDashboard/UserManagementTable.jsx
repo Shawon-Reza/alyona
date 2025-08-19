@@ -23,32 +23,35 @@ const mentors = [
 ]
 
 // Available statuses for dropdown
-const statuses = ["Active", "Inactive", "Banned User", "Pending"]
+const statuses = ["Active", "Inactive", "Banned"]
 
 // Subscription types
-const subscriptionTypes = ["Premium", "Free", "Producto"]
+const subscriptionTypes = [, "Free", "Premium monthly", "Premium Yearly", "Luxury monthly", "Luxury Yearly"]
 
 export default function UserManagementTable() {
     const [currentPage, setCurrentPage] = useState(1)
     const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" })
     const [searchTerm, setSearchTerm] = useState("")
     const [searchValue, setSearchValue] = useState()
+    const [filters, setFilters] = useState({
+        subscription: "",
+        status: "",
+    })
 
-    const { isPending, error, data } = useGetTotalUsers({ currentPage, sortConfig, searchTerm })
+    const { isPending, error, data } = useGetTotalUsers({ currentPage, sortConfig, searchTerm, filters })
     if (isPending) {
         return <div className="text-center text-gray-500">Loading...</div>
     }
 
     // [MOD] keep a local render array
     const [users, setUsers] = useState(data?.results || []) // [unchanged init]
-
+    console.log(users)
     const [editingMentor, setEditingMentor] = useState(null)
     const [editingStatus, setEditingStatus] = useState(null)
     const [showFilterPanel, setShowFilterPanel] = useState(false)
-    const [filters, setFilters] = useState({
-        subscription: "",
-        status: "",
-    })
+
+
+
     const filterPanelRef = useRef(null)
 
     const usersPerPage = 12
@@ -61,7 +64,7 @@ export default function UserManagementTable() {
             (data?.results || []).map((u) => ({
                 ...u,
                 mentor: u?.mentor ?? "No assigned",
-                status: u?.status ?? "Inactive",
+                status: u?.is_active ?? "Inactive",
                 // your payload used subscription_plan in the last message; surface both safely:
                 subscription: u?.subscription ?? u?.subscription_plan ?? "none",
             }))
@@ -127,7 +130,7 @@ export default function UserManagementTable() {
 
     // Update status (UI; plug API call here if needed)
     const updateStatus = (userId, status) => {
-         console.log(`Status updated for user ${userId}:`, status) 
+        console.log(`Status updated for user ${userId}:`, status)
         setUsers((prev) => prev.map((user) => (user.id === userId ? { ...user, status } : user)))
         setEditingStatus(null)
     }
@@ -296,7 +299,7 @@ export default function UserManagementTable() {
                                 <tr key={user.id} className="border-b border-base-300 hover:bg-gray-50 ">
                                     <td
                                         onClick={() => {
-                                            navigate('user/profile') // or navigate(`/user/profile/${user.id}`)
+                                            navigate(`user/profile/${user.id}`) // or navigate(`/user/profile/${user.id}`)
                                         }}
                                         className="py-3 px-4 cursor-pointer"
                                     >

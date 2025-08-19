@@ -1,14 +1,15 @@
 import axiosApi from '@/api/axiosApi';
 import { useQuery } from '@tanstack/react-query';
 
-const useGetTotalUsers = ({ currentPage, sortConfig, searchTerm }) => {
+const useGetTotalUsers = ({ currentPage, sortConfig, searchTerm, filters }) => {
     // console.log('Hook called with:', currentPage, sortConfig, searchTerm);
+    // console.log(filters)
 
     const { isLoading, error, data } = useQuery({
-        queryKey: ['userlist', currentPage, sortConfig, searchTerm],
+        queryKey: ['userlist', currentPage, sortConfig, searchTerm, filters],
         queryFn: () =>
             axiosApi
-                .get(`/admin_panel/api/v1/user-list?page=${currentPage}&sort_by=${sortConfig?.key || ''}&sort_order=${sortConfig?.direction || ''}&search=${searchTerm || ''}`)
+                .get(`/admin_panel/api/v1/user-list?page=${currentPage}&sort_by=${sortConfig?.key || ''}&sort_order=${sortConfig?.direction || ''}&search=${searchTerm || ''}&subscription_plan=${filters?.subscription || ''}&active_status=${filters?.status || ''}`)
                 .then((res) => res.data),
         keepPreviousData: true,
     });

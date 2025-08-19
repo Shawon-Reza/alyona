@@ -1,91 +1,82 @@
 "use client"
+import axiosApi from '@/api/axiosApi'
+import { useQuery } from '@tanstack/react-query'
 import { Download } from 'lucide-react'
+import { useParams } from 'react-router-dom'
 
-const userData = {
-    id: "77-80-0001-2025-05-0",
-    name: "Janet Arias",
-    age: 28,
-    location: "Nantes, France",
-    subscription: "LUXURY",
-    creationDate: "09-05-2025 02:45",
-    gender: "Female",
-    lastLogin: "12-06-2025 12:45",
-    lifestyle: "Under a lot of stress; mostly night life — I love to go out",
-    habits: "Vegan",
-    dieta: "",
-    actividad: "",
-    pregnancy: "No",
-    paymentHistory: [
-        {
-            id: 1,
-            subscriptionPlan: "Premium",
-            paymentDate: "15/06/2025",
-            total: "$7",
-        },
-        {
-            id: 2,
-            subscriptionPlan: "Free",
-            paymentDate: "15/06/2025",
-            total: "$0",
-        },
-    ],
-}
+
 
 export default function ProfileContent() {
     const handleDownloadQuiz = () => {
         console.log("Download user quiz clicked")
     }
+    // Get user ID from URL params
+    const { id } = useParams();
+
+    const { isPending, error, data } = useQuery({
+        queryKey: ['userDetail', id],
+        queryFn: () =>
+            axiosApi.get(`/admin_panel/api/v1/user-detail/${id}`)
+                .then((res) => res.data),
+    });
+
+    if (isPending) return 'Loading...';
+    if (error) return 'An error has occurred: ' + error.message;
+
+    console.log(data);
+    console.log(data?.payment_history?.plan);
+
 
     return (
         <div className="px-4 md:px-0">
             {/* General Section */}
             <div className="mb-6 md:mb-8">
                 <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4 md:mb-6">General</h2>
-                
+
                 {/* Mobile: Single column, Desktop: Two columns */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                     <div className="space-y-0">
                         {/* ID */}
                         <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
                             <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">ID</span>
-                            <span className="text-[#5B5B5B] text-sm md:text-base break-all sm:w-2/3 lg:w-3/4">{userData.id}</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base break-all sm:w-2/3 lg:w-3/4">{data?.id}</span>
                         </div>
                         {/* Age */}
                         <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
                             <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Age</span>
-                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{userData.age}</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{data?.birthday}</span>
                         </div>
                         {/* Location */}
                         <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
                             <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Location</span>
-                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{userData.location}</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{data?.location || "Empty"}</span>
                         </div>
                         {/* Subscription */}
                         <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
                             <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Subscription</span>
                             <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">
                                 <span className="inline-block px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs md:text-sm font-medium">
-                                    {userData.subscription}
+                                    {data?.payment_history?.plan || 'Empty'}
                                 </span>
                             </span>
                         </div>
                     </div>
-                    
+
                     <div className="space-y-0 mt-4 lg:mt-0">
                         {/* Creation Date */}
                         <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
                             <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Creation date</span>
-                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{userData.creationDate}</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{data?.creation_date || 'Empty'}</span>
                         </div>
                         {/* Gender */}
                         <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
                             <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Gender</span>
-                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{userData.gender}</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{data?.gender || 'Empty'}</span>
                         </div>
                         {/* Last Login */}
                         <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
                             <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/3 lg:w-1/4">Last login</span>
-                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{userData.lastLogin}</span>
+                            <span className="text-[#5B5B5B] text-sm md:text-base sm:w-2/3 lg:w-3/4">{data?.last_login || 'Empty'}</span>
                         </div>
                     </div>
                 </div>
@@ -97,23 +88,19 @@ export default function ProfileContent() {
                 <div className="space-y-0">
                     <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
                         <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Lifestyle</span>
-                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{userData.lifestyle}</span>
+                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{data?.lifestyle || 'Empty'}</span>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
                         <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Habits</span>
-                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{userData.habits}</span>
-                    </div>
-                    <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
-                        <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Dieta</span>
-                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{userData.dieta || "-"}</span>
+                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{data?.habits || "Empty"}</span>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
                         <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Actividad</span>
-                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{userData.actividad || "-"}</span>
+                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{data?.activities || "Empty"}</span>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
                         <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Pregnancy</span>
-                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{userData.pregnancy}</span>
+                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{data?.pregnancy || 'Empty'}</span>
                     </div>
                 </div>
             </div>
@@ -121,23 +108,23 @@ export default function ProfileContent() {
             {/* Payment History Section */}
             <div className="mb-6 md:mb-8">
                 <h2 className="text-lg md:text-xl border-b-2 border-base-300 text-[#5B5B5B] mb-4 md:mb-6 pb-2">Payment History</h2>
-                
+
                 {/* Mobile: Card Layout, Desktop: Table Layout */}
                 <div className="md:hidden space-y-3">
-                    {userData.paymentHistory.map((payment) => (
+                    {data?.payment_history.map((payment) => (
                         <div key={payment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                             <div className="space-y-2">
                                 <div className="flex justify-between items-center">
                                     <span className="font-medium text-gray-700 text-sm">Plan</span>
-                                    <span className="text-gray-900 text-sm font-medium">{payment.subscriptionPlan}</span>
+                                    <span className="text-gray-900 text-sm font-medium">{payment?.plan}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <span className="font-medium text-gray-700 text-sm">Date</span>
-                                    <span className="text-gray-900 text-sm">{payment.paymentDate}</span>
+                                    <span className="text-gray-900 text-sm">{payment?.payment_date}</span>
                                 </div>
                                 <div className="flex justify-between items-center pt-2 border-t border-gray-100">
                                     <span className="font-medium text-gray-700 text-sm">Total</span>
-                                    <span className="text-gray-900 text-sm font-semibold">{payment.total}</span>
+                                    <span className="text-gray-900 text-sm font-semibold">{payment?.amount}</span>
                                 </div>
                             </div>
                         </div>
@@ -155,11 +142,11 @@ export default function ProfileContent() {
                             </tr>
                         </thead>
                         <tbody>
-                            {userData.paymentHistory.map((payment) => (
+                            {data?.payment_history.map((payment) => (
                                 <tr key={payment.id} className="border-b border-gray-100 hover:bg-gray-50 transition-all duration-200">
-                                    <td className="py-3 px-4 text-gray-900">{payment.subscriptionPlan}</td>
-                                    <td className="py-3 px-4 text-gray-900">{payment.paymentDate}</td>
-                                    <td className="py-3 px-4 text-gray-900">{payment.total}</td>
+                                    <td className="py-3 px-4 text-gray-900">{payment?.plan}</td>
+                                    <td className="py-3 px-4 text-gray-900">{payment?.payment_date}</td>
+                                    <td className="py-3 px-4 text-gray-900">{payment?.amount}</td>
                                 </tr>
                             ))}
                         </tbody>

@@ -1,463 +1,140 @@
+// Note: This version uses `react-select` for autocomplete + creatable fields.
+// Make sure you install dependencies:
+// npm install react-select
+
 "use client"
 
 import { useState } from "react"
 import { Search, X } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import Select from "react-select"
+import CreatableSelect from "react-select/creatable"
+
+const singleSelectStyles = {
+    control: (base) => ({ ...base, backgroundColor: "#ffffff88", borderRadius: "0.75rem" }),
+    menu: (base) => ({ ...base, zIndex: 9999 })
+}
+
+const multiSelectStyles = {
+    ...singleSelectStyles,
+    multiValue: (base) => ({ ...base, backgroundColor: "#ffffffcc" }),
+}
+
+const options = {
+    categories: ["Skincare", "Hair Care", "Body Care", "Perfume"].map(label => ({ label, value: label })),
+    priceRanges: ["$", "$$", "$$$"].map(label => ({ label, value: label })),
+    brands: ["Brand A", "Brand B"].map(label => ({ label, value: label })),
+    productTypes: ["Night Cream", "Moisturizer"].map(label => ({ label, value: label })),
+    skinTypes: ["Normal", "Oily", "Dry", "Sensitive"].map(label => ({ label, value: label })),
+    concerns: ["Acne", "Aging", "Dryness", "Dehydration"].map(label => ({ label, value: label })),
+    ingredients: ["Peptides", "Hyaluronic Acid", "Phytosterols", "Aloe Juice"].map(label => ({ label, value: label })),
+    inci: ["Aloe Barbadensis Leaf Juice", "Glycerin", "Simmondsia Chinensis Seed Oil"].map(label => ({ label, value: label })),
+    volumes: ["12 g", "0.42 oz"].map(label => ({ label, value: label })),
+    textures: ["Rich", "Cream"].map(label => ({ label, value: label })),
+    features: ["Firming", "Hydrating", "Barrier-repairing", "Skin glow"].map(label => ({ label, value: label })),
+    fragranceNotes: ["Floral", "Amber", "Sweet"].map(label => ({ label, value: label })),
+}
 
 export default function AddProductRequestPage() {
     const [formData, setFormData] = useState({
         pregnancySafe: false,
         fragranceFree: false,
-        inciIngredients: ["Leaf Juice", "Glycerin"],
-        productId: "YB001",
+        productId: "",
         category: "",
         brand: "",
         productName: "",
-        productType: "",
+        productType: [],
         skinTypes: [],
         concerns: [],
         ingredients: [],
-        texture: "",
+        inciIngredients: [],
+        volume: [],
+        texture: [],
         features: [],
         natural: "",
         organic: "",
         priceRange: "",
         fragrance: "",
-        fragranceNotes: "",
+        fragranceNotes: [],
         productUrl: "",
         imageUrl: ""
     })
 
-    const removeInciIngredient = (ingredientToRemove) => {
-        setFormData(prevData => ({
-            ...prevData,
-            inciIngredients: prevData.inciIngredients.filter((ingredient) => ingredient !== ingredientToRemove)
-        }))
+    const navigate = useNavigate()
+
+    const handleSelectChange = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }))
+    }
+
+    const handleMultiChange = (field, values) => {
+        setFormData(prev => ({ ...prev, [field]: values.map(opt => opt.value) }))
     }
 
     const handleSave = () => {
-        console.log(formData)
+        console.log("Saving form data:", formData)
     }
 
-    const navigate = useNavigate()
-
     return (
-        <div className="min-h-screen p-6">
-            {/* Breadcrumbs */}
+        <div className="min-h-screen ">
             <div className="text-sm breadcrumbs mb-6">
                 <ul>
-                    <li onClick={() => {
-                        navigate('/admindashboard')
-                    }}>
-                        <a>Dashboard</a>
-                    </li>
+                    <li onClick={() => navigate('/admindashboard')}><a>Dashboard</a></li>
                     <li>New product request</li>
                 </ul>
             </div>
 
-            <div className="card  p-6">
+            <div className="card ">
                 <h2 className="text-xl font-semibold mb-6">General</h2>
 
-                {/* Pregnancy/Breastfeeding Safe */}
-                <div className="flex items-center gap-10 col-span-full md:col-span-1">
-                    <label htmlFor="pregnancy-safe" className="label cursor-pointer">
-                        <span className="label-text text-[#181818] font-medium">Pregnancy/ Breastfeeding Safe: No</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+                    <input type="text" placeholder="Product ID" className="input input-bordered bg-white/50 rounded-lg w-full" value={formData.productId} onChange={e => handleSelectChange("productId", e.target.value)} />
+                   
+                    <Select options={options.categories} styles={singleSelectStyles} placeholder="Category" onChange={opt => handleSelectChange("category", opt.value)} />
+                    <CreatableSelect options={options.brands} styles={singleSelectStyles} placeholder="Brand" onChange={opt => handleSelectChange("brand", opt.value)} />
+                    <input type="text" placeholder="Product Name" className="input input-bordered bg-white/50 rounded-lg w-full" value={formData.productName} onChange={e => handleSelectChange("productName", e.target.value)} />
+                    <CreatableSelect isMulti options={options.productTypes} styles={multiSelectStyles} placeholder="Product Types" onChange={opts => handleMultiChange("productType", opts)} />
+                    <Select isMulti options={options.skinTypes} styles={multiSelectStyles} placeholder="Skin Types" onChange={opts => handleMultiChange("skinTypes", opts)} />
+                    <CreatableSelect isMulti options={options.concerns} styles={multiSelectStyles} placeholder="Concerns" onChange={opts => handleMultiChange("concerns", opts)} />
+                    <CreatableSelect isMulti options={options.ingredients} styles={multiSelectStyles} placeholder="Ingredients" onChange={opts => handleMultiChange("ingredients", opts)} />
+                    <CreatableSelect isMulti options={options.inci} styles={multiSelectStyles} placeholder="INCI Ingredients" onChange={opts => handleMultiChange("inciIngredients", opts)} />
+                    <CreatableSelect isMulti options={options.volumes} styles={multiSelectStyles} placeholder="Volume" onChange={opts => handleMultiChange("volume", opts)} />
+                    <CreatableSelect isMulti options={options.textures} styles={multiSelectStyles} placeholder="Texture" onChange={opts => handleMultiChange("texture", opts)} />
+                    <CreatableSelect isMulti options={options.features} styles={multiSelectStyles} placeholder="Features" onChange={opts => handleMultiChange("features", opts)} />
+                    <input type="text" placeholder="% Natural" className="input input-bordered bg-white/50 rounded-lg w-full" value={formData.natural} onChange={e => handleSelectChange("natural", e.target.value)} />
+                    <input type="text" placeholder="% Organic" className="input input-bordered bg-white/50 rounded-lg w-full" value={formData.organic} onChange={e => handleSelectChange("organic", e.target.value)} />
+                    <Select options={options.priceRanges} styles={singleSelectStyles} placeholder="Price Range ($, $$, $$$)" onChange={opt => handleSelectChange("priceRange", opt.value)} />
+                </div>
+
+                <h2 className="text-xl font-semibold mt-10">Fragrance</h2>
+                <hr className="my-4" />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Select options={[{ value: 'Yes', label: 'Yes' }, { value: 'No', label: 'No' }]} styles={singleSelectStyles} placeholder="Fragrance?" onChange={opt => handleSelectChange("fragrance", opt.value)} />
+                    <CreatableSelect isMulti options={options.fragranceNotes} styles={multiSelectStyles} placeholder="Fragrance Notes" onChange={opts => handleMultiChange("fragranceNotes", opts)} />
+                </div>
+
+                <div className="form-control flex flex-col mt-6">
+                    <label className="label cursor-pointer">
+                        <span className="label-text">Pregnancy/Breastfeeding Safe</span>
+                        <input type="checkbox" className="toggle h-5" checked={formData.pregnancySafe} onChange={() => handleSelectChange("pregnancySafe", !formData.pregnancySafe)} />
                     </label>
-                    <input
-                        id="pregnancy-safe" 
-                        type="checkbox"
-                        className="toggle toggle-sm"
-                        checked={formData.pregnancySafe}
-                        onChange={() => setFormData(prevData => ({
-                            ...prevData,
-                            pregnancySafe: !prevData.pregnancySafe
-                        }))}
-                    />
-                </div>
-
-                {/* ID, Category, Brand, Product Name, Product Type, etc. */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 text-[#181818]" >
-                    {/* ID */}
-                    <div>
-                        <label htmlFor="id" className="label">
-                            <span className="text-[#181818] font-bold mb-1">ID</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="id"
-                            value={formData.productId}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                productId: e.target.value
-                            }))}
-                            className="input  w-full rounded-xl bg-white/50"
-                        />
-                    </div>
-
-                    {/* Category */}
-                    <div>
-                        <label htmlFor="category" className="label">
-                            <span className="text-[#181818] font-bold mb-1">Category</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="category"
-                            value={formData.category}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                category: e.target.value
-                            }))}
-                            className="input input-bordered w-full rounded-xl bg-white/50"
-                        />
-                    </div>
-
-                    {/* Brand */}
-                    <div>
-                        <label htmlFor="brand" className="label">
-                            <span className="text-[#181818] font-bold mb-1">Brand</span>
-                        </label>
-                        <select
-                            id="brand"
-                            value={formData.brand}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                brand: e.target.value
-                            }))}
-                            className="select select-bordered w-full rounded-xl bg-white/50"
-                        >
-                            <option value="">Choose an option</option>
-                            <option value="Brand A">Brand A</option>
-                            <option value="Brand B">Brand B</option>
-                        </select>
-                    </div>
-
-                    {/* Product name */}
-                    <div>
-                        <label htmlFor="product-name" className="label">
-                            <span className="text-[#181818] font-bold mb-1 ">Product name</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="product-name"
-                            value={formData.productName}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                productName: e.target.value
-                            }))}
-                            className="input input-bordered w-full rounded-xl bg-white/50"
-                        />
-                    </div>
-
-                    {/* Product type */}
-                    <div>
-                        <label htmlFor="product-type" className="label">
-                            <span className="text-[#181818] font-bold mb-1">Product type</span>
-                        </label>
-                        <select
-                            id="product-type"
-                            value={formData.productType}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                productType: e.target.value
-                            }))}
-                            className="select select-bordered w-full rounded-xl bg-white/50"
-                        >
-                            <option value="">Choose an option</option>
-                            <option value="Type 1">Type 1</option>
-                            <option value="Type 2">Type 2</option>
-                        </select>
-                    </div>
-
-                    {/* Skin types */}
-                    <div>
-                        <label htmlFor="skin-types" className="label">
-                            <span className="text-[#181818] font-bold mb-1">Skin types</span>
-                        </label>
-                        <select
-                            id="skin-types"
-                            value={formData.skinTypes}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                skinTypes: e.target.value.split(',')
-                            }))}
-                            className="select select-bordered w-full bg-white/50 rounded-lg"
-                        >
-                            <option value="">Choose multiple options</option>
-                            <option value="Normal">Normal</option>
-                            <option value="Oily">Oily</option>
-                        </select>
-                    </div>
-
-                    {/* Concerns */}
-                    <div>
-                        <label htmlFor="concerns" className="label">
-                            <span className="text-[#181818] font-bold mb-1">Concerns</span>
-                        </label>
-                        <select
-                            id="concerns"
-                            value={formData.concerns}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                concerns: e.target.value.split(',')
-                            }))}
-                            className="select select-bordered w-full bg-white/50 rounded-lg"
-                        >
-                            <option value="">Choose multiple options</option>
-                            <option value="Acne">Acne</option>
-                            <option value="Aging">Aging</option>
-                        </select>
-                    </div>
-
-                    {/* Ingredients */}
-                    <div>
-                        <label htmlFor="ingredients" className="label">
-                            <span className="text-[#181818] font-bold mb-1">Ingredients</span>
-                        </label>
-                        <select
-                            id="ingredients"
-                            value={formData.ingredients}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                ingredients: e.target.value.split(',')
-                            }))}
-                            className="select select-bordered w-full bg-white/50 rounded-lg"
-                        >
-                            <option value="">Choose multiple options</option>
-                            <option value="Ingredient A">Ingredient A</option>
-                            <option value="Ingredient B">Ingredient B</option>
-                        </select>
-                    </div>
-
-                    {/* INCI */}
-                    <div className="col-span-full md:col-span-2 ">
-                        <label htmlFor="inci" className="label">
-                            <span className="text-[#181818] font-bold mb-1">INCI</span>
-                        </label>
-                        <div className="relative flex items-center input input-bordered w-full flex-wrap gap-2 p-2 min-h-[3rem] bg-white/50 rounded-lg">
-                            {formData.inciIngredients.map((ingredient, index) => (
-                                <div key={index} className=" bg-white/50 rounded-lg badge badge-lg gap-2  text-gray-800">
-                                    {ingredient}
-                                    <button
-                                        type="button"
-                                        className="btn btn-xs btn-ghost btn-circle"
-                                        onClick={() => removeInciIngredient(ingredient)}
-                                    >
-                                        <X className="w-3 h-3" />
-                                    </button>
-                                </div>
-                            ))}
-                            <input type="text" id="inci" placeholder="" className="flex-grow outline-none bg-bla " />
-                            <Search className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2" />
-                        </div>
-                    </div>
-
-                    {/* Texture */}
-                    <div>
-                        <label htmlFor="texture" className="label">
-                            <span className="text-[#181818] font-bold mb-1">Texture</span>
-                        </label>
-                        <select
-                            id="texture"
-                            value={formData.texture}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                texture: e.target.value
-                            }))}
-                            className="select select-bordered w-full bg-white/50 rounded-lg"
-                        >
-                            <option value="">Choose an option</option>
-                            <option value="Cream">Cream</option>
-                            <option value="Gel">Gel</option>
-                        </select>
-                    </div>
-
-                    {/* Features */}
-                    <div>
-                        <label htmlFor="features" className="label">
-                            <span className="text-[#181818] font-bold mb-1">Features</span>
-                        </label>
-                        <select
-                            id="features"
-                            value={formData.features}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                features: e.target.value.split(',')
-                            }))}
-                            className="select select-bordered w-full bg-white/50 rounded-lg"
-                        >
-                            <option value="">Choose multiple options</option>
-                            <option value="Feature 1">Feature 1</option>
-                            <option value="Feature 2">Feature 2</option>
-                        </select>
-                    </div>
-
-                    {/* Natural */}
-                    <div>
-                        <label htmlFor="natural" className="label">
-                            <span className="text-[#181818] font-bold mb-1">Natural</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="natural"
-                            value={formData.natural}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                natural: e.target.value
-                            }))}
-                            className="input input-bordered w-full bg-white/50 rounded-lg"
-                        />
-                    </div>
-
-                    {/* Organic */}
-                    <div>
-                        <label htmlFor="organic" className="label">
-                            <span className="text-[#181818] font-bold mb-1">Organic</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="organic"
-                            value={formData.organic}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                organic: e.target.value
-                            }))}
-                            className="input input-bordered w-full bg-white/50 rounded-lg"
-                        />
-                    </div>
-
-                    {/* Price range */}
-                    <div>
-                        <label htmlFor="price-range" className="label">
-                            <span className="text-[#181818] font-bold mb-1">Price range</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="price-range"
-                            value={formData.priceRange}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                priceRange: e.target.value
-                            }))}
-                            className="input input-bordered w-full bg-white/50 rounded-lg"
-                        />
-                    </div>
-                </div>
-
-                <h2 className="text-xl font-semibold ">Fragrance</h2>
-                <hr className="my-6 border-gray-200" />
-
-                {/* Fragrance Free */}
-                <div className="flex items-center gap-10 col-span-full md:col-span-1">
-                    <label htmlFor="fragrance-free" className="label cursor-pointer">
-                        <span className="label-text text-base font-medium">Fragrance Free: No</span>
+                    <label className="label cursor-pointer">
+                        <span className="label-text">Fragrance Free</span>
+                        <input type="checkbox" className="toggle h-5" checked={formData.fragranceFree} onChange={() => handleSelectChange("fragranceFree", !formData.fragranceFree)} />
                     </label>
-                    <input
-                        id="fragrance-free"
-                        type="checkbox"
-                        className="toggle toggle-sm "
-                        checked={formData.fragranceFree}
-                        onChange={() => setFormData(prevData => ({
-                            ...prevData,
-                            fragranceFree: !prevData.fragranceFree
-                        }))}
-                    />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    {/* Fragrance */}
-                    <div>
-                        <label htmlFor="fragrance" className="label">
-                            <span className="label-text">Fragrance</span>
-                        </label>
-                        <select
-                            id="fragrance"
-                            value={formData.fragrance}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                fragrance: e.target.value
-                            }))}
-                            className="select select-bordered w-full bg-white/50 rounded-lg"
-                        >
-                            <option value="">Choose an option</option>
-                            <option value="Floral">Floral</option>
-                            <option value="Citrus">Citrus</option>
-                        </select>
-                    </div>
-
-                    {/* Fragrance notes */}
-                    <div>
-                        <label htmlFor="fragrance-notes" className="label">
-                            <span className="label-text">Fragrance notes</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="fragrance-notes"
-                            value={formData.fragranceNotes}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                fragranceNotes: e.target.value
-                            }))}
-                            className="input input-bordered w-full bg-white/50 rounded-lg"
-                        />
-                    </div>
+                <h2 className="text-xl font-semibold mt-10">Links</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input type="text" placeholder="Product URL" className="input input-bordered bg-white/50 rounded-lg w-full" value={formData.productUrl} onChange={e => handleSelectChange("productUrl", e.target.value)} />
+                    <input type="text" placeholder="Image URL" className="input input-bordered bg-white/50 rounded-lg w-full" value={formData.imageUrl} onChange={e => handleSelectChange("imageUrl", e.target.value)} />
                 </div>
 
-                <hr className="my-6 border-gray-200" />
-
-                <h2 className="text-xl font-semibold mb-6">URL</h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    {/* Product_URL */}
-                    <div>
-                        <label htmlFor="product-url" className="label">
-                            <span className="label-text">Product_URL</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="product-url"
-                            value={formData.productUrl}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                productUrl: e.target.value
-                            }))}
-                            className="bg-white/50 rounded-lg input input-bordered w-full"
-                        />
-                    </div>
-
-                    {/* Image_URL */}
-                    <div>
-                        <label htmlFor="image-url" className="label">
-                            <span className="label-text">Image_URL</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="image-url"
-                            value={formData.imageUrl}
-                            onChange={(e) => setFormData(prevData => ({
-                                ...prevData,
-                                imageUrl: e.target.value
-                            }))}
-                            className="input input-bordered w-full bg-white/50 rounded-lg"
-                        />
-                    </div>
-                </div>
-
-                {/* Action Buttons */}
                 <div className="flex justify-end gap-4 mt-8">
-                    {/* Get Back Button */}
-                    <button className="btn btn-ghost border border-[#BB9777] text-[#7271E3] hover:bg-red-100">
-                        Get back
-                    </button>
-
-                    {/* Save and Notify Button */}
-                    <button
-                        className="btn bg-[#BB9777] text-white hover:bg-purple-700 rounded-lg"
-                        onClick={handleSave}
-                    >
-                        Save
-                    </button>
+                    <button className="btn btn-ghost border border-[#BB9777] text-[#7271E3]">Get back</button>
+                    <button onClick={handleSave} className="btn bg-[#BB9777] text-white hover:bg-purple-700 rounded-lg">Save</button>
                 </div>
-
             </div>
         </div>
     )

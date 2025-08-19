@@ -19,7 +19,7 @@ const Navbar = () => {
     const mobileButtonRef = useRef(null);
 
     const { user, loading } = useCurrentUser(); // Fetch current user info using custom hook
-console.log(user)
+    console.log(user)
     // Toggle notification popup visibility
     const togglePopup = () => {
         if (isProfileMenuOpen) {
@@ -119,7 +119,7 @@ console.log(user)
                         className="rounded-full w-10 h-10 overflow-hidden cursor-pointer"
                         onClick={toggleProfileMenu}
                     >
-                        <img src={annaImg || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
+                        <img src={`http://10.10.13.59:8000/${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
                     </div>
 
                     {/* Profile Menu Popup */}
@@ -162,8 +162,9 @@ console.log(user)
                                     <LogOut size={18} />
                                     <span
                                         onClick={() => {
-                                            console.log('clicked logout');
+
                                             localStorage.removeItem("token");
+                                            console.log('clicked logout');
                                             // Reload the page to reflect the logout
                                             window.location.reload();
                                             setIsProfileMenuOpen(false);
