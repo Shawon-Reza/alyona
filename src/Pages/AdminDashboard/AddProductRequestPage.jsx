@@ -9,6 +9,8 @@ import { Search, X } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import Select from "react-select"
 import CreatableSelect from "react-select/creatable"
+import axiosApi from "@/api/axiosApi"
+import { toast } from "react-toastify"
 
 const singleSelectStyles = {
     control: (base) => ({ ...base, backgroundColor: "#ffffff88", borderRadius: "0.75rem" }),
@@ -21,7 +23,7 @@ const multiSelectStyles = {
 }
 
 const options = {
-    categories: ["Skincare", "Hair Care", "Body Care", "Perfume"].map(label => ({ label, value: label })),
+    categories: ["Skincare", "Hair care", "Body care", "Perfume"].map(label => ({ label, value: label })),
     priceRanges: ["$", "$$", "$$$"].map(label => ({ label, value: label })),
     brands: ["Brand A", "Brand B"].map(label => ({ label, value: label })),
     productTypes: ["Night Cream", "Moisturizer"].map(label => ({ label, value: label })),
@@ -36,6 +38,7 @@ const options = {
 }
 
 export default function AddProductRequestPage() {
+
     const [formData, setFormData] = useState({
         pregnancySafe: false,
         fragranceFree: false,
@@ -70,9 +73,74 @@ export default function AddProductRequestPage() {
         setFormData(prev => ({ ...prev, [field]: values.map(opt => opt.value) }))
     }
 
-    const handleSave = () => {
-        console.log("Saving form data:", formData)
-    }
+   const handleSave = () => {
+    console.log("Saving form data:", formData);
+
+    const backendProduct = {
+        brand: formData?.brand,
+        product_type: formData?.productType,
+        volumes: formData?.volume,
+        ingredients: formData?.ingredients,
+        incl: formData?.inciIngredients,
+        texture: formData?.texture,
+        skin_types: formData?.skinTypes,
+        features: formData?.features,
+        fragrance_notes: formData?.fragranceNotes,
+        concerns: formData?.concerns,
+        productId: formData?.productId,
+        productName: formData?.productName,
+        priceRange: formData?.priceRange,
+        description: "", // optional, if you have one
+        category: formData?.category,
+        image_url: formData?.imageUrl,
+        product_url: formData?.productUrl,
+        fragranceFree: formData?.fragranceFree,
+        natural: formData?.natural,
+        organic: formData?.organic,
+        pregnancy_safe: formData?.pregnancySafe
+    };
+
+    console.log('backendProduct', backendProduct);
+
+    // Send product request to backend
+    axiosApi.post('/products/api/v1/product', backendProduct)
+        .then(response => {
+            console.log('Product request submitted successfully:', response.data);
+            toast.success('Product request submitted successfully!');
+            
+            // // Reset form after successful submission
+            // setFormData({
+            //     pregnancySafe: false,
+            //     fragranceFree: false,
+            //     productId: "",
+            //     category: "",
+            //     brand: "",
+            //     productName: "",
+            //     productType: [], // Reset multi-select fields to empty arrays
+            //     skinTypes: [],
+            //     concerns: [],
+            //     ingredients: [],
+            //     inciIngredients: [],
+            //     volume: [],
+            //     texture: [],
+            //     features: [],
+            //     natural: "",
+            //     organic: "",
+            //     priceRange: "",
+            //     fragrance: "",
+            //     fragranceNotes: [],
+            //     productUrl: "",
+            //     imageUrl: ""
+            // });
+        })
+        .catch(error => {
+            console.error('Error submitting product request:', error);
+            const message = error.response?.data?.error || error.message;
+            toast.error('Failed to submit product request : ' + message);
+        });
+}
+
+
 
     return (
         <div className="min-h-screen ">
@@ -89,7 +157,7 @@ export default function AddProductRequestPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
                     <input type="text" placeholder="Product ID" className="input input-bordered bg-white/50 rounded-lg w-full" value={formData.productId} onChange={e => handleSelectChange("productId", e.target.value)} />
-                   
+
                     <Select options={options.categories} styles={singleSelectStyles} placeholder="Category" onChange={opt => handleSelectChange("category", opt.value)} />
                     <CreatableSelect options={options.brands} styles={singleSelectStyles} placeholder="Brand" onChange={opt => handleSelectChange("brand", opt.value)} />
                     <input type="text" placeholder="Product Name" className="input input-bordered bg-white/50 rounded-lg w-full" value={formData.productName} onChange={e => handleSelectChange("productName", e.target.value)} />
@@ -110,7 +178,9 @@ export default function AddProductRequestPage() {
                 <hr className="my-4" />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Select options={[{ value: 'Yes', label: 'Yes' }, { value: 'No', label: 'No' }]} styles={singleSelectStyles} placeholder="Fragrance?" onChange={opt => handleSelectChange("fragrance", opt.value)} />
+                    {/* <Select options={[{ value: 'Yes', label: 'Yes' }, { value: 'No', label: 'No' }]} styles={singleSelectStyles} placeholder="Fragrance?" onChange={opt => handleSelectChange("fragrance", opt.value)} /> */}
+
+
                     <CreatableSelect isMulti options={options.fragranceNotes} styles={multiSelectStyles} placeholder="Fragrance Notes" onChange={opts => handleMultiChange("fragranceNotes", opts)} />
                 </div>
 
