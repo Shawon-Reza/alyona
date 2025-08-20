@@ -1,11 +1,24 @@
-import React from 'react';
+
 import { Plus } from 'lucide-react';
 import dummyImage from '../assets/Productimgfordetails.png'; // Replace later
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import Navbar from '../Components/Navbar';
 import { NavLink, Outlet } from 'react-router-dom';
+import React, { useState } from 'react';
+
 
 const ProductDetailPage = () => {
+    const [showReviewForm, setShowReviewForm] = useState(false);
+    const [reviewText, setReviewText] = useState('');
+    const [rating, setRating] = useState(0);
+
+
+    const handleReviewSubmit = () => {
+        console.log("Review Submitted:");
+        console.log("Text:", reviewText);
+        console.log("Rating:", rating);
+    }
+
     return (
         <div className='p-4 sm:p-6 px-6 sm:px-10 min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF] relative'>
             {/* Navbar */}
@@ -29,7 +42,7 @@ const ProductDetailPage = () => {
                                 <img
                                     src={dummyImage}
                                     alt="Product"
-                                    className="w-full h-full object-contain "
+                                    className="w-full h-full object-contain cursor-pointer hover:scale-103"
                                 />
                             </div>
                             <span className="absolute top-2 left-2 bg-[#5b52e6] text-white text-xs font-bold px-2 py-1 rounded-md">
@@ -38,12 +51,54 @@ const ProductDetailPage = () => {
                         </div>
 
                         {/* Review Button */}
-                        <button className="w-full bg-[#D2B8A1] hover:bg-[#c9b094] transition text-base sm:text-[18px] font-bold text-[#1f1f1f] py-2 rounded-md">
-                            Share my review
+                        <button
+                            onClick={() => setShowReviewForm(!showReviewForm)}
+                            className="w-full bg-[#D2B8A1] hover:bg-[#a87755] transition text-base sm:text-[18px] font-bold text-white py-2 rounded-md cursor-pointer hover:scale-103 "
+                        >
+                            {showReviewForm ? "Cancel" : "Share my review"}
                         </button>
 
+                        {/* Review Form - Conditionally rendered */}
+                        {showReviewForm && (
+                            <div className="w-full bg-white/70  rounded-md p-4 shadow-md">
+                                <h3 className="text-lg font-semibold mb-2">Your Review</h3>
+
+                                {/* Review Textarea */}
+                                <textarea
+                                    rows={4}
+                                    value={reviewText}
+                                    onChange={(e) => setReviewText(e.target.value)}
+                                    placeholder="Write your review..."
+                                    className="w-full border border-[#a87755] rounded-md p-2 mb-3 text-sm"
+                                />
+
+                                {/* Rating */}
+                                <div className="flex gap-2 items-center mb-4">
+                                    <span className="text-sm">Rating:</span>
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <span
+                                            key={star}
+                                            onClick={() => setRating(star)}
+                                            className={`text-xl cursor-pointer ${star <= rating ? "text-amber-500" : "text-gray-300"}`}
+                                        >
+                                            ★
+                                        </span>
+                                    ))}
+                                </div>
+
+                                {/* Submit */}
+                                <button
+                                    onClick={handleReviewSubmit}
+                                    className="w-full bg-[#BB9777] text-white font-semibold py-2 rounded-md hover:bg-[#a87755] transition cursor-pointer hover:scale-103"
+                                >
+                                    Submit Review
+                                </button>
+                            </div>
+                        )}
+
+
                         {/* Routine Button */}
-                        <button className="w-full flex items-center justify-between gap-2 bg-[#0c0c33] text-white text-base sm:text-[18px] font-bold py-2 px-6 rounded-md hover:bg-[#1a1a4d] transition">
+                        <button className="w-full flex items-center justify-between gap-2 bg-[#0c0c33] text-white text-base sm:text-[18px] font-bold py-2 px-6 rounded-md hover:bg-[#1a1a4d] transition cursor-pointer hover:scale-103">
                             Add to my routine
                             <Plus className="w-5 h-5" />
                         </button>

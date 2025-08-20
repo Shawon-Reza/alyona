@@ -72,10 +72,10 @@ export default function SkinAnalysis() {
   if (error) return 'An error has occurred on skinAnalysis Page: ' + error.message;
 
 
-  // First Four recommendations
+  // First three recommendations
   const recommendations = Object.entries(data)
     .filter(([key, value]) => typeof value === 'object' && value.recommendation)
-    .slice(0, 3);  // Take first 4
+    .slice(0, 3);  
   // L:ast two recommendations
   const recommendations2 = Object.entries(data)
     .filter(([key, value]) => typeof value === 'object' && value.recommendation)

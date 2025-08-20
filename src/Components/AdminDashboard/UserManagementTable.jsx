@@ -299,7 +299,7 @@ export default function UserManagementTable() {
                                 <tr key={user.id} className="border-b border-base-300 hover:bg-gray-50 ">
                                     <td
                                         onClick={() => {
-                                            navigate(`user/profile/${user.id}`) // or navigate(`/user/profile/${user.id}`)
+                                            navigate(`/admindashboard/userlist/user/${user.id}`) // or navigate(`/user/profile/${user.id}`)
                                         }}
                                         className="py-3 px-4 cursor-pointer"
                                     >

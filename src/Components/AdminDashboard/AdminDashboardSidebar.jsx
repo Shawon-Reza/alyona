@@ -46,7 +46,7 @@ export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleVi
 
                     {/* Users */}
                     <NavLink
-                        to="/admindashboard/user-profile-layout"
+                        to="/admindashboard/userlist"
                         onClick={handleSidebarItemClick}
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-4 py-3 rounded-lg ${isActive ? 'bg-orange-100 text-gray-800 font-medium' : 'text-gray-600 hover:bg-orange-100 hover:text-gray-800'} transition-colors`

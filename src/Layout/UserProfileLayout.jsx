@@ -73,7 +73,9 @@ export default function UserProfileLayout() {
                             {/* Mobile: Horizontal scrollable tabs */}
                             <nav className="flex md:flex overflow-x-auto scrollbar-hide">
                                 <NavLink
-                                    to="user/profile"
+                                    to="profile"
+                                    end={false}
+                                    
                                     className={({ isActive }) =>
                                         `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                                             isActive 
@@ -85,7 +87,7 @@ export default function UserProfileLayout() {
                                     Profile
                                 </NavLink>
                                 <NavLink
-                                    to="user/products"
+                                    to="products"
                                     className={({ isActive }) =>
                                         `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                                             isActive 
@@ -97,7 +99,7 @@ export default function UserProfileLayout() {
                                     Products
                                 </NavLink>
                                 <NavLink
-                                    to="user/ai"
+                                    to="ai"
                                     className={({ isActive }) =>
                                         `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                                             isActive 
@@ -109,7 +111,7 @@ export default function UserProfileLayout() {
                                     AI
                                 </NavLink>
                                 <NavLink
-                                    to="user/dashboard"
+                                    to="dashboard"
                                     className={({ isActive }) =>
                                         `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                                             isActive 

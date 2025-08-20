@@ -310,31 +310,36 @@ const router = createBrowserRouter([
                 element: <UserManagementTable></UserManagementTable>,
             },
             {
-                path: 'user-profile-layout',
+                path: 'userlist',
+                element: <UserManagementTable></UserManagementTable>,
+            },
+            {
+                path: 'userlist/user/:id',
                 element: <UserProfileLayout></UserProfileLayout>,
                 children: [
                     {
                         path: '',
-                        element: <UserManagementTable></UserManagementTable>
+                        element: <Navigate to="profile" replace />
                     },
                     {
-                        path: 'user/profile/:id',
+                        path: 'profile',
                         element: <UserProfilePage></UserProfilePage>
                     },
                     {
-                        path: 'user/products',
+                        path: 'products',
                         element: <UserProductContent></UserProductContent>
                     },
                     {
-                        path: 'user/ai',
+                        path: 'ai',
                         element: <UserAIContent></UserAIContent>
                     },
                     {
-                        path: 'user/dashboard',
+                        path: 'dashboard',
                         element: <UserDashboardContent></UserDashboardContent>
                     },
                 ]
             },
+
             {
                 path: "products",
                 element: <ProductManagementTable></ProductManagementTable>,
