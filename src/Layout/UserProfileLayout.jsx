@@ -13,8 +13,10 @@ export default function UserProfileLayout() {
     const location = useLocation();
     console.log(location)
 
+
+
     return (
-        <div className="min-h-screen ">
+        <div className="min-h-screen " >
             {/* Breadcrumb */}
             <div className="flex items-center text-xs md:text-sm text-gray-600 mb-4 md:mb-6 px-4 md:px-0 mt-4">
                 <span className="cursor-pointer hover:text-gray-900 truncate">Users List</span>
@@ -22,13 +24,14 @@ export default function UserProfileLayout() {
                 <span className="text-gray-900 truncate">Janet A.</span>
             </div>
 
+
             {/* Main Content */}
             <div className="">
                 {location.pathname !== '/admindashboard/user-profile-layout' && (
                     <div>
                         {/* Mobile Back Button - Only visible on mobile */}
                         <div className="md:hidden px-4 mb-4">
-                            <button 
+                            <button
                                 onClick={() => window.history.back()}
                                 className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
                             >
@@ -75,12 +78,11 @@ export default function UserProfileLayout() {
                                 <NavLink
                                     to="profile"
                                     end={false}
-                                    
+
                                     className={({ isActive }) =>
-                                        `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
-                                            isActive 
-                                                ? "border-amber-500 text-amber-600" 
-                                                : "border-transparent text-gray-500 hover:text-gray-700"
+                                        `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${isActive
+                                            ? "border-amber-500 text-amber-600"
+                                            : "border-transparent text-gray-500 hover:text-gray-700"
                                         }`
                                     }
                                 >
@@ -89,10 +91,9 @@ export default function UserProfileLayout() {
                                 <NavLink
                                     to="products"
                                     className={({ isActive }) =>
-                                        `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
-                                            isActive 
-                                                ? "border-amber-500 text-amber-600" 
-                                                : "border-transparent text-gray-500 hover:text-gray-700"
+                                        `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${isActive
+                                            ? "border-amber-500 text-amber-600"
+                                            : "border-transparent text-gray-500 hover:text-gray-700"
                                         }`
                                     }
                                 >
@@ -101,10 +102,9 @@ export default function UserProfileLayout() {
                                 <NavLink
                                     to="ai"
                                     className={({ isActive }) =>
-                                        `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
-                                            isActive 
-                                                ? "border-amber-500 text-amber-600" 
-                                                : "border-transparent text-gray-500 hover:text-gray-700"
+                                        `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${isActive
+                                            ? "border-amber-500 text-amber-600"
+                                            : "border-transparent text-gray-500 hover:text-gray-700"
                                         }`
                                     }
                                 >
@@ -113,10 +113,9 @@ export default function UserProfileLayout() {
                                 <NavLink
                                     to="dashboard"
                                     className={({ isActive }) =>
-                                        `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
-                                            isActive 
-                                                ? "border-amber-500 text-amber-600" 
-                                                : "border-transparent text-gray-500 hover:text-gray-700"
+                                        `px-4 md:px-8 py-3 md:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${isActive
+                                            ? "border-amber-500 text-amber-600"
+                                            : "border-transparent text-gray-500 hover:text-gray-700"
                                         }`
                                     }
                                 >

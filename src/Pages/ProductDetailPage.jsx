@@ -3,21 +3,86 @@ import { Plus } from 'lucide-react';
 import dummyImage from '../assets/Productimgfordetails.png'; // Replace later
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import Navbar from '../Components/Navbar';
-import { NavLink, Outlet } from 'react-router-dom';
-import React, { useState } from 'react';
+import { NavLink, Outlet, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
+import axiosApi from '@/api/axiosApi';
+import { useQuery } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
+import { setProductDetails } from '@/store/productSlice';
+import { toast } from 'react-toastify';
 
 
 const ProductDetailPage = () => {
     const [showReviewForm, setShowReviewForm] = useState(false);
     const [reviewText, setReviewText] = useState('');
     const [rating, setRating] = useState(0);
+    const [texture, setTexture] = useState('');
+    const [packaging, setPackaging] = useState('');
+    const [skinFeel, setSkinFeel] = useState('');
+
+    const dispatch = useDispatch()
+
+    const { id } = useParams();
+    console.log(id)
+
+    const handleReviewSubmit = async () => {
+        try {
+            console.log("Review Submitted:");
+            console.log("Text:", reviewText);
+            console.log("Rating:", rating);
+            console.log("Texture:", texture);
+            console.log("Packaging:", packaging);
+            console.log("Skin Feel:", skinFeel);
+
+            const payload = {
+                description: reviewText,
+                rating: Number(rating),
+                texture,
+                packaging,
+                skin_feel: skinFeel,
+            };
+
+            const response = await axiosApi.post(`/products/api/v1/review/${id}`, payload);
+            console.log("✅ Review submitted successfully:", response.data);
+
+            setReviewText("");
+            setRating(0);
+            setTexture("");
+            setPackaging("");
+            setSkinFeel("");
+            toast.success("Review submitted!");
+
+        } catch (error) {
+            console.error("❌ Error submitting review:", error.response?.data || error.message);
+            toast.error("Failed to submit review. Please try again. ");
+        }
+    };
+
+    // Fetch product details using React Query
+    const { isPending, error, data } = useQuery({
+        queryKey: ['productDetails'],
+        queryFn: async () => {
+            const res = await axiosApi.get(`/products/api/v1/product-detail/${id}`);
+            return res.data
+        },
+
+    })
+
+    // ✅ Save to Redux when data is available
+    useEffect(() => {
+        if (data) {
+            dispatch(setProductDetails(data))
+        }
+    }, [data, dispatch])
 
 
-    const handleReviewSubmit = () => {
-        console.log("Review Submitted:");
-        console.log("Text:", reviewText);
-        console.log("Rating:", rating);
-    }
+    if (isPending) return <p>Loading...</p>
+
+    if (error) return <p>An error has occurred: {error.message}</p>
+
+    console.log(data)
+
 
     return (
         <div className='p-4 sm:p-6 px-6 sm:px-10 min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF] relative'>
@@ -59,42 +124,104 @@ const ProductDetailPage = () => {
                         </button>
 
                         {/* Review Form - Conditionally rendered */}
-                        {showReviewForm && (
-                            <div className="w-full bg-white/70  rounded-md p-4 shadow-md">
-                                <h3 className="text-lg font-semibold mb-2">Your Review</h3>
-
-                                {/* Review Textarea */}
-                                <textarea
-                                    rows={4}
-                                    value={reviewText}
-                                    onChange={(e) => setReviewText(e.target.value)}
-                                    placeholder="Write your review..."
-                                    className="w-full border border-[#a87755] rounded-md p-2 mb-3 text-sm"
-                                />
-
-                                {/* Rating */}
-                                <div className="flex gap-2 items-center mb-4">
-                                    <span className="text-sm">Rating:</span>
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                        <span
-                                            key={star}
-                                            onClick={() => setRating(star)}
-                                            className={`text-xl cursor-pointer ${star <= rating ? "text-amber-500" : "text-gray-300"}`}
-                                        >
-                                            ★
-                                        </span>
-                                    ))}
-                                </div>
-
-                                {/* Submit */}
-                                <button
-                                    onClick={handleReviewSubmit}
-                                    className="w-full bg-[#BB9777] text-white font-semibold py-2 rounded-md hover:bg-[#a87755] transition cursor-pointer hover:scale-103"
+                        <AnimatePresence>
+                            {showReviewForm && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="w-full bg-white/70 rounded-md p-4 shadow-md"
                                 >
-                                    Submit Review
-                                </button>
-                            </div>
-                        )}
+                                    <h3 className="text-lg font-semibold mb-2">Your Review</h3>
+
+                                    {/* Review Textarea */}
+                                    <textarea
+                                        rows={4}
+                                        value={reviewText}
+                                        onChange={(e) => setReviewText(e.target.value)}
+                                        placeholder="Write your review..."
+                                        className="w-full border border-[#a87755] rounded-md p-2 mb-3 text-sm"
+                                    />
+
+                                    {/* Rating */}
+                                    <div className="flex gap-2 items-center mb-4">
+                                        <span className="text-sm">Rating:</span>
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <span
+                                                key={star}
+                                                onClick={() => setRating(star)}
+                                                className={`text-xl cursor-pointer ${star <= rating ? "text-amber-500" : "text-gray-300"}`}
+                                            >
+                                                ★
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    {/* Texture */}
+                                    <div className="mb-4">
+                                        <span className="text-sm font-semibold">Texture:</span>
+                                        <div className="flex gap-4 mt-2">
+                                            {["Like", "Dislike", "Not sure"].map((option) => (
+                                                <label key={option} className="text-sm">
+                                                    <input
+                                                        type="radio"
+                                                        value={option}
+                                                        checked={texture === option}
+                                                        onChange={(e) => setTexture(e.target.value)}
+                                                    />
+                                                    {option}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Packaging */}
+                                    <div className="mb-4">
+                                        <span className="text-sm font-semibold">Packaging:</span>
+                                        <div className="flex gap-4 mt-2">
+                                            {["Like", "Dislike", "Not sure"].map((option) => (
+                                                <label key={option} className="text-sm">
+                                                    <input
+                                                        type="radio"
+                                                        value={option}
+                                                        checked={packaging === option}
+                                                        onChange={(e) => setPackaging(e.target.value)}
+                                                    />
+                                                    {option}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Skin Feel */}
+                                    <div className="mb-4">
+                                        <span className="text-sm font-semibold">Skin Feel:</span>
+                                        <div className="flex gap-4 mt-2">
+                                            {["Like", "Dislike", "Not sure"].map((option) => (
+                                                <label key={option} className="text-sm">
+                                                    <input
+                                                        type="radio"
+                                                        value={option}
+                                                        checked={skinFeel === option}
+                                                        onChange={(e) => setSkinFeel(e.target.value)}
+                                                    />
+                                                    {option}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Submit Button */}
+                                    <button
+                                        onClick={handleReviewSubmit}
+                                        className="w-full bg-[#BB9777] text-white font-semibold py-2 rounded-md hover:bg-[#a87755] transition cursor-pointer hover:scale-103"
+                                    >
+                                        Submit Review
+                                    </button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
 
                         {/* Routine Button */}
@@ -108,24 +235,31 @@ const ProductDetailPage = () => {
 
                 {/* Left Side (Text Content) */}
                 <div className="sm:col-span-3 flex-1 space-y-4">
-                    <h1 className="text-xl sm:text-[28px] font-semibold">Moisturising Day Cream</h1>
+                    <h1 className="text-xl sm:text-[28px] font-semibold">{data?.productName}</h1>
                     <p className="text-base sm:text-lg font-medium">32.00 €</p>
 
                     {/* Sizes */}
                     <div>
                         <h4 className="text-lg sm:text-[22px] font-semibold mb-2">Available size</h4>
                         <div className="flex gap-2 flex-wrap">
-                            <button className="px-3 py-1 border border-gray-300 text-sm rounded-lg hover:bg-gray-100">15 ml/ 0.5 fl oz</button>
-                            <button className="px-3 py-1 border border-gray-300 text-sm rounded-lg hover:bg-gray-100">50 ml/ 1.69 fl oz</button>
+                            {
+                                (data?.available_sizes || []).map ((size, idx) => (
+
+                                    <button
+                                        key={idx}
+                                        className="px-3 py-1 border border-gray-300 text-sm rounded-lg hover:bg-gray-100">{size}</button>
+                                ))
+
+                            }
+
                         </div>
                     </div>
 
                     {/* Description */}
                     <p className="text-[15px] sm:text-[18px] text-gray-700 leading-relaxed">
-                        Silky texture face cream absorbs quickly and provides instant hydration and nourishment.
-                        Formulated with multi-molecular-weight Hyaluronic Acid and soothing Bisabolol to make your skin look
-                        exceedingly dewy and plump all day long. Anti-oxidant rich Rowanberry Extract helps to protect against
-                        environmental aggressors and maintain the skin's youthful appearance.
+                        {
+                            data?.description || "Description not available...."
+                        }
                     </p>
 
                     {/* Tabs */}

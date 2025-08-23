@@ -19,7 +19,7 @@ const Navbar = () => {
     const mobileButtonRef = useRef(null);
 
     const { user, loading } = useCurrentUser(); // Fetch current user info using custom hook
-    console.log(user)
+    // console.log(user)
     // Toggle notification popup visibility
     const togglePopup = () => {
         if (isProfileMenuOpen) {
