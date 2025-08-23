@@ -61,7 +61,7 @@ const ProductDetailPage = () => {
 
     // Fetch product details using React Query
     const { isPending, error, data } = useQuery({
-        queryKey: ['productDetails'],
+        queryKey: ['productDetails',id],
         queryFn: async () => {
             const res = await axiosApi.get(`/products/api/v1/product-detail/${id}`);
             return res.data
@@ -105,13 +105,13 @@ const ProductDetailPage = () => {
                         <div className="relative w-full">
                             <div className="w-full h-[340px] sm:h-[465px]  rounded-lg overflow-hidden flex items-center justify-center ">
                                 <img
-                                    src={dummyImage}
+                                    src={data?.image || dummyImage}
                                     alt="Product"
-                                    className="w-full h-full object-contain cursor-pointer hover:scale-103"
+                                    className="w-full h-full object-cover cursor-pointer hover:scale-103 rounded-lg transition duration-300"
                                 />
                             </div>
                             <span className="absolute top-2 left-2 bg-[#5b52e6] text-white text-xs font-bold px-2 py-1 rounded-md">
-                                100%
+                                {Math.round(data?.compatibility || 0)}% compatible
                             </span>
                         </div>
 
@@ -243,7 +243,7 @@ const ProductDetailPage = () => {
                         <h4 className="text-lg sm:text-[22px] font-semibold mb-2">Available size</h4>
                         <div className="flex gap-2 flex-wrap">
                             {
-                                (data?.available_sizes || []).map ((size, idx) => (
+                                (data?.available_sizes || []).map((size, idx) => (
 
                                     <button
                                         key={idx}
