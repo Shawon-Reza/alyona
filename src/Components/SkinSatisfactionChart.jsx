@@ -1,3 +1,5 @@
+import axiosApi from "@/api/axiosApi";
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import {
     LineChart,
@@ -9,39 +11,31 @@ import {
     Dot
 } from "recharts";
 
-// Generate last 4 months
-const getLastFourMonths = () => {
-    const months = [];
-    const now = new Date();
-    for (let i = 3; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        months.push(d.toLocaleString("default", { month: "short" }));
-    }
-    return months;
-};
 
-const SkinSatisfactionChart = ({
-    data = [5, 25, 0, 27], // expects 4 data points
-    latestValue = "87%",
-}) => {
-    const monthLabels = getLastFourMonths();
+const SkinSatisfactionChart = () => {
+    const { isPending, error, data } = useQuery({
+        queryKey: ['skinSatisfaction'],
+        queryFn: async () => {
+            const res = await axiosApi.get('/accounts/api/v1/skin-satisfaction');
+            return res.data;
+        }
+    });
 
-    // Prepare chart data
-    const chartData = monthLabels.map((month, idx) => ({
-        month,
-        value: data[idx] || 0,
-    }));
+    if (isPending) return 'Loading...';
+    if (error) return 'An error has occurred: ' + error.message;
+
+    // latest value (last score in array)
+    const latestValue = data.length ? `${data[data.length - 1].score}%` : "0%";
 
     return (
-        <div className="bg-white rounded-xl shadow-sm p-4 relative overflow-hidden w-full">
-            <h3 className="font-semibold text-sm mb-2 text-center">
+        <div className="bg-white rounded-xl shadow-sm p-4 relative overflow-hidden w-full pb-10">
+            <h3 className="font-semibold text-sm mb-2 text-center pb-5">
                 Skin satisfaction
             </h3>
 
             <div className="relative h-40 w-full">
-                {/* Recharts Container */}
                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData}>
+                    <LineChart data={data}>
                         <CartesianGrid strokeDasharray="0" vertical={false} stroke="#f0f0f0" />
                         <XAxis
                             dataKey="month"
@@ -52,7 +46,7 @@ const SkinSatisfactionChart = ({
                         <Tooltip />
                         <Line
                             type="monotone"
-                            dataKey="value"
+                            dataKey="score"
                             stroke="#1f1f3f"
                             strokeWidth={3.5}
                             dot={{
@@ -74,5 +68,6 @@ const SkinSatisfactionChart = ({
         </div>
     );
 };
+
 
 export default SkinSatisfactionChart;

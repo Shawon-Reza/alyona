@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AboutMySkin from "../Components/AboutMySkin";
 import MyBadges from "../Components/MyBadges";
 import ProductRecommendations from "../Components/ProductRecommendations";
@@ -12,6 +12,8 @@ import { format, startOfMonth, getDay, addDays, getDaysInMonth } from 'date-fns'
 import Navbar from "../Components/Navbar";
 import RecomendationsForUser from "../Components/RecomendationsForUser";
 import ProfileImageUploader from "../Components/ProfileImageUploader";
+import { hasTakenQuizToday } from "@/lib/utils";
+import DailyQuizPopup from "@/Components/DailyQuizPopup";
 
 const user = {
     name: "Anna",
@@ -47,6 +49,8 @@ const getLast7Days = () => {
 
 export default function MainDashboard() {
 
+    const [showQuiz, setShowQuiz] = useState(false);
+
     const [CalendarPopUp, setCalendarPopup] = useState(false);
 
     const today = new Date();
@@ -64,6 +68,17 @@ export default function MainDashboard() {
 
     const days = getLast7Days();
 
+
+    useEffect(() => {
+        if (!hasTakenQuizToday()) {
+            setShowQuiz(true);
+        }
+    }, []);
+
+
+
+
+
     return (
         <div className="relative p-6 bg-gray-50 min-h-screen text-gray-800 font-sans">
 
@@ -73,6 +88,7 @@ export default function MainDashboard() {
             <div className="mb-5 md:mb-10">
                 <Navbar></Navbar>
             </div>
+            {showQuiz && <DailyQuizPopup onClose={() => setShowQuiz(false)} />}
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 

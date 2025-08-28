@@ -166,7 +166,9 @@ const Dashboard = () => {
                 {/* Navbar */}
                 <div className="w-full bg-white shadow-md rounded-xl px-4 sm:px-8 flex justify-between items-center h-[70px]">
                     {/* Logo */}
-                    <div className="flex items-center gap-2 h-16 whitespace-nowrap">
+                    <div 
+                    onClick={ () => navigate('/maindashboard') }
+                    className="flex items-center gap-2 h-16 whitespace-nowrap cursor-pointer">
                         <img src={AuthNavIcon || "/placeholder.svg"} alt="Brand Logo" className="w-14 h-18" />
                         <span className="font-semibold lg:text-xl hidden sm:block">YOURSELF BEAUTY</span>
                     </div>
@@ -316,11 +318,11 @@ const Dashboard = () => {
 
                 {/* Sidebar */}
                 {(viewMode === 'sidebar' || viewMode === 'both') && (
-                    <aside className={`sm:mt-10 mt-3 w-full md:w-[240px] lg:w-xs`}>
+                    <aside className={`sm:mt-10 mt-3 w-full md:w-[240px] lg:w-xs `}>
                         {/* GENERAL */}
                         <h2 className="mt-2 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">General</h2>
                         <div className='bg-white shadow-md border-r border-gray-200 border rounded-2xl'>
-                            <ul className="text-sm text-gray-800 border border-gray-200 rounded-md overflow-hidden">
+                            <ul className="text-sm text-gray-800 border border-gray-200 rounded-md overflow-hidden ">
                                 <li className="border-t border-gray-200 first:border-t-0">
                                     <NavLink
                                         to=""

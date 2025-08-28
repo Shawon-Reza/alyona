@@ -51,7 +51,7 @@ export default function SimilarProductsList() {
           return (
             <div
               key={pid ?? name}
-              className="w-full sm:max-w-[215px] sm:px-1 bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition p-2 sm:p-0 flex sm:block items-center gap-4"
+              className="w-full sm:max-w-[215px] sm:px-1 bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition p-2 sm:p-0 flex sm:block items-center gap-4 hover:scale-103"
             >
               {/* Image */}
               <div className="w-[60px] h-[60px] sm:w-full sm:h-[230px] flex-shrink-0 flex items-center justify-center overflow-hidden -mt-1">
@@ -61,7 +61,7 @@ export default function SimilarProductsList() {
                   onClick={() =>
                     navigate(`/library/product-detail/${pid}`)
                   }
-                  className="w-full h-full object-cover rounded-lg pt-2 cursor-pointer"
+                  className="w-full h-full object-cover rounded-2xl pt-2 cursor-pointer"
                 />
               </div>
 

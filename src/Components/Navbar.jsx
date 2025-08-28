@@ -86,7 +86,9 @@ const Navbar = () => {
     return (
         <div className="w-full bg-white shadow-md rounded-xl px-4 sm:px-8 flex justify-between items-center h-[70px] relative">
             {/* Logo */}
-            <div className="flex items-center gap-2 h-16 whitespace-nowrap">
+            <div
+                onClick={ () => navigate('/maindashboard') }
+                className="flex items-center gap-2 h-16 whitespace-nowrap cursor-pointer">
                 <img src={AuthNavIcon || "/placeholder.svg"} alt="Brand Logo" className="w-14 h-18" />
                 <span className="font-semibold lg:text-xl hidden sm:block">YOURSELF BEAUTY</span>
             </div>

@@ -29,37 +29,38 @@ const LoginPage = () => {
         console.log("Password:", password);
 
         try {
-
             const response = await axios.post('http://10.10.13.59:8000/accounts/api/v1/login', {
                 email,
-                password
+                password,
             });
-            toast.success("Login Successfull")
+
+            toast.success("Login Successful");
             console.log("Login Successful:", response.data.access);
 
+            // Check quiz status
             if (response?.data?.login_user_info?.quiz_status) {
                 setTimeout(() => {
-                    console.log('statuse', response?.login_user_info?.quiz_status)
-                    navigate('/maindashboard')
+                    console.log('status:', response?.data?.login_user_info?.quiz_status);
+                    navigate('/maindashboard');
                 }, 2000);
             } else {
                 setTimeout(() => {
                     navigate('/SimpleRegisterPage');
                 }, 2000);
             }
+
             console.log('first', response?.data)
             // Example: Save access token to localStorage
             localStorage.setItem('accessToken', JSON.stringify(response.data));
             localStorage.setItem('token', JSON.stringify(response?.data?.access));
             localStorage.removeItem("adtoken");
 
-
-
         } catch (error) {
-            console.error("Login Failed:", error.response?.data || error.message);
-            toast.warning("Invalid email or password");
+            console.error("Login Failed:", error.response?.data?.detail);
+            toast.warning(`${error.response?.data?.detail || "Please try again"}`);
         }
     };
+
 
 
     return (

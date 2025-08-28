@@ -99,7 +99,7 @@ export default function ProfileImageUploader() {
                 >
                     {imageFile ? (
                         <img
-                            className="w-18 h-18 object-cover rounded-full"
+                            className="w-18 h-18 object-cover rounded-full cursor-pointer"
                             src={imagePreview}
                             alt="Preview of uploaded image"
                         />
