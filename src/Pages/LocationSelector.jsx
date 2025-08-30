@@ -59,7 +59,7 @@ const LocationSelector = () => {
             console.error("Error fetching address:", err);
         }
     };
-
+    console.log(searchInput)
     const handleSearchLocation = async () => {
         if (!searchInput) return;
         try {
@@ -101,10 +101,10 @@ const LocationSelector = () => {
     useEffect(() => {
         console.log("Living area updated:", livingArea);
     }, [livingArea]);
-    
+
 
     const dispatch = useDispatch();
-console.log(address)
+    console.log(address)
     const handleSave = () => {
         dispatch(setField({ field: 'location_area', value: livingArea }));
         dispatch(setField({ field: 'area', value: address.street }));

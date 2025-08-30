@@ -4,6 +4,8 @@ import { useState } from "react"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import axiosApi from "@/api/axiosApi"
+import { useQuery } from "@tanstack/react-query"
 
 const monthlyEarnings = [
     { month: "ENE", amount: 300 },
@@ -22,21 +24,6 @@ const topCountries = [
     { country: "Others", users: "92", percentage: 3 },
 ]
 
-const topProducts = [
-    { product: "Peptide Serum", sales: "2321", growth: "+8%" },
-    { product: "Ceramide Hydrating Night Cream", sales: "111", growth: "+90%" },
-    { product: "BiPhasic Make-up Remover", sales: "102", growth: "-2%" },
-    { product: "Hydrating Toner", sales: "102", growth: "-" },
-    { product: "Natural Retinol-Alternative Oil Serum", sales: "80", growth: "-2%" },
-]
-
-const topIngredients = [
-    { ingredient: "Almond Oil", percentage: "2321", usage: "+8%" },
-    { ingredient: "Camelia (Green Tea) extract", percentage: "111", usage: "+90%" },
-    { ingredient: "Ceramides", percentage: "102", usage: "-2%" },
-    { ingredient: "Cocoa Butter", percentage: "102", usage: "-" },
-    { ingredient: "Ferulic acid", percentage: "80", usage: "-2%" },
-]
 
 const frequentQuestions = [
     { question: "What skincare ingredients work best to prevent aging and wrinkles?", percentage: "2.6k" },
@@ -47,10 +34,76 @@ const frequentQuestions = [
 ]
 
 export default function DashboardGeneralContent() {
-    const [selectedYear, setSelectedYear] = useState("2025-1")
-    const [selectedMonth, setSelectedMonth] = useState("MAR")
+
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonthNumber = (today.getMonth() + 1).toString().padStart(2, "0");
+
+
+    const [selectedYear, setSelectedYear] = useState(currentYear.toString())
+    const [selectedMonth, setSelectedMonth] = useState(currentMonthNumber);
+    const [selectedMonthTopcountries, setSelectedMonthTopcountries] = useState(currentMonthNumber);
+    const [selectedMonthTopProduct, setSelectedMonthTopProduct] = useState(currentMonthNumber);
 
     const navigate = useNavigate();
+
+    const {
+        isPending: topIngredientsLoading,
+        error: topIngredientsError,
+        data: top_Ingredients,
+    } = useQuery({
+        queryKey: ['top_Ingredients', selectedMonth],
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/top-ingredients/${selectedMonth}`)
+            return res.data
+        },
+    })
+
+    const {
+        isPending: topProductsLoading,
+        error: topProductsError,
+        data: top_products,
+    } = useQuery({
+        queryKey: ['top_products', selectedMonthTopProduct], // different query key
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/top-products/${selectedMonthTopProduct}`)
+            return res.data
+        },
+    })
+    const {
+        isPending: topCountiesLoading,
+        error: topCountiesError,
+        data: top_Counties,
+    } = useQuery({
+        queryKey: ['top_Counties', selectedMonthTopcountries], // different query key
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/top-countries/${selectedMonthTopcountries}`)
+            return res.data
+        },
+    })
+
+
+
+
+    console.log(top_Counties)
+
+    // Loading / Error handling
+    if (topIngredientsLoading || topProductsLoading) return 'Loading...'
+    if (topIngredientsError) return 'Error (Ingredients): ' + topIngredientsError.message
+    if (topProductsError) return 'Error (Products): ' + topProductsError.message
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     return (
         <div className="p-6 space-y-6 min-h-screen">
@@ -146,7 +199,7 @@ export default function DashboardGeneralContent() {
 
             <div className=" lg:flex gap-6 space-y-6 lg:space-y-0">
                 {/* Top Countries */}
-                <div className="card bg-white/50 shadow-md border border-gray-200 w-full">
+                <div className="card bg-white/50 shadow-md border border-gray-200 w-full max-h-[260px]">
                     <div className="card-body p-4">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold">Top Countries</h3>
@@ -155,13 +208,22 @@ export default function DashboardGeneralContent() {
                                     <ChevronLeft className="w-4 h-4" />
                                 </button>
                                 <select
-                                    value={selectedMonth}
-                                    onChange={(e) => setSelectedMonth(e.target.value)}
+                                    value={selectedMonthTopcountries}
+                                    onChange={(e) => setSelectedMonthTopcountries(e.target.value)}
                                     className="select select-bordered select-sm w-20"
                                 >
-                                    <option value="MAR">MAR</option>
-                                    <option value="APR">APR</option>
-                                    <option value="MAY">MAY</option>
+                                    <option value="01">JAN</option>
+                                    <option value="02">FEB</option>
+                                    <option value="03">MAR</option>
+                                    <option value="04">APR</option>
+                                    <option value="05">MAY</option>
+                                    <option value="06">JUN</option>
+                                    <option value="07">JUL</option>
+                                    <option value="08">AUG</option>
+                                    <option value="09">SEP</option>
+                                    <option value="10">OCT</option>
+                                    <option value="11">NOV</option>
+                                    <option value="12">DEC</option>
                                 </select>
                                 <button className="btn btn-ghost btn-sm">
                                     <ChevronRight className="w-4 h-4" />
@@ -169,11 +231,13 @@ export default function DashboardGeneralContent() {
                             </div>
                         </div>
                         <div className="space-y-3">
-                            {topCountries.map((country, index) => (
+                            {top_Counties.map((country, index) => (
                                 <div key={index} className="flex items-center justify-between">
-                                    <span className="text-sm">{country.country}</span>
+                                    <span className="text-sm">{country?.country}</span>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-sm font-medium">{country.users}</span>
+                                        <span className="text-sm font-medium"> {country?.count > 100
+                                            ? (country.count / 1000).toFixed(1) + "k" // 1500 → 1.5k
+                                            : country?.count}</span>
                                         <div className="w-16 h-2 bg-gray-200 rounded-full">
                                             <div className="h-full bg-purple-500 rounded-full" style={{ width: `${country.percentage}%` }} />
                                         </div>
@@ -185,7 +249,7 @@ export default function DashboardGeneralContent() {
                 </div>
 
                 {/* Top Products */}
-                <div className="card bg-white/50 shadow-md border border-gray-200 w-full">
+                <div className="card bg-white/50 shadow-md border border-gray-200 w-full max-h-[260px]">
                     <div className="card-body p-4">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold">Top Products</h3>
@@ -194,13 +258,22 @@ export default function DashboardGeneralContent() {
                                     <ChevronLeft className="w-4 h-4" />
                                 </button>
                                 <select
-                                    value={selectedMonth}
-                                    onChange={(e) => setSelectedMonth(e.target.value)}
+                                    value={selectedMonthTopProduct}
+                                    onChange={(e) => setSelectedMonthTopProduct(e.target.value)}
                                     className="select select-bordered select-sm w-20"
                                 >
-                                    <option value="MAR">MAR</option>
-                                    <option value="APR">APR</option>
-                                    <option value="MAY">MAY</option>
+                                    <option value="01">JAN</option>
+                                    <option value="02">FEB</option>
+                                    <option value="03">MAR</option>
+                                    <option value="04">APR</option>
+                                    <option value="05">MAY</option>
+                                    <option value="06">JUN</option>
+                                    <option value="07">JUL</option>
+                                    <option value="08">AUG</option>
+                                    <option value="09">SEP</option>
+                                    <option value="10">OCT</option>
+                                    <option value="11">NOV</option>
+                                    <option value="12">DEC</option>
                                 </select>
                                 <button className="btn btn-ghost btn-sm">
                                     <ChevronRight className="w-4 h-4" />
@@ -208,28 +281,26 @@ export default function DashboardGeneralContent() {
                             </div>
                         </div>
                         <div className="space-y-3">
-                            {topProducts.map((product, index) => (
+                            {top_products.map((product, index) => (
                                 <div key={index} className="flex items-center justify-between">
-                                    <span className="text-sm flex-1">{product.product}</span>
+                                    <span className="text-sm flex-1">{product?.product}</span>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-sm font-medium">{product.sales}</span>
+                                        <span className="text-sm font-medium">{product?.current_month}</span>
                                         <div
-                                            className={`badge badge-sm ${product.growth.startsWith("+")
-                                                ? "badge-success"
-                                                : product.growth === "-"
-                                                    ? "badge-neutral"
-                                                    : "badge-error"
+                                            className={`badge badge-sm ${product?.difference_percentage > 0
+                                                ? "badge-success"   // positive → green
+                                                : product?.difference_percentage < 0
+                                                    ? "badge-error"     // negative → red
+                                                    : "badge-neutral"   // 0 or "-" → neutral
                                                 }`}
                                         >
-                                            {product.growth}
+                                            {product?.difference_percentage}%
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-4 text-right">
-                            <button className="btn btn-link btn-sm text-gray-500">See more</button>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -249,31 +320,42 @@ export default function DashboardGeneralContent() {
                                     onChange={(e) => setSelectedMonth(e.target.value)}
                                     className="select select-bordered select-sm w-20"
                                 >
-                                    <option value="MAR">MAR</option>
-                                    <option value="APR">APR</option>
-                                    <option value="MAY">MAY</option>
+                                    <option value="01">JAN</option>
+                                    <option value="02">FEB</option>
+                                    <option value="03">MAR</option>
+                                    <option value="04">APR</option>
+                                    <option value="05">MAY</option>
+                                    <option value="06">JUN</option>
+                                    <option value="07">JUL</option>
+                                    <option value="08">AUG</option>
+                                    <option value="09">SEP</option>
+                                    <option value="10">OCT</option>
+                                    <option value="11">NOV</option>
+                                    <option value="12">DEC</option>
                                 </select>
                                 <button className="btn btn-ghost btn-sm">
                                     <ChevronRight className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
-                        <div className="space-y-3">
-                            {topIngredients.map((ingredient, index) => (
+                        <div className="space-y-3 max-h-[270px] overflow-scroll">
+                            {top_Ingredients.map((ingredient, index) => (
                                 <div key={index} className="flex items-center justify-between">
-                                    <span className="text-sm flex-1">{ingredient.ingredient}</span>
+                                    <span className="text-sm flex-1">{ingredient?.ingredient}</span>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-sm font-medium">{ingredient.percentage}</span>
+                                        <span className="text-sm font-medium">{ingredient?.current_month}</span>
                                         <div
-                                            className={`badge badge-sm ${ingredient.usage.startsWith("+")
-                                                ? "badge-success"
-                                                : ingredient.usage === "-"
-                                                    ? "badge-neutral"
-                                                    : "badge-error"
+                                            className={`badge badge-sm ${ingredient?.difference_percentage > 0
+                                                ? "badge-success"   // positive → green
+                                                : ingredient?.difference_percentage < 0
+                                                    ? "badge-error"     // negative → red
+                                                    : "badge-neutral"   // 0 → neutral
                                                 }`}
                                         >
-                                            {ingredient.usage}
+                                            {ingredient?.difference_percentage}%
                                         </div>
+
+
                                     </div>
                                 </div>
                             ))}

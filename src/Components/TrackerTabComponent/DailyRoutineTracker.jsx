@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // ✅ Make sure this is imported
+import { useLocation, useParams } from "react-router-dom"; // ✅ Make sure this is imported
 import productImage from '../../assets/ProductIMG.png';
 import { Sun, Moon } from "lucide-react";
 
@@ -51,6 +51,7 @@ const routineMap = {
 };
 
 const DailyRoutineTracker = () => {
+
     const { mode = "day" } = useParams(); // ✅ use from router
     const { title, icon, products } = routineMap[mode] || routineMap.day;
 
@@ -70,6 +71,8 @@ const DailyRoutineTracker = () => {
         console.log("Current mode:", mode);
     }, [mode]);
 
+    const location =useLocation();
+    console.log(location)
     return (
         <div className="relative p-6 text-[#181818]">
             {/* Question */}
@@ -79,7 +82,7 @@ const DailyRoutineTracker = () => {
                     <p>{title}</p>
                 </div>
 
-                <div className="flex gap-4 mb-6">
+                <div className="flex gap-4 mb-6 ">
                     {["yes", "no"].map((value) => {
                         const isSelected = routineDone === value;
 
@@ -104,10 +107,10 @@ const DailyRoutineTracker = () => {
                             <button
                                 key={value}
                                 onClick={() => setRoutineDone(value)}
-                                className={`px-6 w-full py-2 rounded-lg flex items-center justify-between border border-base-300 ${bgClass}`}
+                                className={`px-6 w-full py-2 rounded-lg flex items-center justify-between border border-base-300 ${bgClass} cursor-pointer hover:scale-103 transition`}
                             >
                                 {value.charAt(0).toUpperCase() + value.slice(1)}
-                                <span className={`ml-3 w-7 h-7 rounded-lg flex items-center justify-center ${tickBgClass}`}>
+                                <span className={`ml-3 w-7 h-7 rounded-lg flex items-center justify-center ${tickBgClass} `}>
                                     ✓
                                 </span>
                             </button>
@@ -125,13 +128,13 @@ const DailyRoutineTracker = () => {
                         <div key={product.key}>
                             <p className="font-medium mb-2 text-xl">{product.step}</p>
                             <div
-                                className={`relative flex items-center gap-4 rounded-xl p-2 border border-base-300 bg-white cursor-pointer transition shadow-sm`}
+                                className={`relative flex items-center gap-4 rounded-xl p-2 border border-base-300 bg-white cursor-pointer transition shadow-sm hover:scale-102`}
                                 onClick={() => toggleProduct(product.key)}
                             >
                                 <div
                                     className={`absolute top-2 right-2 w-7 h-7 rounded-lg flex items-center justify-center text-xs z-10 ${selectedProducts[product.key]
-                                            ? "bg-[#B1805A] text-white"
-                                            : "border border-[#B1805A] text-[#B1805A]"
+                                        ? "bg-[#B1805A] text-white"
+                                        : "border border-[#B1805A] text-[#B1805A]"
                                         }`}
                                 >
                                     ✓

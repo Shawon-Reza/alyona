@@ -182,7 +182,7 @@ const ProductDetailPage = () => {
                                         <div className="flex gap-4 mt-2">
                                             {["Like", "Dislike", "Not sure"].map((option) => (
                                                 <label key={option} className="text-sm">
-                                                    <input
+                                  ""                  <input
                                                         type="radio"
                                                         value={option}
                                                         checked={packaging === option}

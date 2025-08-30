@@ -135,6 +135,8 @@ const TrackerLayout = () => {
                     </div>
                 </div>
 
+
+
                 {/* Right Content */}
                 <div className="w-full lg:flex-1 p-6 bg-white rounded-2xl shadow-xl mb-15">
                     <TrackerTabs />

@@ -19,7 +19,7 @@ const QuizGreetings = () => {
         const finalQuizeData = {
             location_area: data.location_area,
             area: data.area,
-            country: data.country,
+            country: data.country,          
             city: data.city,
             age: Number(data.age),
             daily_period: data.daily_period,
@@ -95,7 +95,7 @@ const QuizGreetings = () => {
                     Tell us your email so we can send you a complete Yourself Beauty guide with personalized tips, insights, and recommendations to support your skin beauty — as well as a thank you gift for taking care of yourself.
                 </p>
 
-                <div className=" max-w-xs mt-2">
+                <div className=" max-w-xs mt-2 z-100">
                     <RowButton
                         text="Let's get started"
                         onClick={() => {

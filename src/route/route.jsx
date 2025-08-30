@@ -219,8 +219,7 @@ const router = createBrowserRouter([
                 path: "addon-skincare",
                 children: [
                     { index: true, element: <Navigate to="day" replace /> },
-                    { path: "day", element: <div>Add on Skincare - Day</div> },
-                    { path: "night", element: <div>Add on Skincare - Night</div> },
+                   { path: ":mode", element: <DailyRoutineTracker /> },
                 ],
             },
             {
