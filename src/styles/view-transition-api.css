@@ -1,0 +1,5 @@
+/* Enable automatic navigation animations */
+@view-transition {
+  navigation: auto;
+}
+

@@ -29,7 +29,7 @@ const LoginPage = () => {
         console.log("Password:", password);
 
         try {
-            const response = await axios.post('http://10.10.13.59:8000/accounts/api/v1/login', {
+            const response = await axios.post('http://10.10.13.59:8005/accounts/api/v1/login', {
                 email,
                 password,
             });

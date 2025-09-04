@@ -16,6 +16,7 @@ import {
     Edit,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import axiosApi from "@/api/axiosApi"
 
 // Sample product data based on the image
 const initialProducts = [
@@ -167,6 +168,7 @@ const statuses = ["Available", "Not available", "Discontinued"]
 const brands = ["Yourself Beauty", "Brand A", "Brand B"]
 
 export default function ProductManagementTable() {
+
     const [products, setProducts] = useState(initialProducts)
     const [searchTerm, setSearchTerm] = useState("")
     const [sortConfig, setSortConfig] = useState({ key: "id", direction: "asc" })
@@ -187,9 +189,11 @@ export default function ProductManagementTable() {
         priceRange: "",
         status: "",
     })
-
+    const fileInputRef = useRef(null);
     const selectFieldsRef = useRef(null)
     const filterRef = useRef(null)
+
+
 
     const productsPerPage = 20
     const totalProducts = 8618 // From the image
@@ -283,8 +287,35 @@ export default function ProductManagementTable() {
     }
 
     const handleBulkUpload = () => {
-        console.log("Bulk upload clicked")
-    }
+        fileInputRef.current?.click();
+    };
+
+    // When user selects file
+    const handleFileChange = async (e) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            console.log("Selected file:", file);
+
+            // Prepare FormData
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const res = await axiosApi.post("/products/api/v1/bulk-product", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+
+                console.log("Upload success:", res.data);
+                alert("File uploaded successfully!");
+            } catch (error) {
+                console.error("Upload error:", error);
+                alert("File upload failed!");
+            }
+        }
+    };
+
 
     const handleAddProduct = () => {
         console.log("Add product clicked")
@@ -465,6 +496,16 @@ export default function ProductManagementTable() {
                                 Export list
                             </button>
 
+
+
+                            {/* Hidden file input */}
+                            <input
+                                type="file"
+                                accept=".csv,.xlsx,.xls"
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                                style={{ display: "none" }}
+                            />
                             <button
                                 onClick={handleBulkUpload}
                                 className="flex items-center px-4 py-2 bg-indigo-900 text-white text-xs sm:text-xl rounded-lg hover:bg-indigo-800"
@@ -573,7 +614,7 @@ export default function ProductManagementTable() {
                                 {selectedFields.actions && <th className="py-3 px-4 text-left">Actions</th>}
                             </tr>
                         </thead>
-                        
+
                         <tbody className="divide-y divide-gray-200 rounded-2xl">
                             {currentProducts.map((product) => (
                                 <tr key={product.id} className="hover:bg-gray-50">
