@@ -11,6 +11,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { setProductDetails } from '@/store/productSlice';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
+import axios from 'axios';
 
 
 const ProductDetailPage = () => {
@@ -61,7 +63,7 @@ const ProductDetailPage = () => {
 
     // Fetch product details using React Query
     const { isPending, error, data } = useQuery({
-        queryKey: ['productDetails',id],
+        queryKey: ['productDetails', id],
         queryFn: async () => {
             const res = await axiosApi.get(`/products/api/v1/product-detail/${id}`);
             return res.data
@@ -82,6 +84,73 @@ const ProductDetailPage = () => {
     if (error) return <p>An error has occurred: {error.message}</p>
 
     console.log(data)
+
+
+
+    // Get Day night category for add product to routine
+
+    const chooseDayNight = () => {
+        Swal.fire({
+            title: "Choose your preference",
+            text: "Do you prefer Day or Night?",
+            showDenyButton: true,
+            confirmButtonText: "🌞 Day routine (AM)",
+            denyButtonText: "🌙 Night routine (PM)",
+            showClass: {
+                popup: `
+        animate__animated
+        animate__fadeInUp
+        animate__faster
+      `
+            },
+            hideClass: {
+                popup: `
+        animate__animated
+        animate__fadeOutDown
+        animate__faster
+      `
+            }
+        }).then((result) => {
+            if (result.isConfirmed || result.isDenied) {
+                const dayNight = result.isConfirmed ? "AM" : "PM";
+
+                // Show dropdown for weekly choices
+                Swal.fire({
+                    title: "Select Frequency",
+                    input: "select",
+                    inputOptions: {
+                        "1 time per week": "1 time per week",
+                        "2 time per week": "2 time per week",
+                        "3 time per week": "3 time per week"
+                    },
+                    inputPlaceholder: "Select frequency",
+                    showCancelButton: true,
+                }).then((freqResult) => {
+                    if (freqResult.isConfirmed) {
+                        const frequency = freqResult.value;
+
+                        // ✅ Axios POST request
+                        axiosApi.post(`/products/api/v1/daily-routine/${id}`, {
+                            daily: dayNight,      // "AM" or "PM"
+                            weekly: frequency   // "1 time per week", etc.
+                        })
+                            .then((response) => {
+                                Swal.fire("Success!", "Routine saved ✅", "success");
+                                console.log(response.data);
+                            })
+                         .catch((error) => {
+    const errorMessage = error.response?.data?.message || error.message || "Failed to save routine ❌";
+    
+    Swal.fire("Error!", errorMessage, "error");
+    console.error("API Error:", error);
+});
+
+                    }
+                });
+            }
+        });
+    };
+
 
 
     return (
@@ -181,18 +250,24 @@ const ProductDetailPage = () => {
                                         <span className="text-sm font-semibold">Packaging:</span>
                                         <div className="flex gap-4 mt-2">
                                             {["Like", "Dislike", "Not sure"].map((option) => (
-                                                <label key={option} className="text-sm">
-                                  ""                  <input
+                                                <label
+                                                    key={option}
+                                                    className="flex items-center gap-2 text-sm cursor-pointer"
+                                                >
+                                                    <input
                                                         type="radio"
+                                                        name="packaging" // 👈 group radios
                                                         value={option}
                                                         checked={packaging === option}
                                                         onChange={(e) => setPackaging(e.target.value)}
+                                                        className="accent-blue-600" // Tailwind for radio color
                                                     />
                                                     {option}
                                                 </label>
                                             ))}
                                         </div>
                                     </div>
+
 
                                     {/* Skin Feel */}
                                     <div className="mb-4">
@@ -225,7 +300,9 @@ const ProductDetailPage = () => {
 
 
                         {/* Routine Button */}
-                        <button className="w-full flex items-center justify-between gap-2 bg-[#0c0c33] text-white text-base sm:text-[18px] font-bold py-2 px-6 rounded-md hover:bg-[#1a1a4d] transition cursor-pointer hover:scale-103">
+                        <button
+                            onClick={chooseDayNight}
+                            className="w-full flex items-center justify-between gap-2 bg-[#0c0c33] text-white text-base sm:text-[18px] font-bold py-2 px-6 rounded-md hover:bg-[#1a1a4d] transition cursor-pointer hover:scale-103">
                             Add to my routine
                             <Plus className="w-5 h-5" />
                         </button>

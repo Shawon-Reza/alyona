@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef, useEffect } from "react"
 import {
     Search,
@@ -17,159 +15,13 @@ import {
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import axiosApi from "@/api/axiosApi"
+import { toast } from "react-toastify"
+import { useQuery } from "@tanstack/react-query"
 
-// Sample product data based on the image
-const initialProducts = [
-    {
-        id: "YB001",
-        product: "Peptide Infusion Serum",
-        brand: "Yourself Beauty",
-        priceRange: "$",
-        ingredients:
-            "Cucumber extract, Elder Flower Extract, Evening Primrose Oil, Ferulic acid, Glycerin, Glycolipids, Grape...",
-        status: "Available",
-    },
-    {
-        id: "YB002",
-        product: "Ceramide Nourishing Night Cream",
-        brand: "Yourself Beauty",
-        priceRange: "$",
-        ingredients: "Jojoba oil, Lactic acid, Lavender flower water, Oak ba...",
-        status: "Available",
-    },
-    {
-        id: "YB003",
-        product: "BiPhasic Make-up Remover",
-        brand: "Yourself Beauty",
-        priceRange: "$$",
-        ingredients:
-            "Rosehip oil, Rosemary Leaf Extract, Rowan berry extract, Salicylic acid, Sea-Buckthorn Fruit extract, Shea butter...",
-        status: "Available",
-    },
-    {
-        id: "YB004",
-        product: "Hydrating Facial Toner",
-        brand: "Yourself Beauty",
-        priceRange: "$$",
-        ingredients:
-            "Sunflower Oil, Sweet Flag extract, Tea tree oil, Vitamin C (L-Ascorbic acid), Vitamin E, Watercress extract, Zinc O...",
-        status: "Available",
-    },
-    {
-        id: "YB005",
-        product: "Natural Retinol-Alternative Oil Serum",
-        brand: "Yourself Beauty",
-        priceRange: "$$$",
-        ingredients:
-            "Cloudberry Extract, Cocoa Butter, Cucumber extract, Elder Flower Extract, Ferulic acid, Ginkgo Leaf Extract...",
-        status: "Available",
-    },
-    {
-        id: "YB006",
-        product: "Acne Spot Treatment",
-        brand: "Yourself Beauty",
-        priceRange: "$$$",
-        ingredients:
-            "Grape seed extract, Hyaluronic acid, Jojoba oil, Lactic acid, Lavender flower water, Peptides, Phytosterols, Ra...",
-        status: "Available",
-    },
-    {
-        id: "YB007",
-        product: "Oil-To-Milk Cleanser",
-        brand: "Yourself Beauty",
-        priceRange: "$",
-        ingredients:
-            "Rice oil, Rose flower water, Rosehip oil, Rosemary Leaf Extract, Rowan berry extract, Salicylic acid, Sea-Buckth...",
-        status: "Available",
-    },
-    {
-        id: "YB008",
-        product: "Purifying Facial Toner",
-        brand: "Yourself Beauty",
-        priceRange: "$$",
-        ingredients:
-            "Aloe Juice, Almond Oil, Avocado Oil, Bakuchiol, Betaine, Blackberry extract, Blueberry extract, Blueberry Oil",
-        status: "Available",
-    },
-    {
-        id: "YB009",
-        product: "Antioxidant Ginkgo Gel Booster",
-        brand: "Yourself Beauty",
-        priceRange: "$",
-        ingredients:
-            "Sunflower Oil, Sweet Flag extract, Tea tree oil, Vitamin C (L-Ascorbic acid), Vitamin E, Watercress extract, Zinc O...",
-        status: "Available",
-    },
-    {
-        id: "YB010",
-        product: "Sun Protection SPF50 Stick",
-        brand: "Yourself Beauty",
-        priceRange: "$$",
-        ingredients:
-            "Cloudberry Extract, Cocoa Butter, Cucumber extract, Elder Flower Extract, Ferulic acid, Ginkgo Leaf Extract...",
-        status: "Available",
-    },
-    {
-        id: "YB011",
-        product: "Vitamin C Brightening Serum",
-        brand: "Yourself Beauty",
-        priceRange: "$$$",
-        ingredients:
-            "Grape seed extract, Hyaluronic acid, Jojoba oil, Lactic acid, Lavender flower water, Peptides, Phytosterols, Ra...",
-        status: "Available",
-    },
-    {
-        id: "YB012",
-        product: "Moisturising Day Cream",
-        brand: "Yourself Beauty",
-        priceRange: "$$",
-        ingredients:
-            "Rice oil, Rose flower water, Rosehip oil, Rosemary Leaf Extract, Rowan berry extract, Salicylic acid, Sea-Buckth...",
-        status: "Available",
-    },
-    {
-        id: "YB013",
-        product: "Moisturising Day Cream",
-        brand: "Yourself Beauty",
-        priceRange: "$",
-        ingredients: "Vitamin E, Watercress extract, Zinc Oxide, Almond Oil, Aloe Juice, Avocado Oil, Bakuchiol, Betaine",
-        status: "Not available",
-    },
-    {
-        id: "YB014",
-        product: "Moisturising Day Cream",
-        brand: "Yourself Beauty",
-        priceRange: "$$$",
-        ingredients:
-            "Aloe Juice, Almond Oil, Avocado Oil, Bakuchiol, Betaine, Blackberry extract, Blueberry extract, Blueberry Oil",
-        status: "Available",
-    },
-    {
-        id: "YB015",
-        product: "Moisturising Day Cream",
-        brand: "Yourself Beauty",
-        priceRange: "$$",
-        ingredients:
-            "Blueberry Seed oil, Camelia (Green Tea) extract, Charcoal, Cloudberry Extract, Cocoa Butter, Cucumber...",
-        status: "Available",
-    },
-    {
-        id: "YB016",
-        product: "Moisturising Day Cream",
-        brand: "Yourself Beauty",
-        priceRange: "$",
-        ingredients: "Ferulic acid, Glycerin, Glycolipids, Grape seed extract,",
-        status: "Available",
-    },
-]
 
 const priceRanges = ["$", "$$", "$$$"]
-const statuses = ["Available", "Not available", "Discontinued"]
-const brands = ["Yourself Beauty", "Brand A", "Brand B"]
 
 export default function ProductManagementTable() {
-
-    const [products, setProducts] = useState(initialProducts)
     const [searchTerm, setSearchTerm] = useState("")
     const [sortConfig, setSortConfig] = useState({ key: "id", direction: "asc" })
     const [currentPage, setCurrentPage] = useState(1)
@@ -181,105 +33,40 @@ export default function ProductManagementTable() {
         brand: true,
         priceRange: true,
         ingredients: true,
-        status: true,
         actions: true,
     })
     const [filters, setFilters] = useState({
-        brand: "",
         priceRange: "",
-        status: "",
     })
-    const fileInputRef = useRef(null);
+
+    const fileInputRef = useRef(null)
     const selectFieldsRef = useRef(null)
     const filterRef = useRef(null)
 
+    const productsPerPage = 14
 
-
-    const productsPerPage = 20
-    const totalProducts = 8618 // From the image
-    const totalPages = 431 // From the image
-
-    // Close dropdowns when clicking outside
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (selectFieldsRef.current && !selectFieldsRef.current.contains(event.target)) {
-                setShowSelectFields(false)
-            }
-            if (filterRef.current && !filterRef.current.contains(event.target)) {
-                setShowFilter(false)
-            }
+    // Fetch products with pagination and filtering
+    const { isPending: products_loading, error: products_error, data: products } = useQuery({
+        queryKey: ['productslist', filters, searchTerm, currentPage],
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/product-list`, {
+                params: {
+                    priceRange: filters?.priceRange || "",
+                    search: searchTerm || "",
+                    page: currentPage,  // Correctly pass the current page
+                    limit: productsPerPage,  // Adding limit for pagination
+                },
+            })
+            return res.data
         }
-
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside)
-        }
-    }, [])
-
-    // Handle sorting
-    const requestSort = (key) => {
-        let direction = "asc"
-        if (sortConfig.key === key && sortConfig.direction === "asc") {
-            direction = "desc"
-        }
-        setSortConfig({ key, direction })
-    }
-
-    // Get sorted products
-    const getSortedProducts = () => {
-        const sortableProducts = [...products]
-        sortableProducts.sort((a, b) => {
-            if (a[sortConfig.key] < b[sortConfig.key]) {
-                return sortConfig.direction === "asc" ? -1 : 1
-            }
-            if (a[sortConfig.key] > b[sortConfig.key]) {
-                return sortConfig.direction === "asc" ? 1 : -1
-            }
-            return 0
-        })
-        return sortableProducts
-    }
-
-    // Handle search and filter
-    const filteredProducts = getSortedProducts().filter((product) => {
-        // Search filter
-        const matchesSearch = Object.values(product).some((value) =>
-            value.toString().toLowerCase().includes(searchTerm.toLowerCase()),
-        )
-
-        // Brand filter
-        const matchesBrand = !filters.brand || product.brand === filters.brand
-
-        // Price range filter
-        const matchesPriceRange = !filters.priceRange || product.priceRange === filters.priceRange
-
-        // Status filter
-        const matchesStatus = !filters.status || product.status === filters.status
-
-        return matchesSearch && matchesBrand && matchesPriceRange && matchesStatus
     })
+    console.log(products)
+
+    const totalProducts = products?.count || 0
+    const totalPages = Math.ceil(totalProducts / productsPerPage) // Calculate total pages dynamically
 
     // Pagination
-    const indexOfLastProduct = currentPage * productsPerPage
-    const indexOfFirstProduct = indexOfLastProduct - productsPerPage
-    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
-
-    // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber)
-
-    // Get status class
-    const getStatusClass = (status) => {
-        switch (status) {
-            case "Available":
-                return "bg-green-100 text-green-800"
-            case "Not available":
-                return "bg-red-100 text-red-800"
-            case "Discontinued":
-                return "bg-gray-100 text-gray-800"
-            default:
-                return "bg-gray-100 text-gray-800"
-        }
-    }
 
     // Handle actions
     const handleExportList = () => {
@@ -287,35 +74,34 @@ export default function ProductManagementTable() {
     }
 
     const handleBulkUpload = () => {
-        fileInputRef.current?.click();
-    };
+        fileInputRef.current?.click()
+    }
 
     // When user selects file
     const handleFileChange = async (e) => {
         if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            console.log("Selected file:", file);
+            const file = e.target.files[0]
+            console.log("Selected file:", file)
 
             // Prepare FormData
-            const formData = new FormData();
-            formData.append("file", file);
+            const formData = new FormData()
+            formData.append("file", file)
 
             try {
                 const res = await axiosApi.post("/products/api/v1/bulk-product", formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
-                });
+                })
 
-                console.log("Upload success:", res.data);
-                alert("File uploaded successfully!");
+                console.log("Upload success:", res.data)
+                toast.success("File uploaded successfully!")
             } catch (error) {
-                console.error("Upload error:", error);
-                alert("File upload failed!");
+                console.error("Upload error:", error)
+                toast.error("File upload failed!")
             }
         }
-    };
-
+    }
 
     const handleAddProduct = () => {
         console.log("Add product clicked")
@@ -334,17 +120,8 @@ export default function ProductManagementTable() {
         setCurrentPage(1)
     }
 
-    const clearFilters = () => {
-        setFilters({
-            brand: "",
-            priceRange: "",
-            status: "",
-        })
-    }
+    const navigate = useNavigate()
 
-
-
-    const navigate = useNavigate();
     return (
         <div className=" min-h-screen">
             {/* Header */}
@@ -401,79 +178,30 @@ export default function ProductManagementTable() {
 
                             {/* Filter */}
                             <div className="relative" ref={filterRef}>
-                                <button
+                                <select
                                     className="flex items-center text-xs sm:text-xl px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50"
-                                    onClick={() => setShowFilter(!showFilter)}
-                                >
-                                    Filter
-                                    <ChevronDown className={`ml-2 h-4 w-4 transition-transform ${showFilter ? "rotate-180" : ""}`} />
-                                </button>
+                                    defaultValue=""  // ✅ set default
 
-                                {showFilter && (
-                                    <div className="absolute right-0 top-full mt-2 p-6 bg-white rounded-lg shadow-lg border z-10 w-80">
-                                        <div className="space-y-4">
-                                            <div>
-                                                <label className="block text-sm font-medium mb-2">Brand</label>
-                                                <select
-                                                    className="w-full p-2 border rounded-md"
-                                                    value={filters.brand}
-                                                    onChange={(e) => setFilters({ ...filters, brand: e.target.value })}
-                                                >
-                                                    <option value="">All Brands</option>
-                                                    {brands.map((brand) => (
-                                                        <option key={brand} value={brand}>
-                                                            {brand}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-2">Price Range</label>
-                                                <select
-                                                    className="w-full p-2 border rounded-md"
-                                                    value={filters.priceRange}
-                                                    onChange={(e) => setFilters({ ...filters, priceRange: e.target.value })}
-                                                >
-                                                    <option value="">All Prices</option>
-                                                    {priceRanges.map((range) => (
-                                                        <option key={range} value={range}>
-                                                            {range}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium mb-2">Status</label>
-                                                <select
-                                                    className="w-full p-2 border rounded-md"
-                                                    value={filters.status}
-                                                    onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                                                >
-                                                    <option value="">All Statuses</option>
-                                                    {statuses.map((status) => (
-                                                        <option key={status} value={status}>
-                                                            {status}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            <div className="flex justify-end gap-2 pt-4">
-                                                <button
-                                                    onClick={clearFilters}
-                                                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
-                                                >
-                                                    Clear
-                                                </button>
-                                                <button
-                                                    onClick={applyFilters}
-                                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                                                >
-                                                    Apply
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
+                                    onChange={(e) => {
+                                        const { value } = e.target;
+                                        setFilters((prevFilters) => ({
+                                            ...prevFilters,
+                                            priceRange: value,
+                                        }));
+
+                                    }}
+
+                                >
+                                    <option value="" disabled>
+                                        Filter
+                                    </option>
+                                    <option value="$">$</option>
+                                    <option value="$$">$$</option>
+                                    <option value="$$$">$$$</option>
+                                </select>
+
+
+
                             </div>
 
                         </div>
@@ -598,96 +326,63 @@ export default function ProductManagementTable() {
                                         </div>
                                     </th>
                                 )}
-                                {selectedFields.status && (
-                                    <th className="py-3 px-4 text-left cursor-pointer" onClick={() => requestSort("status")}>
-                                        <div className="flex items-center">
-                                            Status
-                                            {sortConfig.key === "status" &&
-                                                (sortConfig.direction === "asc" ? (
-                                                    <ChevronUp className="ml-1 h-4 w-4" />
-                                                ) : (
-                                                    <ChevronDown className="ml-1 h-4 w-4" />
-                                                ))}
-                                        </div>
-                                    </th>
-                                )}
+
                                 {selectedFields.actions && <th className="py-3 px-4 text-left">Actions</th>}
                             </tr>
                         </thead>
 
                         <tbody className="divide-y divide-gray-200 rounded-2xl">
-                            {currentProducts.map((product) => (
-                                <tr key={product.id} className="hover:bg-gray-50">
-                                    {selectedFields.id && <td className="py-3 px-4 font-medium text-gray-900">{product.id}</td>}
+                            {products?.results
+                                .map((product) => (
+                                    <tr key={product.id} className="hover:bg-gray-50">
+                                        {selectedFields.id && <td className="py-3 px-4 font-medium text-gray-900">{product.productId}</td>}
 
-                                    {selectedFields.product && <td
-                                        onClick={() => {
-                                            navigate('details')
-                                        }}
-                                        className="py-3 px-4 text-gray-900 cursor-pointer">{product.product}</td>}
+                                        {selectedFields.product && <td
+                                            onClick={() => {
+                                                navigate(`details/${product.id}`)
+                                            }}
+                                            className="py-3 px-4 text-gray-900 cursor-pointer">{product.productName}</td>}
 
-                                    {selectedFields.brand && <td className="py-3 px-4 text-gray-900">{product.brand}</td>}
-                                    {selectedFields.priceRange && <td className="py-3 px-4 text-gray-900">{product.priceRange}</td>}
-                                    {selectedFields.ingredients && (
-                                        <td className="py-3 px-4 text-gray-600 max-w-md">
-                                            <div className="truncate" title={product.ingredients}>
-                                                {product.ingredients}
-                                            </div>
-                                        </td>
-                                    )}
-                                    {selectedFields.status && (
-                                        <td className="py-3 px-4">
-                                            <div className="relative">
-                                                <select
-                                                    className={`px-3 py-1 rounded-full text-xs font-medium border-0 ${getStatusClass(product.status)}`}
-                                                    value={product.status}
-                                                    onChange={(e) => {
-                                                        const updatedProducts = products.map((p) =>
-                                                            p.id === product.id ? { ...p, status: e.target.value } : p,
-                                                        )
-                                                        setProducts(updatedProducts)
-                                                    }}
-                                                >
-                                                    {statuses.map((status) => (
-                                                        <option key={status} value={status}>
-                                                            {status}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                        {selectedFields.brand && <td className="py-3 px-4 text-gray-900">{product.brand}</td>}
+                                        {selectedFields.priceRange && <td className="py-3 px-4 text-gray-900">{product.priceRange}</td>}
+                                        {selectedFields.ingredients && (
+                                            <td className="py-3 px-4 text-gray-600 max-w-md">
+                                                <div className="truncate" title={product.ingredients}>
+                                                    {product.ingredients}
+                                                </div>
+                                            </td>
+                                        )}
 
-                                            </div>
-                                        </td>
-                                    )}
-                                    {selectedFields.actions && (
-                                        <td className="py-3 px-4">
-                                            <div className="flex items-center gap-2">
-                                                <button
-                                                    onClick={() => handleDeleteProduct(product.id)}
-                                                    className="p-1 text-gray-400 hover:text-red-600"
-                                                >
-                                                    <Trash2 className="w-4 h-4 cursor-pointer" />
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        handleEditProduct(product.id)
-                                                        navigate('edit-product')
-                                                    }}
-                                                    className="p-1 text-gray-400 hover:text-blue-600"
-                                                >
-                                                    <Edit className="w-4 h-4 cursor-pointer" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    )}
-                                </tr>
-                            ))}
+                                        {selectedFields.actions && (
+                                            <td className="py-3 px-4">
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => handleDeleteProduct(product.id)}
+                                                        className="p-1 text-gray-400 hover:text-red-600"
+                                                    >
+                                                        <Trash2 className="w-4 h-4 cursor-pointer" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            handleEditProduct(product.id)
+                                                            navigate('edit-product')
+                                                        }}
+                                                        className="p-1 text-gray-400 hover:text-blue-600"
+                                                    >
+                                                        <Edit className="w-4 h-4 cursor-pointer" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        )}
+                                    </tr>
+                                ))}
                         </tbody>
                     </table>
                 </div>
 
                 {/* Pagination */}
                 <div className="flex items-center justify-between p-4 border-t border-gray-200">
-                    <div className="text-sm text-gray-700">1 to 20 of {totalProducts.toLocaleString()}</div>
+                    <div className="text-sm text-gray-700">1 to 20 of {totalProducts}</div>
                     <div className="flex items-center space-x-2">
                         <button
                             className="p-1 rounded-md hover:bg-gray-100"

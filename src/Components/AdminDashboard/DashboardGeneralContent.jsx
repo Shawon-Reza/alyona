@@ -1,20 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import axiosApi from "@/api/axiosApi"
 import { useQuery } from "@tanstack/react-query"
-
-const monthlyEarnings = [
-    { month: "ENE", amount: 300 },
-    { month: "FEB", amount: 1200 },
-    { month: "MAR", amount: 900 },
-    { month: "APR", amount: 1900 },
-    { month: "MAY", amount: 1100 },
-    { month: "JUN", amount: 1500 },
-]
 
 const topCountries = [
     { country: "France", users: "12.1K", percentage: 45 },
@@ -37,15 +28,22 @@ export default function DashboardGeneralContent() {
 
     const today = new Date();
     const currentYear = today.getFullYear();
+    const years = Array.from({ length: 5 }, (_, index) => currentYear - index);
     const currentMonthNumber = (today.getMonth() + 1).toString().padStart(2, "0");
 
 
     const [selectedYear, setSelectedYear] = useState(currentYear.toString())
     const [selectedMonth, setSelectedMonth] = useState(currentMonthNumber);
+    const [selectedMonthFrequency, setSelectedMonthFrequency] = useState(currentMonthNumber);
     const [selectedMonthTopcountries, setSelectedMonthTopcountries] = useState(currentMonthNumber);
     const [selectedMonthTopProduct, setSelectedMonthTopProduct] = useState(currentMonthNumber);
 
+    const [startDateFrequency, setStartDateFrequency] = useState("");
+    const [endDateFrequency, setEndDateFrequency] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    console.log(startDateFrequency, endDateFrequency);
 
     const {
         isPending: topIngredientsLoading,
@@ -70,6 +68,7 @@ export default function DashboardGeneralContent() {
             return res.data
         },
     })
+
     const {
         isPending: topCountiesLoading,
         error: topCountiesError,
@@ -82,24 +81,59 @@ export default function DashboardGeneralContent() {
         },
     })
 
+    // Monthly earning details. 
+    const {
+        isPending: monthlyEarningLoading,
+        error: monthlyEarningError,
+        data: monthlyEarning,
+    } = useQuery({
+        queryKey: ['monthlyEarning', selectedYear], // new query key
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/income-stat/${selectedYear}`)
+            return res.data
+        },
+    })
+    const transformedData = useMemo(() => {
+        return monthlyEarning?.map((entry) => {
+            const month = Object.keys(entry)[0]; // Get the month key (e.g., Jan)
+            const amount = entry[month]; // Get the amount value
+            return { month, amount }; // Return a new object with month and amount
+        });
+    }, [monthlyEarning]);
+
+    // Frequency Of uses
+    const {
+        isPending: userFrequencyLoading,
+        error: userFrequencyError,
+        data: userFrequency,
+    } = useQuery({
+        queryKey: ['userFrequency', startDateFrequency, endDateFrequency], // include both for re-fetching
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/user-activity/`, {
+                params: {
+                    from_date: startDateFrequency || null, // safe default
+                    to_date: endDateFrequency || null,
+                },
+            })
+            return res.data
+        },
+    })
+
+    console.log(userFrequency)
 
 
-
-    console.log(top_Counties)
 
     // Loading / Error handling
-    if (topIngredientsLoading || topProductsLoading) return 'Loading...'
+    // 🔹 Loading checks
+    if (topIngredientsLoading) return 'Loading Ingredients...'
+    if (topProductsLoading) return 'Loading Products...'
+    if (topCountiesLoading) return 'Loading Countries...'
+    // if (monthlyEarningLoading) return 'Loading Monthly Earnings...'
+
+    // 🔹 Error checks
     if (topIngredientsError) return 'Error (Ingredients): ' + topIngredientsError.message
     if (topProductsError) return 'Error (Products): ' + topProductsError.message
-
-
-
-
-
-
-
-
-
+    if (topCountiesError) return 'Error (Countries): ' + topCountiesError.message
 
 
 
@@ -110,6 +144,7 @@ export default function DashboardGeneralContent() {
 
             <div className="lg:flex gap-6 space-y-6 lg:space-y-0">
                 {/* Monthly Earnings Chart */}
+
                 <div className="card bg-white/50 shadow-md border border-gray-200 w-full">
                     <div className="card-body p-4">
                         <div className="flex items-center justify-between mb-4">
@@ -123,26 +158,38 @@ export default function DashboardGeneralContent() {
                                     onChange={(e) => setSelectedYear(e.target.value)}
                                     className="select select-bordered select-sm w-24"
                                 >
-                                    <option value="2025-1">2025-1</option>
-                                    <option value="2024-1">2024-1</option>
-                                    <option value="2023-1">2023-1</option>
+                                    {years.map((year) => (
+                                        <option key={year} value={year}>
+                                            {year}
+                                        </option>
+                                    ))}
                                 </select>
+                                );
                                 <button className="btn btn-ghost btn-sm">
                                     <ChevronRight className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
-                        <ResponsiveContainer width="100%" height={200}>
-                            <LineChart data={monthlyEarnings}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="month" />
-                                <YAxis />
-                                <Tooltip />
-                                <Line type="monotone" dataKey="amount" stroke="#8b5cf6" strokeWidth={2} />
-                            </LineChart>
-                        </ResponsiveContainer>
+
+                        {/* Loading State */}
+                        {monthlyEarningLoading ? (
+                            <div className="text-center text-gray-500">Loading Monthly Earnings...</div>
+                        ) : monthlyEarningError ? (
+                            <div className="text-center text-red-500">Error (Earnings): {monthlyEarningError.message}</div>
+                        ) : (
+                            <ResponsiveContainer width="100%" height={200}>
+                                <LineChart data={transformedData}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="month" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Line type="monotone" dataKey="amount" stroke="#8b5cf6" strokeWidth={2} />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
                 </div>
+
 
                 {/* Frequency of Usage */}
                 <div className="card bg-white/50 shadow-md border border-gray-200 w-full">
@@ -150,23 +197,26 @@ export default function DashboardGeneralContent() {
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold">Frequency of usage</h3>
                             <div className="flex items-center gap-2">
-                                <button className="btn btn-ghost btn-sm">
-                                    <ChevronLeft className="w-4 h-4" />
-                                </button>
-                                <select
-                                    value={selectedMonth}
-                                    onChange={(e) => setSelectedMonth(e.target.value)}
-                                    className="select select-bordered select-sm w-20"
-                                >
-                                    <option value="MAR">MAR</option>
-                                    <option value="APR">APR</option>
-                                    <option value="MAY">MAY</option>
-                                </select>
-                                <button className="btn btn-ghost btn-sm">
-                                    <ChevronRight className="w-4 h-4" />
+                                <input
+                                    type="date"
+                                    value={startDateFrequency}
+                                    onChange={(e) => setStartDateFrequency(e.target.value)}
+                                    className="input input-bordered input-sm"
+                                />
+                                <span className="text-sm">to</span>
+                                <input
+                                    type="date"
+                                    value={endDateFrequency}
+                                    onChange={(e) => setEndDateFrequency(e.target.value)}
+                                    className="input input-bordered input-sm"
+                                />
+                                <button className="btn btn-primary btn-sm">
+                                    {loading ? "Loading..." : "Fetch"}
                                 </button>
                             </div>
                         </div>
+
+                        {/* Your current static stats go here */}
                         <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -250,7 +300,7 @@ export default function DashboardGeneralContent() {
 
                 {/* Top Products */}
                 <div className="card bg-white/50 shadow-md border border-gray-200 w-full max-h-[260px]">
-                    <div className="card-body p-4">
+                    <div className="card-body p-4 overflow-auto">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold">Top Products</h3>
                             <div className="flex items-center gap-2">

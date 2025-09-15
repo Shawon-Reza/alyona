@@ -47,6 +47,7 @@ export default function DashboardUserContent() {
     const [selectedYearSkinTypes, setSelectedYearSkinTypes] = useState(currentYear.toString())
 
 
+
     const [selectedMonth, setSelectedMonth] = useState("MAR")
     const [selectedMonthScreenConcern, setSelectedMonthScreenConcern] = useState(currentMonthNumber)
     const [selectedMonthWaitlist, setSelectedMonthWaitlist] = useState(currentMonthNumber)
@@ -101,8 +102,7 @@ export default function DashboardUserContent() {
                 count: skinTypesDataRaw[type],
             }))
         : []; //
-    console.log(skinTypesDataRaw)
-    console.log(skinTypesData)
+
 
     const { isPending: screenConcernLoading, error: screenConcernError, data: screenConcern } = useQuery({
         queryKey: ['screenConcern', selectedMonthScreenConcern],
@@ -111,6 +111,9 @@ export default function DashboardUserContent() {
             return res.data
         }
     })
+console.log(screenConcern)
+
+
     const { isPending: waitListLoading, error: waitListError, data: waitList } = useQuery({
         queryKey: ['waitList', selectedMonthWaitlist],
         queryFn: async () => {
@@ -156,7 +159,7 @@ export default function DashboardUserContent() {
                                     <ChevronLeft className="w-3 h-3 md:w-4 md:h-4" />
                                 </button>
                                 <select
-                                    value={selectedYearUserAge}
+                                    value={selectedYearSkinTypes}
                                     onChange={(e) => setSelectedYearUserAge(e.target.value)}
                                     className="select select-bordered select-sm w-20 md:w-24 text-xs md:text-sm"
                                 >
@@ -202,8 +205,8 @@ export default function DashboardUserContent() {
                                     <ChevronLeft className="w-3 h-3 md:w-4 md:h-4" />
                                 </button>
                                 <select
-                                    value={selectedYear}
-                                    onChange={(e) => setSelectedYear(e.target.value)}
+                                    value={selectedYearSkinTypes}
+                                    onChange={(e) => setSelectedYearSkinTypes(e.target.value)} // Corrected to update the right state
                                     className="select select-bordered select-sm w-20 md:w-24 text-xs md:text-sm"
                                 >
                                     {years.map((year) => (

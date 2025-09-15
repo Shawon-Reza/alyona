@@ -50,7 +50,7 @@ const CircularProgress = ({ value, size = 80 }) => {
 export default function AboutSkin() {
   // Get Skin Analysis All data based on quiz
   const { isLoading, error, data } = useQuizResult();
-
+  console.log(data)
 
   // Handle loading and error states
   if (isLoading) return 'Loading...';

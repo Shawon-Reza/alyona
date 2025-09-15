@@ -219,31 +219,28 @@ const router = createBrowserRouter([
                 path: "addon-skincare",
                 children: [
                     { index: true, element: <Navigate to="day" replace /> },
-                   { path: ":mode", element: <DailyRoutineTracker /> },
+                    { path: ":mode", element: <DailyRoutineTracker /> },
                 ],
             },
             {
                 path: "body-care",
                 children: [
                     { index: true, element: <Navigate to="day" replace /> },
-                    { path: "day", element: <div>Body Care - Day</div> },
-                    { path: "night", element: <div>Body Care - Night</div> },
+                    { path: ":mode", element: <DailyRoutineTracker /> },
                 ],
             },
             {
                 path: "hair-care",
                 children: [
                     { index: true, element: <Navigate to="day" replace /> },
-                    { path: "day", element: <div>Hair Care - Day</div> },
-                    { path: "night", element: <div>Hair Care - Night</div> },
+                    { path: ":mode", element: <DailyRoutineTracker /> },
                 ],
             },
             {
                 path: "perfume",
                 children: [
                     { index: true, element: <Navigate to="day" replace /> },
-                    { path: "day", element: <div>Perfume - Day</div> },
-                    { path: "night", element: <div>Perfume - Night</div> },
+                    { path: ":mode", element: <DailyRoutineTracker /> },
                 ],
             },
         ],
@@ -352,7 +349,7 @@ const router = createBrowserRouter([
                 element: <EditProductPage></EditProductPage>,
             },
             {
-                path: "products/details",
+                path: "products/details/:id",
                 element: <AdminProductDetailPage></AdminProductDetailPage>,
             },
             {

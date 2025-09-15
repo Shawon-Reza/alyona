@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { ChevronRight, ChevronDown, ChevronLeft } from "lucide-react"
 import {
     BarChart,
@@ -15,43 +15,11 @@ import {
     Pie,
     Cell,
 } from "recharts"
+import { useQuery } from "@tanstack/react-query"
+import { useNavigate, useParams } from "react-router-dom"
+import axiosApi from "@/api/axiosApi"
 
-const productData = {
-    id: "YB0001",
-    name: "Hydrating Toner",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQH-BKNmTsmJC4pILiOuLVKw3XOV8CTEQCIkQ&s",
-    status: "Available",
-    insights: {
-        avgSatisfaction: 87,
-        amountOfUsers: 12324,
-        avgRating: 4.9,
-        ratingCount: 25,
-        skinConcerns: "Top choice for acne-prone skin",
-        skinTypePreferences: "Most popular among oily skin users or Highly rated by dry skin customers",
-    },
-    details: {
-        id: "YB0001",
-        category: "Skincare",
-        pregnancySafe: "Yes",
-        brand: "Yourself beauty",
-        productType: "Toner",
-        concerns: "Dullness, Dehydratation",
-        skinType: "all, dry, sensibly, oily",
-        features: "Hydratating",
-        ingredients: "ingredients",
-        texture: "Liquid",
-        inci: "Leaf Juice, Glycerin",
-        natural: "99%",
-        organic: "61%",
-        priceRange: "$$$",
-        fragrance: "yes",
-        fragranceNotes: "floral",
-        productUrl: "WWW.YB.COM/LINK",
-    },
-}
-
-const statusOptions = ["Available", "Not available", "Discontinued", "Out of stock"]
-
+// ---- Static fallbacks for charts that your API doesn't provide (yet)
 const ageData = [
     { age: "15-24", female: 3512, male: 2000 },
     { age: "25-34", female: 5800, male: 2500 },
@@ -60,13 +28,9 @@ const ageData = [
     { age: "55+", female: 1200, male: 800 },
 ]
 
-const demographicsData = [
-    { name: "Female", value: 6000, color: "#ec4899" },
-    { name: "Male", value: 3000, color: "#3b82f6" },
-    { name: "No defined", value: 3000, color: "#e5e7eb" },
-]
+const statusOptions = ["Available", "Not available", "Discontinued", "Out of stock"]
 
-const topCountries = [
+const topCountriesFallback = [
     { country: "France", users: "2K", percentage: 80 },
     { country: "Germany", users: "1.5K", percentage: 60 },
     { country: "Switzerland", users: "120", percentage: 20 },
@@ -75,11 +39,27 @@ const topCountries = [
 ]
 
 export default function AdminProductDetailPage() {
-    const [currentStatus, setCurrentStatus] = useState(productData.status)
+    const navigate = useNavigate()
+    const [currentStatus, setCurrentStatus] = useState("Available")
     const [showStatusDropdown, setShowStatusDropdown] = useState(false)
     const [selectedYear, setSelectedYear] = useState("2025")
     const [selectedMonth, setSelectedMonth] = useState("MAR")
 
+    const { id } = useParams()
+
+    const {
+        isPending: productSpecificDetailsLoading,
+        error: productSpecificDetailsError,
+        data: productSpecificDetails,
+    } = useQuery({
+        queryKey: ["productSpecificDetails", id],
+        enabled: !!id,
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/product-detail-stat/${id}`)
+            return res.data
+        },
+    })
+    console.log(productSpecificDetails)
     const handleStatusChange = (newStatus) => {
         setCurrentStatus(newStatus)
         setShowStatusDropdown(false)
@@ -100,42 +80,133 @@ export default function AdminProductDetailPage() {
         }
     }
 
-    const handleManageReviews = (type) => {
-        console.log(`Manage reviews ${type} clicked`)
+    // ----- Derived UI values & safe fallbacks
+    const productName = productSpecificDetails?.productName ?? "—"
+    const imageUrl = productSpecificDetails?.image_url ?? "/placeholder.svg"
+    const productId = productSpecificDetails?.productId ?? "—"
+    const category = productSpecificDetails?.category ?? "Empty"
+    const brand = productSpecificDetails?.brand ?? "—"
+    const pregnancySafe = productSpecificDetails?.pregnancy_safe === true ? "Yes" : "No"
+    const priceRange = productSpecificDetails?.priceRange ?? "—"
+    const fragranceNotes = Array.isArray(productSpecificDetails?.fragrance_notes)
+        ? productSpecificDetails.fragrance_notes.join(", ")
+        : "—"
+    const fragrance = productSpecificDetails?.fragranceFree === true ? "No (fragrance-free)" : "Yes"
+    const natural = productSpecificDetails?.natural ?? "—"
+    const organic = productSpecificDetails?.organic ?? "—"
+    const productUrl = productSpecificDetails?.product_url ?? "—"
+    const texture = Array.isArray(productSpecificDetails?.texture) ? productSpecificDetails.texture.join(", ") : "—"
+    const concerns = Array.isArray(productSpecificDetails?.concerns) ? productSpecificDetails.concerns.join(", ") : "—"
+    const skinTypes = Array.isArray(productSpecificDetails?.skin_types)
+        ? productSpecificDetails.skin_types.join(", ")
+        : "—"
+    const features = Array.isArray(productSpecificDetails?.features) ? productSpecificDetails.features.join(", ") : "—"
+    const ingredients = Array.isArray(productSpecificDetails?.ingredients)
+        ? productSpecificDetails.ingredients.join(", ")
+        : "—"
+    const inci = Array.isArray(productSpecificDetails?.incl) ? productSpecificDetails.incl.join(", ") : "—"
+
+    const amountOfUsers = productSpecificDetails?.amount_of_users ?? 0
+    const avgRatings =
+        typeof productSpecificDetails?.avg_ratings === "number"
+            ? Number(productSpecificDetails.avg_ratings.toFixed(1))
+            : 0
+    const ratingCount = Array.isArray(productSpecificDetails?.reviews) ? productSpecificDetails.reviews.length : 0
+
+    const avgSatisfactionDisplay =
+        typeof productSpecificDetails?.avg_satisfaction === "number"
+            ? `${productSpecificDetails.avg_satisfaction}%`
+            : productSpecificDetails?.avg_satisfaction ?? "—"
+
+    const skinConcernsText = Array.isArray(productSpecificDetails?.skin_concerns)
+        ? productSpecificDetails.skin_concerns.join(", ")
+        : concerns
+
+    const skinTypePreferencesText = useMemo(() => {
+        const reported = Array.isArray(productSpecificDetails?.user_skin_types)
+            ? productSpecificDetails.user_skin_types.join(", ")
+            : ""
+        const available = Array.isArray(productSpecificDetails?.skin_types)
+            ? productSpecificDetails.skin_types.join(", ")
+            : ""
+        if (reported && available) return `Users reported: ${reported} • Available types: ${available}`
+        if (reported) return `Users reported: ${reported}`
+        if (available) return `Available types: ${available}`
+        return "—"
+    }, [productSpecificDetails])
+
+    // Demographics pie (female/male/undefined)
+    const demographics = productSpecificDetails?.demographics ?? {}
+    const male = Number(demographics?.male ?? 0)
+    const female = Number(demographics?.female ?? 0)
+    const known = male + female
+    const other = Number(demographics?.other ?? 0)
+
+    const demographicsData = [
+        { name: "Female", value: female, color: "#ec4899" },
+        { name: "Male", value: male, color: "#3b82f6" },
+        { name: "Others", value: other, color: "#e5e7eb" },
+    ]
+    const demographicsTotal = demographicsData.reduce((s, d) => s + (Number(d.value) || 0), 0)
+
+    // Countries section (no data from API yet, keep fallback)
+    const topCountries = topCountriesFallback
+
+    if (productSpecificDetailsLoading) {
+        return (
+            <div className="p-6">
+                <div className="animate-pulse space-y-4">
+                    <div className="h-6 bg-gray-200 rounded w-1/3" />
+                    <div className="h-4 bg-gray-200 rounded w-1/2" />
+                    <div className="h-96 bg-gray-100 rounded" />
+                </div>
+            </div>
+        )
     }
 
+    if (productSpecificDetailsError) {
+        return (
+            <div className="p-6 text-red-600">
+                Failed to load product details. {String(productSpecificDetailsError)}
+            </div>
+        )
+    }
+
+    
     return (
         <div className="min-h-screen">
             {/* Breadcrumb */}
             <div className="flex items-center text-sm text-gray-600 mb-6">
-                <span className="cursor-pointer hover:text-gray-900">Product List</span>
+                <span
+                    onClick={() => navigate("/admindashboard/products")}
+                    className="cursor-pointer hover:text-gray-900">Product List</span>
                 <ChevronRight className="w-4 h-4 mx-2" />
-                <span className="text-gray-900">{productData.name}</span>
+                <span className="text-gray-900">{productName}</span>
             </div>
 
-            <div className="">
+            <div>
                 {/* Product Header */}
                 <div className="p-3 md:p-6 border-b border-gray-200">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-center">
                             <img
-                                src={productData.image || "/placeholder.svg"}
-                                alt={productData.name}
+                                src={imageUrl}
+                                alt={productName}
                                 className="w-10 h-10 md:w-12 md:h-12 object-cover mr-3 md:mr-4 rounded"
                             />
-                            <h1 className="text-xl md:text-2xl font-semibold text-gray-900 truncate">{productData.name}</h1>
+                            <h1 className="text-xl md:text-2xl font-semibold text-gray-900 truncate">{productName}</h1>
                         </div>
 
-                        {/* Mobile Actions */}
+                        {/* Actions */}
                         <div className="flex items-center gap-2 md:gap-4 flex-wrap">
                             <button
-                                onClick={() => handleManageReviews("primary")}
+                                onClick={() => console.log("Manage reviews primary")}
                                 className="flex-1 md:flex-none px-3 md:px-4 py-2 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 transition-colors text-sm"
                             >
                                 Manage reviews
                             </button>
                             <button
-                                onClick={() => handleManageReviews("secondary")}
+                                onClick={() => console.log("Manage reviews secondary")}
                                 className="flex-1 md:flex-none px-3 md:px-4 py-2 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 transition-colors text-sm"
                             >
                                 Manage reviews
@@ -174,29 +245,27 @@ export default function AdminProductDetailPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         <div>
                             <div className="text-sm font-medium text-gray-700 mb-1">Avg satisfaction level</div>
-                            <div className="text-2xl font-bold text-gray-900">{productData.insights.avgSatisfaction}%</div>
+                            <div className="text-2xl font-bold text-gray-900">{avgSatisfactionDisplay}</div>
                         </div>
                         <div>
                             <div className="text-sm font-medium text-gray-700 mb-1">Amount of users</div>
-                            <div className="text-2xl font-bold text-gray-900">
-                                {productData.insights.amountOfUsers.toLocaleString()}
-                            </div>
+                            <div className="text-2xl font-bold text-gray-900">{Number(amountOfUsers).toLocaleString()}</div>
                         </div>
                         <div>
                             <div className="text-sm font-medium text-gray-700 mb-1">Avg rating</div>
                             <div className="text-2xl font-bold text-gray-900">
-                                {productData.insights.avgRating} ({productData.insights.ratingCount})
+                                {avgRatings} ({ratingCount})
                             </div>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <div className="text-sm font-medium text-gray-700 mb-1">Skin concerns</div>
-                            <div className="text-gray-900">{productData.insights.skinConcerns}</div>
+                            <div className="text-gray-900">{skinConcernsText}</div>
                         </div>
                         <div>
                             <div className="text-sm font-medium text-gray-700 mb-1">Skin Type Preferences</div>
-                            <div className="text-gray-900">{productData.insights.skinTypePreferences}</div>
+                            <div className="text-gray-900">{skinTypePreferencesText}</div>
                         </div>
                     </div>
                 </div>
@@ -204,82 +273,82 @@ export default function AdminProductDetailPage() {
                 {/* Product Data */}
                 <div className="px-6 py-3">
                     <h2 className="text-lg font-semibold text-gray-900 mb-6">Product Data</h2>
-                    <div className="">
-                        <div className="">
+                    <div>
+                        <div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">ID</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.id}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%] ">{productId}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Category</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.category}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{category}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Pregnancy Safe</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.pregnancySafe}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{pregnancySafe}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Brand</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.brand}</span>
-                            </div>
-                            <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Product type</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.productType}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{brand}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Concerns</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.concerns}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{concerns}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Skin type</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.skinType}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{skinTypes}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Features</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.features}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{features}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Ingredients</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.ingredients}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{ingredients}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Texture</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.texture}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{texture}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">INCI</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.inci}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{inci}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Natural</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.natural}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{natural}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Organic</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.organic}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{organic}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Price range</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.priceRange}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{priceRange}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Fragrance</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.fragrance}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{fragrance}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Fragrance notes</span>
-                                <span className="text-gray-900 w-[60%] md:w-[90%]">{productData.details.fragranceNotes}</span>
+                                <span className="text-gray-900 w-[60%] md:w-[70%] lg:w-[80%]">{fragranceNotes || "—"}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
                                 <span className="font-medium text-gray-700 w-[40%] md:w-[10%] text-left">Product URL</span>
-                                <span className="text-blue-600 hover:text-blue-800 cursor-pointer w-[60%] md:w-[90%]">
-                                    {productData.details.productUrl}
-                                </span>
+                                <a
+                                    className="text-blue-600 hover:text-blue-800 w-[60%] md:w-[70%] truncate"
+                                    href={productUrl !== "—" ? productUrl : undefined}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    {productUrl}
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-
 
                 {/* Stats Section */}
                 <div className="px-6 py-2 border-t border-gray-200">
@@ -292,7 +361,7 @@ export default function AdminProductDetailPage() {
                 {/* Analytics Section */}
                 <div className="p-6 border-t border-gray-200">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* Total users vs age Chart */}
+                        {/* Total users vs age Chart (static sample) */}
                         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-lg shadow-sm">
                             <div className="p-4">
                                 <div className="flex items-center justify-between mb-4">
@@ -334,7 +403,7 @@ export default function AdminProductDetailPage() {
                             </div>
                         </div>
 
-                        {/* Demographics Chart */}
+                        {/* Demographics Chart (dynamic) */}
                         <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
                             <div className="p-4">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Demographics</h3>
@@ -357,21 +426,27 @@ export default function AdminProductDetailPage() {
                                     </PieChart>
                                 </ResponsiveContainer>
                                 <div className="space-y-2 text-sm">
-                                    {demographicsData.map((entry, index) => (
-                                        <div key={index} className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }}></div>
-                                                <span>{entry.name}</span>
+                                    {demographicsData.map((entry, index) => {
+                                        const pct =
+                                            demographicsTotal > 0
+                                                ? Math.round((Number(entry.value || 0) / demographicsTotal) * 100)
+                                                : 0
+                                        return (
+                                            <div key={index} className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }}></div>
+                                                    <span>{entry.name}</span>
+                                                </div>
+                                                <span className="font-medium">{pct}%</span>
                                             </div>
-                                            <span className="font-medium">{Math.round((entry.value / 12000) * 100)}%</span>
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Top Countries */}
+                    {/* Top Countries (fallback sample) */}
                     <div className="mt-6 bg-white border border-gray-200 rounded-lg shadow-sm">
                         <div className="p-4">
                             <div className="flex items-center justify-between mb-4">
@@ -400,7 +475,10 @@ export default function AdminProductDetailPage() {
                                         <div className="text-sm font-medium text-gray-900 mb-1">{country.country}</div>
                                         <div className="text-lg font-bold text-gray-900 mb-2">{country.users}</div>
                                         <div className="w-full h-2 bg-gray-200 rounded-full">
-                                            <div className="h-full bg-purple-500 rounded-full" style={{ width: `${country.percentage}%` }} />
+                                            <div
+                                                className="h-full bg-purple-500 rounded-full"
+                                                style={{ width: `${country.percentage}%` }}
+                                            />
                                         </div>
                                     </div>
                                 ))}
@@ -412,139 +490,86 @@ export default function AdminProductDetailPage() {
                 {/* Reviews Section */}
                 <div className="p-6 border-t border-gray-200">
                     <h2 className="text-lg font-semibold text-gray-900 mb-4">Reviews</h2>
-                    <div className="overflow-x-auto bg-white">
-                        <table className="w-full">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
-                                        <div className="flex items-center">
-                                            Date
-                                            <ChevronDown className="ml-1 h-4 w-4" />
-                                        </div>
-                                    </th>
-                                    <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
-                                        <div className="flex items-center">
-                                            User
-                                            <ChevronDown className="ml-1 h-4 w-4" />
-                                        </div>
-                                    </th>
-                                    <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
-                                        <div className="flex items-center">
-                                            Rating
-                                            <ChevronDown className="ml-1 h-4 w-4" />
-                                        </div>
-                                    </th>
-                                    <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
-                                        <div className="flex items-center">
-                                            Comments
-                                            <ChevronDown className="ml-1 h-4 w-4" />
-                                        </div>
-                                    </th>
-                                    <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
-                                        <div className="flex items-center">
-                                            Actions
-                                            <ChevronDown className="ml-1 h-4 w-4" />
-                                        </div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200">
-                                {[
-                                    {
-                                        date: "05-10-2025 11:15",
-                                        user: "Carlos Ramirez",
-                                        rating: "5.0",
-                                        comment:
-                                            "The combination of ingredients is impressive! My skin feels so hydrated and refreshed after using it.",
-                                    },
-                                    {
-                                        date: "06-05-2025 16:40",
-                                        user: "Emma Thompson",
-                                        rating: "5.0",
-                                        comment:
-                                            "This product smells amazing and leaves my skin feeling soft and smooth. Definitely a must-try!",
-                                    },
-                                    {
-                                        date: "03-25-2025 09:30",
-                                        user: "David Lee",
-                                        rating: "5.0",
-                                        comment:
-                                            "I noticed a significant improvement in my skin's texture after using this. It's become a staple in my routine!",
-                                    },
-                                    {
-                                        date: "04-15-2025 12:00",
-                                        user: "Sophia Patel",
-                                        rating: "5.0",
-                                        comment: "Great product! It really helps with my skin's hydration and gives it a nice glow.",
-                                    },
-                                    {
-                                        date: "05-20-2025 14:15",
-                                        user: "Michael Chen",
-                                        rating: "5.0",
-                                        comment:
-                                            "I love how lightweight this feels on my skin. It absorbs quickly and doesn't leave any greasy residue.",
-                                    },
-                                    {
-                                        date: "06-30-2025 12:00",
-                                        user: "Olivia Martinez",
-                                        rating: "5.0",
-                                        comment: "This has become my go-to moisturizer. My skin feels plump and rejuvenated!",
-                                    },
-                                    {
-                                        date: "03-30-2025 08:30",
-                                        user: "James Smith",
-                                        rating: "5.0",
-                                        comment: "I appreciate the natural ingredients. My skin has never felt better!",
-                                    },
-                                    {
-                                        date: "04-10-2025 15:00",
-                                        user: "Isabella Brown",
-                                        rating: "5.0",
-                                        comment: "This product is fantastic! It has helped reduce my breakouts and even out my skin tone.",
-                                    },
-                                ].map((review, index) => (
-                                    <tr key={index} className="hover:bg-gray-50">
-                                        <td className="py-3 px-4 text-sm text-gray-900">{review.date}</td>
-                                        <td className="py-3 px-4 text-sm text-gray-900">{review.user}</td>
-                                        <td className="py-3 px-4 text-sm text-gray-900">{review.rating}</td>
-                                        <td className="py-3 px-4 text-sm text-gray-900 max-w-md">
-                                            <div className="truncate" title={review.comment}>
-                                                {review.comment}
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-4 text-sm text-gray-900">
-                                            <button
-                                                className="text-gray-400 hover:text-red-600 transition-colors"
-                                                onClick={() => console.log(`Delete review from ${review.user}`)}
-                                            >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth={2}
-                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
 
-                    {/* Pagination */}
+                    {Array.isArray(productSpecificDetails?.reviews) && productSpecificDetails.reviews.length > 0 ? (
+                        <div className="overflow-x-auto bg-white">
+                            <table className="w-full">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
+                                            <div className="flex items-center">
+                                                Date
+                                                <ChevronDown className="ml-1 h-4 w-4" />
+                                            </div>
+                                        </th>
+                                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
+                                            <div className="flex items-center">
+                                                User
+                                                <ChevronDown className="ml-1 h-4 w-4" />
+                                            </div>
+                                        </th>
+                                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
+                                            <div className="flex items-center">
+                                                Rating
+                                                <ChevronDown className="ml-1 h-4 w-4" />
+                                            </div>
+                                        </th>
+                                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
+                                            <div className="flex items-center">
+                                                Comments
+                                                <ChevronDown className="ml-1 h-4 w-4" />
+                                            </div>
+                                        </th>
+                                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
+                                            <div className="flex items-center">
+                                                Actions
+                                                <ChevronDown className="ml-1 h-4 w-4" />
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {productSpecificDetails.reviews.map((r, idx) => (
+                                        <tr key={idx} className="hover:bg-gray-50">
+                                            <td className="py-3 px-4 text-sm text-gray-900">{r.created_at.split("T")[0] ?? "—"}</td>
+                                            <td className="py-3 px-4 text-sm text-gray-900">{r.user ?? "—"}</td>
+                                            <td className="py-3 px-4 text-sm text-gray-900">{r.rating ?? "—"}</td>
+                                            <td className="py-3 px-4 text-sm text-gray-900 max-w-md">
+                                                <div className="truncate" title={r.comment ?? ""}>
+                                                    {r.description ?? "—"}
+                                                </div>
+                                            </td>
+                                            <td className="py-3 px-4 text-sm text-gray-900">
+                                                <button
+                                                    className="text-gray-400 hover:text-red-600 transition-colors"
+                                                    onClick={() => console.log(`Delete review`, r)}
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <div className="text-sm text-gray-600">No reviews yet.</div>
+                    )}
+
+                    {/* Pagination (static placeholder) */}
                     <div className="flex items-center justify-between mt-4 pt-4">
-                        <div className="text-sm text-gray-700">1 to 20 of 25</div>
+                        <div className="text-sm text-gray-700">1 to 20 of {ratingCount || 0}</div>
                         <div className="flex items-center space-x-2">
                             <button className="p-1 rounded-md hover:bg-gray-100 disabled:opacity-50" disabled>
                                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                                    />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
                                 </svg>
                             </button>
                             <button className="p-1 rounded-md hover:bg-gray-100 disabled:opacity-50" disabled>
@@ -552,7 +577,7 @@ export default function AdminProductDetailPage() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                 </svg>
                             </button>
-                            <span className="text-sm px-2">Page 1 of 2</span>
+                            <span className="text-sm px-2">Page 1 of 1</span>
                             <button className="p-1 rounded-md hover:bg-gray-100">
                                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
