@@ -31,12 +31,28 @@ const AdminDashboardLogin = () => {
 
         axiosApi.post('/accounts/api/v1/login', { email, password })
             .then((response) => {
-                toast.success('Login successful!');
-                navigate('/admindashboard');
-                localStorage.setItem("adtoken", JSON.stringify(response.data.access));
-                console.log('Login successful:', response.data);
-                localStorage.removeItem("token");
-                
+                console.log(response?.data.login_user_info.role)
+                if (response?.data.login_user_info.role === 'admin') {
+
+                    toast.success('Successfully Logged in as Admin');
+                    navigate('/admindashboard');
+                    localStorage.setItem("adtoken", JSON.stringify(response.data.access));
+                    console.log('Login successful:', response.data);
+                    localStorage.removeItem("token");
+                }
+                else if (response?.data.login_user_info.role === 'mentor') {
+                    toast.success('Successfully Logged in as Mentor');
+                    navigate('/mentordashboard');
+                    localStorage.setItem("mtrtoken", JSON.stringify(response.data.access));
+                    console.log('Login successful:', response.data);
+                    localStorage.removeItem("token");
+                    return;
+                } else {
+                    toast.error('You are not an admin. Please use the mentor login page.');
+                    return;
+                }
+
+
 
             })
             .catch((error) => {

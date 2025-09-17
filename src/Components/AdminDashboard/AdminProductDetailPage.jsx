@@ -18,6 +18,7 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import axiosApi from "@/api/axiosApi"
+import { MdDeleteOutline } from "react-icons/md"
 
 // ---- Static fallbacks for charts that your API doesn't provide (yet)
 const ageData = [
@@ -28,22 +29,23 @@ const ageData = [
     { age: "55+", female: 1200, male: 800 },
 ]
 
-const statusOptions = ["Available", "Not available", "Discontinued", "Out of stock"]
-
-const topCountriesFallback = [
-    { country: "France", users: "2K", percentage: 80 },
-    { country: "Germany", users: "1.5K", percentage: 60 },
-    { country: "Switzerland", users: "120", percentage: 20 },
-    { country: "Italy", users: "12", percentage: 5 },
-    { country: "Others", users: "2", percentage: 2 },
-]
-
 export default function AdminProductDetailPage() {
     const navigate = useNavigate()
     const [currentStatus, setCurrentStatus] = useState("Available")
     const [showStatusDropdown, setShowStatusDropdown] = useState(false)
     const [selectedYear, setSelectedYear] = useState("2025")
+    const [selectedYearUservsAge, setSelectedYearUservsAge] = useState(
+        new Date().getFullYear().toString()
+    )
     const [selectedMonth, setSelectedMonth] = useState("MAR")
+    const [selectedMonthTopCouentries, setSelectedMonthTopCouentries] = useState(
+        String(new Date().getMonth() + 1).padStart(2, "0")
+    )
+
+
+    const currentYear = new Date().getFullYear()
+    const years = Array.from({ length: 5 }, (_, i) => (currentYear - i).toString())
+
 
     const { id } = useParams()
 
@@ -59,7 +61,7 @@ export default function AdminProductDetailPage() {
             return res.data
         },
     })
-    console.log(productSpecificDetails)
+
     const handleStatusChange = (newStatus) => {
         setCurrentStatus(newStatus)
         setShowStatusDropdown(false)
@@ -79,6 +81,17 @@ export default function AdminProductDetailPage() {
                 return "bg-gray-100 text-gray-800"
         }
     }
+
+    const date = new Date()
+    console.log(date)
+
+
+
+
+
+
+
+
 
     // ----- Derived UI values & safe fallbacks
     const productName = productSpecificDetails?.productName ?? "—"
@@ -135,7 +148,7 @@ export default function AdminProductDetailPage() {
         return "—"
     }, [productSpecificDetails])
 
-    // Demographics pie (female/male/undefined)
+    // Demographics pie (female/male/others)
     const demographics = productSpecificDetails?.demographics ?? {}
     const male = Number(demographics?.male ?? 0)
     const female = Number(demographics?.female ?? 0)
@@ -150,7 +163,49 @@ export default function AdminProductDetailPage() {
     const demographicsTotal = demographicsData.reduce((s, d) => s + (Number(d.value) || 0), 0)
 
     // Countries section (no data from API yet, keep fallback)
-    const topCountries = topCountriesFallback
+
+    const {
+        isPending: topCountriesLoading,
+        error: topCountriesError,
+        data: topCountries,
+    } = useQuery({
+        queryKey: ["topCountries", id, selectedMonthTopCouentries], // refetch when id changes (if needed)
+        enabled: !!id, // only run when id exists
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/product-usage-by-country/${id}/${selectedMonthTopCouentries}`)
+            return res.data
+        },
+    })
+
+    // User vs Age section (no data from API yet, keep fallback)
+
+    const {
+        isPending: userAgeLoading,
+        error: userAgeError,
+        data: userAgeData,
+    } = useQuery({
+        queryKey: ["uservsAge", id, selectedYearUservsAge], // refetch when id or month changes
+        enabled: !!id, // only run when id exists
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/total-users-by-product-age-chart/${id}/${selectedYearUservsAge}`);
+            return res.data;
+        },
+    });
+
+    // Transform API data into chart-friendly array
+    const ageData = userAgeData
+        ? Object.entries(userAgeData)
+            .filter(([key]) => key !== "total_user") // remove total_user key
+            .map(([age, value]) => ({
+                age,
+                male: value.male,
+                female: value.female,
+            }))
+        : [];
+
+
+
+
 
     if (productSpecificDetailsLoading) {
         return (
@@ -172,7 +227,6 @@ export default function AdminProductDetailPage() {
         )
     }
 
-    
     return (
         <div className="min-h-screen">
             {/* Breadcrumb */}
@@ -211,30 +265,7 @@ export default function AdminProductDetailPage() {
                             >
                                 Manage reviews
                             </button>
-                            <div className="relative">
-                                <button
-                                    onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-                                    className={`inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium ${getStatusClass(
-                                        currentStatus,
-                                    )}`}
-                                >
-                                    {currentStatus}
-                                    <ChevronDown className="w-3 h-3 md:w-4 md:h-4 ml-1" />
-                                </button>
-                                {showStatusDropdown && (
-                                    <div className="absolute right-0 top-full mt-2 py-2 bg-white rounded-lg shadow-lg border z-10 min-w-[150px]">
-                                        {statusOptions.map((status) => (
-                                            <button
-                                                key={status}
-                                                onClick={() => handleStatusChange(status)}
-                                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            >
-                                                {status}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -358,7 +389,7 @@ export default function AdminProductDetailPage() {
                     </div>
                 </div>
 
-                {/* Analytics Section */}
+                {/* Total users vs age */}
                 <div className="p-6 border-t border-gray-200">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Total users vs age Chart (static sample) */}
@@ -371,13 +402,15 @@ export default function AdminProductDetailPage() {
                                             <ChevronLeft className="w-4 h-4" />
                                         </button>
                                         <select
-                                            value={selectedYear}
-                                            onChange={(e) => setSelectedYear(e.target.value)}
+                                            value={selectedYearUservsAge}
+                                            onChange={(e) => setSelectedYearUservsAge(e.target.value)}
                                             className="text-sm border border-gray-300 rounded px-3 py-1"
                                         >
-                                            <option value="2025">2025</option>
-                                            <option value="2024">2024</option>
-                                            <option value="2023">2023</option>
+                                            {years.map((year) => (
+                                                <option key={year} value={year}>
+                                                    {year}
+                                                </option>
+                                            ))}
                                         </select>
                                         <button className="p-1 hover:bg-gray-100 rounded">
                                             <ChevronRight className="w-4 h-4" />
@@ -400,6 +433,7 @@ export default function AdminProductDetailPage() {
                                         <Bar dataKey="male" fill="#2563eb" barSize={16} />
                                     </BarChart>
                                 </ResponsiveContainer>
+
                             </div>
                         </div>
 
@@ -456,13 +490,22 @@ export default function AdminProductDetailPage() {
                                         <ChevronLeft className="w-4 h-4" />
                                     </button>
                                     <select
-                                        value={selectedMonth}
-                                        onChange={(e) => setSelectedMonth(e.target.value)}
-                                        className="text-sm border border-gray-300 rounded px-2 py-1"
+                                        value={selectedMonthTopCouentries}
+                                        onChange={(e) => setSelectedMonthTopCouentries(e.target.value)}
+                                        className="select select-bordered select-sm w-20"
                                     >
-                                        <option value="MAR">MAR</option>
-                                        <option value="APR">APR</option>
-                                        <option value="MAY">MAY</option>
+                                        <option value="01">JAN</option>
+                                        <option value="02">FEB</option>
+                                        <option value="03">MAR</option>
+                                        <option value="04">APR</option>
+                                        <option value="05">MAY</option>
+                                        <option value="06">JUN</option>
+                                        <option value="07">JUL</option>
+                                        <option value="08">AUG</option>
+                                        <option value="09">SEP</option>
+                                        <option value="10">OCT</option>
+                                        <option value="11">NOV</option>
+                                        <option value="12">DEC</option>
                                     </select>
                                     <button className="p-1 hover:bg-gray-100 rounded">
                                         <ChevronRight className="w-4 h-4" />
@@ -470,19 +513,24 @@ export default function AdminProductDetailPage() {
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                                {topCountries.map((country, index) => (
-                                    <div key={index} className="text-center">
-                                        <div className="text-sm font-medium text-gray-900 mb-1">{country.country}</div>
-                                        <div className="text-lg font-bold text-gray-900 mb-2">{country.users}</div>
-                                        <div className="w-full h-2 bg-gray-200 rounded-full">
-                                            <div
-                                                className="h-full bg-purple-500 rounded-full"
-                                                style={{ width: `${country.percentage}%` }}
-                                            />
+                                {topCountries && topCountries.length > 0 ? (
+                                    topCountries.map((country, index) => (
+                                        <div key={index} className="text-center">
+                                            <div className="text-sm font-medium text-gray-900 mb-1">{country.country}</div>
+                                            <div className="text-lg font-bold text-gray-900 mb-2">
+                                                {country.count >= 1000
+                                                    ? (country.count / 1000).toFixed(1) + "k"
+                                                    : country.count}
+                                            </div>
                                         </div>
+                                    ))
+                                ) : (
+                                    <div className="col-span-5 text-center text-gray-500 font-medium py-4">
+                                        No Data Found
                                     </div>
-                                ))}
+                                )}
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -492,7 +540,7 @@ export default function AdminProductDetailPage() {
                     <h2 className="text-lg font-semibold text-gray-900 mb-4">Reviews</h2>
 
                     {Array.isArray(productSpecificDetails?.reviews) && productSpecificDetails.reviews.length > 0 ? (
-                        <div className="overflow-x-auto bg-white">
+                        <div className="overflow-x-auto bg-white h-[600px]" >
                             <table className="w-full">
                                 <thead className="bg-gray-50">
                                     <tr>
@@ -544,14 +592,7 @@ export default function AdminProductDetailPage() {
                                                     className="text-gray-400 hover:text-red-600 transition-colors"
                                                     onClick={() => console.log(`Delete review`, r)}
                                                 >
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth={2}
-                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                        />
-                                                    </svg>
+                                                    <MdDeleteOutline size={21} className="cursor-pointer" />
                                                 </button>
                                             </td>
                                         </tr>

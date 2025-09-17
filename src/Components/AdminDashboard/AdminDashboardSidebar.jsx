@@ -9,7 +9,7 @@ export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleVi
     const navigate = useNavigate()
 
     return (
-        <div className={`w-72 min-h-screen shadow-lg  bg-white/50 border-r border-base-100 rounded-2xl ${isBelowMd ? "w-screen pr-10" : " "}`}>
+        <div className={`w-72 min-h-[calc(100vh-50px)] mb-5 shadow-lg  bg-white/50 border-r border-base-100 rounded-2xl ${isBelowMd ? "w-screen pr-10" : " "}`}>
             <div className="p-6">
 
                 {/* Navbar Show only when Device is below medium size. */}

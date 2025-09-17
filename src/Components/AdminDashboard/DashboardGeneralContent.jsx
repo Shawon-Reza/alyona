@@ -109,7 +109,7 @@ export default function DashboardGeneralContent() {
     } = useQuery({
         queryKey: ['userFrequency', startDateFrequency, endDateFrequency], // include both for re-fetching
         queryFn: async () => {
-            const res = await axiosApi.get(`/admin_panel/api/v1/user-activity/`, {
+            const res = await axiosApi.get(`/admin_panel/api/v1/user-activity/?from_date=${startDateFrequency}&to_date=${endDateFrequency}`, {
                 params: {
                     from_date: startDateFrequency || null, // safe default
                     to_date: endDateFrequency || null,
@@ -218,30 +218,40 @@ export default function DashboardGeneralContent() {
 
                         {/* Your current static stats go here */}
                         <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <p className="text-sm text-gray-600">Connected now</p>
-                                    <p className="text-2xl font-bold">45 users</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">Average usage time</p>
-                                    <p className="text-2xl font-bold">25:31 min</p>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <p className="text-sm text-gray-600">Average sessions per day</p>
-                                    <p className="text-2xl font-bold">12 sessions</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">Number of users per day</p>
-                                    <p className="text-2xl font-bold">1231 users</p>
-                                </div>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600">Most popular time range</p>
-                                <p className="text-2xl font-bold">14:00-15:00</p>
-                            </div>
+                            {userFrequencyLoading ? (
+                                <div className="text-center text-gray-500 p-4">Loading user frequency data...</div>
+                            ) : userFrequencyError ? (
+                                <div className="text-center text-red-500 p-4">Failed to load user frequency data.</div>
+                            ) : (
+                                <>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p className="text-sm text-gray-600">Connected now</p>
+                                            <p className="text-2xl font-bold">{userFrequency?.connected_now}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-600">Average usage time</p>
+                                            <p className="text-2xl font-bold">{userFrequency?.average_usage_time} min</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p className="text-sm text-gray-600">Average sessions per day</p>
+                                            <p className="text-2xl font-bold">{userFrequency?.average_session_perday} sessions</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-600">Number of users per day</p>
+                                            <p className="text-2xl font-bold">{userFrequency?.number_of_users_per_day} users</p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-sm text-gray-600">Most popular time range</p>
+                                        <p className="text-2xl font-bold">{userFrequency?.most_popular_time_range}</p>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -53,7 +53,9 @@ const AdminDashboard = () => {
                 }
                 ${viewMode === 'sidebar' || viewMode === 'both' || (isBelowMd && sidebarOpen) ? 'block' : 'hidden'}
             `}>
-                <div className={`h-full ${isBelowMd ? 'pt-6 px-4' : 'mt-6 px-6'}`}>
+                <div
+                    className={`sticky top-0 ${isBelowMd ? 'pt-6 px-4' : 'pt-6 px-6 max-h-screen  overflow-y-auto'}`}
+                >
                     <AdminDashboardSidebar
                         handleSidebarItemClick={handleSidebarItemClick}
                         toggleView={toggleView}
@@ -61,6 +63,7 @@ const AdminDashboard = () => {
                         isMobile={isBelowMd}
                     />
                 </div>
+
             </div>
 
             {/* Main Content Area */}

@@ -12,163 +12,17 @@ import {
     Plus,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-
-// Sample data based on the image
-const initialMentors = [
-    {
-        id: 1,
-        name: "Carlos Ramirez",
-        email: "name@example.com",
-        users: 15,
-        region: "Region 2",
-        mentor: "(555) 123-4567",
-        status: "Active",
-    },
-    {
-        id: 2,
-        name: "Emma Thompson",
-        email: "name@example.com",
-        users: 2,
-        region: "Region 3",
-        mentor: "(555) 234-5678",
-        status: "Active",
-    },
-    {
-        id: 3,
-        name: "David Lee",
-        email: "name@example.com",
-        users: 5,
-        region: "Region 1",
-        mentor: "(555) 234-5678",
-        status: "Active",
-    },
-    {
-        id: 4,
-        name: "Sophia Patel",
-        email: "name@example.com",
-        users: 7,
-        region: "Region 2",
-        mentor: "(555) 345-6789",
-        status: "Active",
-    },
-    {
-        id: 5,
-        name: "Michael Chen",
-        email: "name@example.com",
-        users: 1,
-        region: "Region 3",
-        mentor: "(555) 456-7890",
-        status: "Active",
-    },
-    {
-        id: 6,
-        name: "Olivia Martinez",
-        email: "name@example.com",
-        users: 2,
-        region: "Region 1",
-        mentor: "(555) 567-8901",
-        status: "Active",
-    },
-    {
-        id: 7,
-        name: "James Smith",
-        email: "name@example.com",
-        users: 9,
-        region: "Region 2",
-        mentor: "(555) 678-9012",
-        status: "Active",
-    },
-    {
-        id: 8,
-        name: "Isabella Brown",
-        email: "name@example.com",
-        users: 0,
-        region: "Region 3",
-        mentor: "(555) 789-0123",
-        status: "Active",
-    },
-    {
-        id: 9,
-        name: "Liam Wilson",
-        email: "name@example.com",
-        users: 14,
-        region: "Region 1",
-        mentor: "(555) 890-1234",
-        status: "Active",
-    },
-    {
-        id: 10,
-        name: "Mia Davis",
-        email: "name@example.com",
-        users: 12,
-        region: "Region 2",
-        mentor: "(555) 901-2345",
-        status: "Active",
-    },
-    {
-        id: 11,
-        name: "Ethan Garcia",
-        email: "name@example.com",
-        users: 12,
-        region: "Region 3",
-        mentor: "(555) 012-3456",
-        status: "Active",
-    },
-    {
-        id: 12,
-        name: "Ava Rodriguez",
-        email: "name@example.com",
-        users: 14,
-        region: "Region 1",
-        mentor: "(555) 135-2468",
-        status: "Active",
-    },
-    {
-        id: 13,
-        name: "Noah Lewis",
-        email: "name@example.com",
-        users: 14,
-        region: "Region 2",
-        mentor: "(555) 246-3579",
-        status: "Active",
-    },
-    {
-        id: 14,
-        name: "Charlotte Walker",
-        email: "name@example.com",
-        users: 1,
-        region: "Region 3",
-        mentor: "(555) 357-4680",
-        status: "Active",
-    },
-    {
-        id: 15,
-        name: "Lucas Hall",
-        email: "name@example.com",
-        users: "Free",
-        region: "Region 1",
-        mentor: "(555) 468-5791",
-        status: "Banned User",
-    },
-    {
-        id: 16,
-        name: "Amelia Young",
-        email: "name@example.com",
-        users: "2024-07-21",
-        region: "Region 2",
-        mentor: "(555) 579-6802",
-        status: "Active",
-    },
-]
+import axiosApi from "@/api/axiosApi"
+import { useQuery } from "@tanstack/react-query"
 
 // Available regions for filter
-const regions = ["Region 1", "Region 2", "Region 3"]
+const regions = ["north", "south", "east", "west"]
 
 // Available statuses for dropdown
-const statuses = ["Active", "Inactive", "Banned User", "Pending"]
+const statuses = ["Active", "Banned User"]
 
 export default function MentorManagementTable() {
-    const [mentors, setMentors] = useState(initialMentors)
+    const [mentors, setMentors] = useState([])
     const [searchTerm, setSearchTerm] = useState("")
     const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" })
     const [currentPage, setCurrentPage] = useState(1)
@@ -180,9 +34,45 @@ export default function MentorManagementTable() {
     })
     const filterPanelRef = useRef(null)
 
+    const { isLoading, error, data: mentorList } = useQuery({
+        queryKey: ['mentorsList', filters],
+        queryFn: async () => {
+            // Convert "Active" to "true" and "Banned User" to "false"
+            const statusValue = filters.status === "Active" ? "true" : filters.status === "Banned User" ? "false" : ""
+
+            // Pass filters as query parameters
+            const query = new URLSearchParams({
+                region: filters.region,
+                is_active: statusValue, // Mapping status to string "true"/"false"
+                is_banned: statusValue === "false" ? "true" : "" // If status is "Banned User", pass `is_banned` as "true"
+            }).toString()
+
+            const res = await axiosApi.get(`/admin_panel/api/v1/mentor-list?${query}`)
+            return res.data
+        },
+        refetchOnWindowFocus: false,
+    })
+
     const mentorsPerPage = 20
-    const totalMentors = 8618 // From the image
-    const totalPages = 431 // From the image
+    const totalMentors = mentorList?.length
+    const totalPages = Math.ceil((mentorList?.length) / mentorsPerPage)
+
+    // Update mentors when data is fetched
+    useEffect(() => {
+        if (mentorList) {
+            // Map the fetched mentor list to match the expected structure
+            const updatedMentors = mentorList.map((mentor) => ({
+                id: mentor.id,
+                name: mentor.full_name,
+                email: mentor.email,
+                users: mentor.mentee_count,
+                region: mentor.region,
+                mentor: mentor.phone_number,
+                status: mentor.is_banned ? "Banned User" : "Active",
+            }))
+            setMentors(updatedMentors)
+        }
+    }, [mentorList])
 
     // Close filter panel when clicking outside
     useEffect(() => {
@@ -286,10 +176,6 @@ export default function MentorManagementTable() {
                 return "bg-green-100 text-green-800"
             case "Banned User":
                 return "bg-red-100 text-red-800"
-            case "Inactive":
-                return "bg-gray-100 text-gray-800"
-            case "Pending":
-                return "bg-yellow-100 text-yellow-800"
             default:
                 return "bg-gray-100 text-gray-800"
         }
@@ -300,8 +186,9 @@ export default function MentorManagementTable() {
         console.log("Add mentor clicked")
     }
     const navigate = useNavigate()
+
     return (
-        <div className=" rounded-lg shadow relative mt-4">
+        <div className="rounded-lg shadow relative mt-4">
             {/* Header with Search, Add Mentor, and Filter */}
             <div className="flex justify-between gap-2 items-center mb-4">
                 <div className="relative w-64">
@@ -499,11 +386,12 @@ export default function MentorManagementTable() {
                                                     </option>
                                                 ))}
                                             </select>
-                                           
                                         </div>
                                     ) : (
                                         <div
-                                            className={`inline-block px-3 py-1 rounded-full text-xs font-medium cursor-pointer ${getStatusClass(mentor.status)}`}
+                                            className={`inline-block px-3 py-1 rounded-full text-xs font-medium cursor-pointer ${getStatusClass(
+                                                mentor.status
+                                            )}`}
                                             onClick={() => setEditingStatus(mentor.id)}
                                         >
                                             {mentor.status}
@@ -518,7 +406,7 @@ export default function MentorManagementTable() {
 
             {/* Pagination */}
             <div className="flex items-center justify-between mt-4">
-                <div className="text-sm text-gray-700">1 to 20 of {totalMentors.toLocaleString()}</div>
+                <div className="text-sm text-gray-700">1 to 20 of {totalMentors?.toLocaleString()}</div>
                 <div className="flex items-center space-x-2">
                     <button className="p-1 rounded-md hover:bg-gray-100" onClick={() => paginate(1)} disabled={currentPage === 1}>
                         <ChevronsLeft className="h-5 w-5" />

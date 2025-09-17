@@ -32,7 +32,7 @@ export default function CreateUserMentor() {
             })
             .catch(err => {
                 console.error("Error creating mentor:", err);
-                toast.error("Failed to create mentor. Please try again.", err.response?.data?.message || "Unknown error");
+                toast.error(`Failed to create mentor. ${err.response?.data?.error}`, err.response?.data?.message || "Unknown error");
             });
     };
 

@@ -43,7 +43,7 @@ export default function ProductManagementTable() {
     const selectFieldsRef = useRef(null)
     const filterRef = useRef(null)
 
-    const productsPerPage = 14
+    const productsPerPage = 15
 
     // Fetch products with pagination and filtering
     const { isPending: products_loading, error: products_error, data: products } = useQuery({
@@ -126,7 +126,7 @@ export default function ProductManagementTable() {
         <div className=" min-h-screen">
             {/* Header */}
             <div className="mb-6">
-                <div className="p-4 border-b border-gray-200">
+                <div className="pb-4 border-b border-gray-200">
                     <div className="flex justify-between gap-5">
                         <div className="relative w-80">
                             <input
