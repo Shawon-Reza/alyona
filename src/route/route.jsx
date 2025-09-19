@@ -391,7 +391,7 @@ const router = createBrowserRouter([
                 element: <MentorInboxComponent></MentorInboxComponent>
             },
             {
-                path: 'chats/chatWithUser',
+                path: 'chats/chatWithUser/:id',
                 element: <ChatWithUser></ChatWithUser>
             },
             {

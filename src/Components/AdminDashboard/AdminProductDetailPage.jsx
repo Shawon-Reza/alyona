@@ -82,8 +82,6 @@ export default function AdminProductDetailPage() {
         }
     }
 
-    const date = new Date()
-    console.log(date)
 
 
 

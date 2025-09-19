@@ -14,7 +14,8 @@ axiosApi.interceptors.request.use(
 
         try {
             // Get access token from localStorage
-            token = JSON.parse(localStorage.getItem('token')) || JSON.parse(localStorage.getItem('adtoken'));
+            // token = JSON.parse(localStorage.getItem('token')) || JSON.parse(localStorage.getItem('adtoken'));
+            token = JSON.parse(localStorage.getItem('mtrtoken'))
         } catch (error) {
             console.error("Error parsing token from localStorage", error);
         }
