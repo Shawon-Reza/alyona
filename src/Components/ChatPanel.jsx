@@ -1,42 +1,47 @@
 // src/chat/ChatPanel.jsx
-import React, { useEffect, useState, useRef, use } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Send, Paperclip } from "lucide-react";
-import { getOrCreateRoom, getMessages, connectWebSocket } from "../Chat/chatService";
+import { getMessages, connectWebSocket } from "../Chat/chatService";
 import { useParams } from "react-router-dom";
 
 const ChatPanel = ({ chatWithUserId }) => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
-    // const [roomId, setRoomId] = useState(null);
     const socketRef = useRef(null);
     const scrollRef = useRef();
-
     const { id: roomId } = useParams();
+
+    // Logged-in user
+    const currentUser = JSON.parse(localStorage.getItem("user"))?.full_name || "current_user";
+
     useEffect(() => {
         const initChat = async () => {
-            // const room = await getOrCreateRoom(chatWithUserId);
-            // setRoomId(room.id);
+            // Fetch messages from backend
             const messageList = await getMessages(roomId);
             setMessages(messageList);
 
+            // Connect WebSocket
             socketRef.current = connectWebSocket(
                 roomId,
-                (newMsg) => setMessages((prev) => [...prev, newMsg]),
-                (seenIds, seenBy) => {
-                    setMessages((prev) =>
-                        prev.map((msg) =>
-                            seenIds.includes(msg.id)
-                                ? { ...msg, seen: true }
-                                : msg
-                        )
-                    );
+                (newMsg) => {
+                    setMessages((prev) => {
+                        // If tempId exists, replace the temporary message
+                        if (newMsg.tempId) {
+                            return prev.map((msg) =>
+                                msg.tempId === newMsg.tempId ? { ...newMsg } : msg
+                            );
+                        }
+
+                        // Otherwise, add message if not duplicate
+                        if (prev.find((msg) => msg.id === newMsg.id)) return prev;
+                        return [...prev, newMsg];
+                    });
                 }
             );
+
         };
 
-        if (roomId) {
-            initChat();
-        }
+        if (roomId) initChat();
 
         return () => {
             if (socketRef.current) socketRef.current.close();
@@ -52,14 +57,32 @@ const ChatPanel = ({ chatWithUserId }) => {
     const handleSend = () => {
         if (!input.trim()) return;
 
+        const tempId = Date.now(); // Temporary ID
+
+        const newMessage = {
+            id: tempId,
+            text: input.trim(),
+            my_message: true,
+            created_at: new Date().toISOString(),
+            user: currentUser,
+            room: roomId,
+            seen: true,
+            file: null,
+            tempId, // Include tempId
+        };
+
+        setMessages((prev) => [...prev, newMessage]);
+
         const messagePayload = {
             type: "chat_message",
             message: input.trim(),
+            tempId, // Send tempId to backend
         };
 
         socketRef.current.send(JSON.stringify(messagePayload));
         setInput("");
     };
+
 
     return (
         <div className="flex flex-col h-full w-full rounded-2xl overflow-hidden">
@@ -67,13 +90,10 @@ const ChatPanel = ({ chatWithUserId }) => {
                 {messages.map((msg) => (
                     <div
                         key={msg.id}
-                        className={`flex flex-col gap-1 max-w-[80%] ${msg.is_self ? "items-end ml-auto" : "items-start"
-                            }`}
+                        className={`flex flex-col gap-1 max-w-[80%] ${msg.my_message ? "items-end ml-auto" : "items-start"}`}
                     >
                         <div
-                            className={`px-4 py-2 rounded-xl text-sm shadow-sm ${msg.is_self
-                                ? "bg-[#695CFF] text-white"
-                                : "bg-white text-gray-800"
+                            className={`px-4 py-2 rounded-xl text-sm shadow-sm ${msg.my_message ? "bg-[#695CFF] text-white" : "bg-white text-gray-800"
                                 }`}
                         >
                             {msg.text}
@@ -86,7 +106,7 @@ const ChatPanel = ({ chatWithUserId }) => {
                 <div ref={scrollRef} />
             </div>
 
-            {/* Input */}
+            {/* Chat Input */}
             <div className="w-full border-t border-gray-200 bg-white/50 backdrop-blur-[100px] px-4 py-3">
                 <div className="flex items-center gap-2">
                     <div className="flex items-center justify-between w-full bg-white rounded-lg px-4 py-2 shadow-sm">
@@ -97,8 +117,8 @@ const ChatPanel = ({ chatWithUserId }) => {
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter" && !e.shiftKey) {
-                                    e.preventDefault();   // prevent newline
-                                    handleSend();         // call the same function as button
+                                    e.preventDefault();
+                                    handleSend();
                                 }
                             }}
                             className="flex-1 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"

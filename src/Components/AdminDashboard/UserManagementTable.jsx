@@ -4,23 +4,10 @@ import { useState, useRef, useEffect } from "react"
 import { Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import useGetTotalUsers from "@/hooks/useGetTotalUsers"
+import axiosApi from "@/api/axiosApi"
+import { useQuery } from "@tanstack/react-query"
+import { toast } from "react-toastify"
 
-// Available mentors for dropdown
-const mentors = [
-    "Maya",
-    "Lily",
-    "Chloe",
-    "Ava",
-    "Isabella",
-    "Grace",
-    "Emma",
-    "Olivia",
-    "Mia",
-    "Aria",
-    "Scarlett",
-    "Sofia",
-    "No assigned",
-]
 
 // Available statuses for dropdown
 const statuses = ["Active", "Inactive", "Banned"]
@@ -50,13 +37,26 @@ export default function UserManagementTable() {
     const [editingStatus, setEditingStatus] = useState(null)
     const [showFilterPanel, setShowFilterPanel] = useState(false)
 
-
-
     const filterPanelRef = useRef(null)
 
     const usersPerPage = 12
     const totalUsers = data?.count
     const totalPages = data?.total_pages
+
+
+    // Get Mentor List
+    const { isPending: mentorIsPending, error: mentorError, data: mentorlist } = useQuery({
+        queryKey: ['mentorlist'],
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/mentor-list`)
+            return res.data
+        }
+    })
+
+    console.log(mentorlist)
+    
+
+
 
     // [MOD] sync users from server + safe defaults so selects are controlled
     useEffect(() => {
@@ -123,9 +123,33 @@ export default function UserManagementTable() {
     // Update mentor (UI; plug API call here if needed)
     const updateMentor = (userId, mentor) => {
         console.log(`Mentor updated for user ${userId}:`, mentor)
-
+        const matchedMentor = mentorlist.find(m => m.full_name === mentor);
+        console.log(userId, matchedMentor?.id)
         setUsers((prev) => prev.map((user) => (user.id === userId ? { ...user, mentor } : user)))
         setEditingMentor(null)
+
+        if (!userId) {
+            console.error("User ID is missing");
+            return;
+        }
+
+        if (!matchedMentor?.id) {
+            console.error("Mentor not found");
+            return;
+        }
+
+        axiosApi.post(`/admin_panel/api/v1/mentor-relation`, {
+            mentee: userId,
+            mentor: matchedMentor?.id
+        }).then((response) => {
+            toast. success('Mentor assign successfully. Now they can communicate in chat.');
+            console.log('Mentor relation updated successfully:', response.data);
+        }).catch((error) => {
+            console.error('Error updating mentor relation:', error);
+        });
+
+
+
     }
 
     // Update status (UI; plug API call here if needed)
@@ -316,22 +340,27 @@ export default function UserManagementTable() {
                                         {editingMentor === user?.id ? (
                                             <div className="relative">
                                                 <select
-                                                    className=" p-1 border rounded-md "
-                                                    value={user.mentor ?? "Not assigned"}        // [MOD] controlled + safe default
+                                                    className="p-1 border rounded-md w-full"
+                                                    value={user.mentor ?? "Not assigned"}
                                                     onChange={(e) => updateMentor(user.id, e.target.value)}
                                                     onBlur={() => setEditingMentor(null)}
                                                     autoFocus
+                                                    style={{
+                                                        maxHeight: "calc(100vh - 200px)",
+                                                        overflowY: "auto",
+                                                    }}
                                                 >
-                                                    {mentors.map((mentor) => (
-                                                        <option key={mentor} value={mentor}>
-                                                            {mentor}
+                                                    {mentorlist?.map((mentor) => (
+                                                        <option key={mentor.id} value={mentor?.full_name}>
+                                                            {mentor?.full_name}
                                                         </option>
                                                     ))}
                                                 </select>
+
                                             </div>
                                         ) : (
                                             <div className="cursor-pointer" onClick={() => setEditingMentor(user.id)}>
-                                                {user.mentor || 'Not assigned'}
+                                                { user?.mentor_profile ||'Not assigned'}
                                             </div>
                                         )}
                                     </td>

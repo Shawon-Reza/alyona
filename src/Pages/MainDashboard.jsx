@@ -53,6 +53,8 @@ export default function MainDashboard() {
 
     const [CalendarPopUp, setCalendarPopup] = useState(false);
 
+
+    
     const today = new Date();
     const monthStart = startOfMonth(today);
     const daysInMonth = getDaysInMonth(monthStart);
@@ -74,8 +76,6 @@ export default function MainDashboard() {
             setShowQuiz(true);
         }
     }, []);
-
-
 
 
 
@@ -103,7 +103,7 @@ export default function MainDashboard() {
                                 className="w-20 h-20 rounded-full object-cover mb-4"
                             /> */}
                             <ProfileImageUploader></ProfileImageUploader>
-                            <h2 className="text-lg font-semibold mb-2">Hello {user.name}!</h2>
+                            <h2 className="text-lg font-semibold mb-2">Hello {user?.user}!</h2>
 
                             <div className="flex gap-3 items-center mb-3">
                                 <div className="px-3 py-1 text-sm border border-gray-300 rounded-full">Level {user.level}</div>

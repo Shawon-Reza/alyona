@@ -10,6 +10,7 @@ import {
 import Navbar from '../Components/Navbar';
 import MonthlySkinReport from '../Components/MonthlySkinReport ';
 import useIsMobile from '../hooks/useIsMobile';
+import MentorDropdown from './MentorDropdown';
 
 const ChatPage = () => {
     const navigate = useNavigate();
@@ -45,6 +46,15 @@ const ChatPage = () => {
                             <span className="text-[14px]">Jules</span>
                         </div>
                     </div>
+
+                    {/* Chat with mentor  */}
+                    {/* <button className="w-full flex justify-between items-center bg-white rounded-xl px-4 py-2 shadow-sm">
+                        <h2 className="text-xl font-bold">Mentors</h2>
+                        <span className="text-[#4F46E5] text-2xl">›</span>
+                    </button> */}
+
+                    <MentorDropdown />
+
 
                     {/* Options Toggle - only visible on mobile */}
                     <div

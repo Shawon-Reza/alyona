@@ -19,7 +19,7 @@ const Navbar = () => {
     const mobileButtonRef = useRef(null);
 
     const { user, loading } = useCurrentUser(); // Fetch current user info using custom hook
-    // console.log(user)
+    console.log(user?.image)
     // Toggle notification popup visibility
     const togglePopup = () => {
         if (isProfileMenuOpen) {
@@ -121,7 +121,7 @@ const Navbar = () => {
                         className="rounded-full w-10 h-10 overflow-hidden cursor-pointer"
                         onClick={toggleProfileMenu}
                     >
-                        <img src={`http://10.10.13.59:8000/${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
+                        <img src={`http://10.10.13.59:8005${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
                     </div>
 
                     {/* Profile Menu Popup */}

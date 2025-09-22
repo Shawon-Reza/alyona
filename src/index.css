@@ -16,5 +16,13 @@
         @apply font-satoshi;
     }
 }
+.pdf-mode * {
+  /* box-shadow: none !important; */
+  border: none !important;
+  /* outline: none !important; */
+  filter: none !important;
+}
+
+
 
 /* url('/src/assets/fonts/Satoshi-Regular.woff') format('woff'); */

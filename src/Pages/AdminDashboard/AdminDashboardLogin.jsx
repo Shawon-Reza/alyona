@@ -38,14 +38,19 @@ const AdminDashboardLogin = () => {
                     navigate('/admindashboard');
                     localStorage.setItem("adtoken", JSON.stringify(response.data.access));
                     console.log('Login successful:', response.data);
-                    // localStorage.removeItem("token");
+                    // Remove other tokens if any
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("mtrtoken");
                 }
                 else if (response?.data.login_user_info.role === 'mentor') {
                     toast.success('Successfully Logged in as Mentor');
                     navigate('/mentordashboard');
                     localStorage.setItem("mtrtoken", JSON.stringify(response.data.access));
                     console.log('Login successful:', response.data);
-                    // localStorage.removeItem("token");
+
+                    // Remove other tokens if any
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("adtoken");
                     return;
                 } else {
                     toast.error('You are not an admin. Please use the mentor login page.');

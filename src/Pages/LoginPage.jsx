@@ -54,6 +54,7 @@ const LoginPage = () => {
             localStorage.setItem('accessToken', JSON.stringify(response.data));
             localStorage.setItem('token', JSON.stringify(response?.data?.access));
             localStorage.removeItem("adtoken");
+            localStorage.removeItem("mtrtoken");
 
         } catch (error) {
             console.error("Login Failed:", error.response?.data?.detail);

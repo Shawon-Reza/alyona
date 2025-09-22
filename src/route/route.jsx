@@ -190,6 +190,10 @@ const router = createBrowserRouter([
                 element: <ChatPanel></ChatPanel>,
             },
             {
+                path: "chat-with-mentor/:id",
+                element: <ChatPanel></ChatPanel>,
+            },
+            {
                 path: "face-scan",
                 element: <FaceScan />, // <-- renders inside <Outlet />
             },
