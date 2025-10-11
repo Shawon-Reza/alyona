@@ -288,8 +288,6 @@ const router = createBrowserRouter([
                         path: 'users',
                         element: <DashboardUserContent></DashboardUserContent> // Content for the Users page
                     },
-
-
                 ]
             },
 

@@ -19,14 +19,14 @@ export const getMessages = async (roomId) => {
 
 export const connectWebSocket = (roomId, onMessage, onSeen) => {
     // const token = JSON.parse(localStorage.getItem("mtrtoken"));
-     let token;
-try {
-  token = JSON.parse(localStorage.getItem('token')) 
-          || JSON.parse(localStorage.getItem('mtrtoken'));
-} catch (e) {
-  token = null;
-}
-console.log(token);
+    let token;
+    try {
+        token = JSON.parse(localStorage.getItem('token'))
+            || JSON.parse(localStorage.getItem('mtrtoken'));
+    } catch (e) {
+        token = null;
+    }
+    console.log(token);
 
     const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
     const wsUrl = `${wsProtocol}://10.10.13.59:8005/ws/chat/${roomId}/?token=${token}`;
@@ -37,6 +37,7 @@ console.log(token);
 
     socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        console.log(data)
         if (data.type === "chat_message") {
             onMessage(data.message);
         } else if (data.type === "messages_seen_update") {

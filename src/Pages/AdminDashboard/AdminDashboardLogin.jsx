@@ -4,9 +4,10 @@ import { FaFacebookF, FaEye, FaEyeSlash } from 'react-icons/fa';
 import login from '../../assets/loginPageIMG.png';
 import { useNavigate } from 'react-router-dom';
 import LoginPageOverLap from '../../assets/LoginPageOverLap.png'
-import NavbarLogo from '../../assets/NavbarLogo.png'
+
 import axiosApi from '@/api/axiosApi';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const AdminDashboardLogin = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +30,7 @@ const AdminDashboardLogin = () => {
 
 
 
-        axiosApi.post('/accounts/api/v1/login', { email, password })
+        axios.post('http://10.10.13.59:8005/accounts/api/v1/login', { email, password })
             .then((response) => {
                 console.log(response?.data.login_user_info.role)
                 if (response?.data.login_user_info.role === 'admin') {

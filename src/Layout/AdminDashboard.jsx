@@ -39,37 +39,66 @@ const AdminDashboard = () => {
         setSidebarOpen(false);
     };
 
-const downloadPDF = async () => {
-    const input = outletRef.current;
-    if (!input) return;
+    const downloadPDF = async () => {
+        const input = outletRef.current;
+        if (!input) return;
 
-    input.classList.add("pdf-mode"); // ✅ Add safe-mode class
+        input.classList.add("pdf-mode"); // Add safe-mode class
 
-    try {
-        const dataUrl = await domtoimage.toPng(input, {
-            cacheBust: true,
-            style: {
-                background: '#fff',
-                color: '#000',
-            },
-        });
+        // Temporarily override styles for large screens
+        const originalStyle = input.style; // Store original styles
+        input.style.width = '100%'; // Ensure it spans the full page width
+        input.style.maxWidth = '100%'; // Remove max-width for smaller devices
 
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const img = new Image();
-        img.src = dataUrl;
+        // Override any other responsive classes
+        input.classList.remove("min-w-full");  // Example of removing responsive class
+        input.classList.add("w-full"); // Make sure it uses full width like on large screen
 
-        img.onload = function () {
-            const imgWidth = pdf.internal.pageSize.getWidth();
-            const imgHeight = (img.height * imgWidth) / img.width;
-            pdf.addImage(img, 'PNG', 0, 0, imgWidth, imgHeight);
-            pdf.save('dashboard-data.pdf');
-        };
-    } catch (error) {
-        console.error('PDF Generation Failed:', error);
-    } finally {
-        input.classList.remove("pdf-mode"); // ✅ Restore normal state
-    }
-};
+        try {
+            const dataUrl = await domtoimage.toPng(input, {
+                cacheBust: true,
+                style: {
+                    background: '#fff',
+                    color: '#000',
+                },
+            });
+
+            const pdf = new jsPDF('p', 'mm', 'a4'); // A4 size in mm
+            const img = new Image();
+            img.src = dataUrl;
+
+            img.onload = function () {
+                const imgWidth = 210;  // A4 width in mm (fixed width)
+                const imgHeight = (img.height * imgWidth) / img.width; // Maintain aspect ratio
+
+                // Add the first page with the image
+                pdf.addImage(img, 'PNG', 0, 0, imgWidth, imgHeight);
+
+                // Track the current yPosition on the page (after the first page content)
+                let yPosition = imgHeight;
+
+                // If content exceeds the height, add new pages
+                while (yPosition > pdf.internal.pageSize.height) {
+                    pdf.addPage(); // Add a new page
+                    yPosition -= pdf.internal.pageSize.height; // Adjust position for the next page
+                }
+
+                // Add remaining part of the image on the next page
+                pdf.addImage(img, 'PNG', 0, yPosition, imgWidth, imgHeight);
+
+                // Save the PDF
+                pdf.save('dashboard-data.pdf');
+            };
+        } catch (error) {
+            console.error('PDF Generation Failed:', error);
+        } finally {
+            input.classList.remove("pdf-mode"); // Restore normal state
+            input.style = originalStyle; // Restore original styles
+        }
+    };
+
+
+
 
 
 
@@ -106,37 +135,46 @@ const downloadPDF = async () => {
 
             {/* Main Content Area */}
             {/* Main Content Area */}
-<div className={`flex-1 flex flex-col min-h-screen ${isBelowMd ? 'w-full' : ''}`}>
-    {/* Navbar */}
-    <div className="flex-shrink-0 px-4 md:px-6 py-4 md:py-6">
-        <AdminDashboardNavbar
-            toggleView={toggleView}
-            isMobile={isBelowMd}
-            sidebarOpen={sidebarOpen}
-        />
-    </div>
+            <div className={`flex-1 flex flex-col min-h-screen ${isBelowMd ? 'w-full' : ''}`}>
+                {/* Navbar */}
+                <div className="flex-shrink-0 px-4 md:px-6 py-4 md:py-6">
+                    <AdminDashboardNavbar
+                        toggleView={toggleView}
+                        isMobile={isBelowMd}
+                        sidebarOpen={sidebarOpen}
+                    />
+                </div>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={downloadPDF}
+                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition-colors"
+                    >
+                        Download PDF
+                        <Download className="w-4 h-4" />
+                    </button>
+                </div>
 
-    {/* Content Area */}
-    <div className={`flex-1 px-4 md:px-6 pb-4 md:pb-6 ${viewMode === 'outlet' || viewMode === 'both' ? 'block' : 'hidden'}`}>
-        {/* ⬇️ Move ref here */}
-        <div ref={outletRef} className="space-y-4">
-            <div className="flex items-center gap-3">
-                <button
-                    onClick={downloadPDF}
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition-colors"
-                >
-                    Download PDF
-                    <Download className="w-4 h-4" />
-                </button>
-            </div>
+                {/* Content Area */}
+                <div className={`flex-1 px-4 md:px-6 pb-4 md:pb-6 ${viewMode === 'outlet' || viewMode === 'both' ? 'block' : 'hidden'}`}>
+                    {/* ⬇️ Move ref here */}
+                    <div ref={outletRef} className="space-y-4">
+                        {/* <div className="flex items-center gap-3">
+                            <button
+                                onClick={downloadPDF}
+                                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition-colors"
+                            >
+                                Download PDF
+                                <Download className="w-4 h-4" />
+                            </button>
+                        </div> */}
 
-            {/* Only this part will be in PDF */}
-            <div className="bg-white shadow-md rounded-md p-4">
-                <Outlet />
+                        {/* Only this part will be in PDF */}
+                        <div className="bg-white shadow-md rounded-md p-4">
+                            <Outlet />
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
         </div>
     );

@@ -92,36 +92,35 @@ const ProductDetailPage = () => {
     const chooseDayNight = () => {
         Swal.fire({
             title: "Choose your preference",
-            text: "Do you prefer Day or Night?",
-            showDenyButton: true,
-            confirmButtonText: "🌞 Day routine (AM)",
-            denyButtonText: "🌙 Night routine (PM)",
+            input: "radio",
+            inputOptions: {
+                AM: "🌞 Day routine (AM)",
+                PM: "🌙 Night routine (PM)",
+                Both: "🌗 Both routines (AM & PM)",
+            },
+            inputValidator: (value) => {
+                if (!value) return "You need to choose one!";
+            },
+            confirmButtonText: "Next",
+            showCancelButton: true,
             showClass: {
-                popup: `
-        animate__animated
-        animate__fadeInUp
-        animate__faster
-      `
+                popup: `animate__animated animate__fadeInUp animate__faster`,
             },
             hideClass: {
-                popup: `
-        animate__animated
-        animate__fadeOutDown
-        animate__faster
-      `
-            }
+                popup: `animate__animated animate__fadeOutDown animate__faster`,
+            },
         }).then((result) => {
-            if (result.isConfirmed || result.isDenied) {
-                const dayNight = result.isConfirmed ? "AM" : "PM";
+            if (result.isConfirmed) {
+                const dayNight = result.value; // "AM", "PM", or "BOTH"
 
-                // Show dropdown for weekly choices
+                // Show frequency selection
                 Swal.fire({
                     title: "Select Frequency",
                     input: "select",
                     inputOptions: {
                         "1 time per week": "1 time per week",
                         "2 time per week": "2 time per week",
-                        "3 time per week": "3 time per week"
+                        "3 time per week": "3 time per week",
                     },
                     inputPlaceholder: "Select frequency",
                     showCancelButton: true,
@@ -130,26 +129,29 @@ const ProductDetailPage = () => {
                         const frequency = freqResult.value;
 
                         // ✅ Axios POST request
-                        axiosApi.post(`/products/api/v1/daily-routine/${id}`, {
-                            daily: dayNight,      // "AM" or "PM"
-                            weekly: frequency   // "1 time per week", etc.
-                        })
+                        axiosApi
+                            .post(`/products/api/v1/daily-routine/${id}`, {
+                                daily: dayNight,     // AM, PM, or BOTH
+                                weekly: frequency,   // frequency string
+                            })
                             .then((response) => {
                                 Swal.fire("Success!", "Routine saved ✅", "success");
                                 console.log(response.data);
                             })
-                         .catch((error) => {
-    const errorMessage = error.response?.data?.message || error.message || "Failed to save routine ❌";
-    
-    Swal.fire("Error!", errorMessage, "error");
-    console.error("API Error:", error);
-});
-
+                            .catch((error) => {
+                                const errorMessage =
+                                    error.response?.data?.message ||
+                                    error.message ||
+                                    "Failed to save routine ❌";
+                                Swal.fire("Error!", errorMessage, "error");
+                                console.error("API Error:", error);
+                            });
                     }
                 });
             }
         });
     };
+
 
 
 

@@ -7,8 +7,22 @@ import { ChevronRight, Sparkle } from "lucide-react";
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import TrackerTabs from "../Components/TrackerTabs";
 import DayNightTabs from "../Components/TrackerTabComponent/DayNightTabs";
+import { FaGreaterThan } from "react-icons/fa";
+import { PiGreaterThan, PiGreaterThanBold } from "react-icons/pi";
+import GoalSettingComponent from "@/Components/TrackerTabComponent/GoalSettingComponent";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 const TrackerLayout = () => {
+    // Set goal popup visibility state
+    const [isGoalPopupVisible, setIsGoalPopupVisible] = useState(false);
+
+    // handle open goal popup
+    const openGoalPopup = () => {
+        console.log("setGoal is clicked")
+        setIsGoalPopupVisible(!isGoalPopupVisible);
+
+    };
+
     const recommendations = [
         {
             id: 1,
@@ -42,7 +56,7 @@ const TrackerLayout = () => {
             <div className="flex flex-col-reverse lg:flex-row px-4 lg:px-10 mt-6 lg:mt-10 gap-6 lg:gap-8">
 
                 {/* Sidebar (bottom on mobile, left on desktop) */}
-                <div className="w-full lg:w-1/4 min-w-[320px] space-y-6 mb-2">
+                <div className="relative w-full lg:w-1/4 min-w-[320px] space-y-6 mb-2">
                     {/* Calendar */}
                     <PopUpCalendarOnClick />
 
@@ -79,9 +93,14 @@ const TrackerLayout = () => {
                             <p className="text-[18px] font-bold">Skin type: Normal</p>
                         </div>
 
-                        <div className="bg-gradient-to-r from-[#7271E3] to-[#FAB2A5] p-4 rounded-xl text-[#181818] shadow-md border border-base-300">
-                            <p className="text-sm font-bold">No goal defined</p>
-                            <p className="text-sm">Define a goal for your skincare</p>
+                        <div
+                            onClick={openGoalPopup}
+                            className="flex items-center justify-between bg-gradient-to-r from-[#7271E3] to-[#FAB2A5] p-4 rounded-xl text-[#181818] shadow-md border border-base-300 cursor-pointer">
+                            <div>
+                                <p className="text-sm font-bold">No goal defined</p>
+                                <p className="text-sm">Define a goal for your skincare</p>
+                            </div>
+                            <PiGreaterThanBold size={22} />
                         </div>
                     </div>
 
@@ -133,6 +152,18 @@ const TrackerLayout = () => {
                             <ChevronRight size={16} />
                         </div>
                     </div>
+
+                    {/* Set Goal left side modal */}
+                    {/* text-sm font-bold */}
+                    <div className={` ${isGoalPopupVisible ? 'block' : 'hidden'} absolute top-0 bottom-0 left-0 right-0`}>
+                        <GoalSettingComponent></GoalSettingComponent>
+                        <div className="absolute top-7 right-4 text-gray-500 cursor-pointer" onClick={openGoalPopup}>
+                            <IoCloseCircleOutline size={28} className="hover:scale-110 transform transition-transform duration-700 ease-in-out" />
+                        </div>
+                    </div>
+
+
+
                 </div>
 
 
