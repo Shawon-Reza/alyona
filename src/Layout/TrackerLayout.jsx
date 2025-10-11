@@ -11,10 +11,14 @@ import { FaGreaterThan } from "react-icons/fa";
 import { PiGreaterThan, PiGreaterThanBold } from "react-icons/pi";
 import GoalSettingComponent from "@/Components/TrackerTabComponent/GoalSettingComponent";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import GoalHistory from "@/Components/TrackerTabComponent/GoalHistory";
 
 const TrackerLayout = () => {
+
     // Set goal popup visibility state
     const [isGoalPopupVisible, setIsGoalPopupVisible] = useState(false);
+    // Set history goal popup visibility state
+    const [isGoalHistoryPopup, setIsGoalHistoryPopup] = useState(false);
 
     // handle open goal popup
     const openGoalPopup = () => {
@@ -22,6 +26,12 @@ const TrackerLayout = () => {
         setIsGoalPopupVisible(!isGoalPopupVisible);
 
     };
+
+    const handleGoalHistory = () => {
+        console.log("Goal history is clicked")
+        setIsGoalHistoryPopup(!isGoalHistoryPopup);
+    }
+
 
     const recommendations = [
         {
@@ -41,7 +51,7 @@ const TrackerLayout = () => {
     ];
 
     return (
-        <div className="relative min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF]">
+        <div className=" relative min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF]">
             {/* Navbar */}
             <div className="px-4 lg:px-10 pt-6">
                 <Navbar />
@@ -56,7 +66,7 @@ const TrackerLayout = () => {
             <div className="flex flex-col-reverse lg:flex-row px-4 lg:px-10 mt-6 lg:mt-10 gap-6 lg:gap-8">
 
                 {/* Sidebar (bottom on mobile, left on desktop) */}
-                <div className="relative w-full lg:w-1/4 min-w-[320px] space-y-6 mb-2">
+                <div className="relative w-full lg:w-1/4 min-w-[320px] space-y-6 mb-2 px-1">
                     {/* Calendar */}
                     <PopUpCalendarOnClick />
 
@@ -105,7 +115,9 @@ const TrackerLayout = () => {
                     </div>
 
                     {/* Goal History */}
-                    <div className="bg-white/50 border border-base-300 shadow-md p-4 rounded-xl">
+                    <div
+                        onClick={handleGoalHistory}
+                        className="cursor-pointer bg-white/50 border border-base-300 shadow-md p-4 rounded-xl">
                         <p className="text-[18px] font-bold">Goal History</p>
                     </div>
 
@@ -153,14 +165,47 @@ const TrackerLayout = () => {
                         </div>
                     </div>
 
-                    {/* Set Goal left side modal */}
-                    {/* text-sm font-bold */}
-                    <div className={` ${isGoalPopupVisible ? 'block' : 'hidden'} absolute top-0 bottom-0 left-0 right-0`}>
-                        <GoalSettingComponent></GoalSettingComponent>
-                        <div className="absolute top-7 right-4 text-gray-500 cursor-pointer" onClick={openGoalPopup}>
-                            <IoCloseCircleOutline size={28} className="hover:scale-110 transform transition-transform duration-700 ease-in-out" />
+                    {/* Set Goal left side modal..................... */}
+
+                    <div
+                        className={`absolute top-0 bottom-0 left-0 right-0 
+                            transition-all duration-500 ease-in-out 
+                            ${isGoalPopupVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-5 pointer-events-none'}
+                          `}
+                    >
+                        <GoalSettingComponent />
+
+                        <div
+                            className="absolute top-7 right-4 text-gray-500 cursor-pointer"
+                            onClick={openGoalPopup}
+                        >
+                            <IoCloseCircleOutline
+                                size={28}
+                                className="hover:scale-110 transform transition-transform duration-700 ease-in-out"
+                            />
                         </div>
                     </div>
+
+                    {/* Goal History left side modal */}
+                    <div
+                        className={`max-h-screen bg-[#F5EADF]/50  rounded-2xl absolute top-0 bottom-0 left-0 right-0 
+                            transition-all duration-500 ease-in-out 
+                            ${isGoalHistoryPopup ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-5 pointer-events-none'}
+                          `}
+                    >
+                        <GoalHistory> </GoalHistory>
+
+                        <div
+                            className="absolute top-7 right-4 text-gray-500 cursor-pointer"
+                            onClick={handleGoalHistory}
+                        >
+                            <IoCloseCircleOutline
+                                size={28}
+                                className="hover:scale-110 transform transition-transform duration-700 ease-in-out"
+                            />
+                        </div>
+                    </div>
+
 
 
 

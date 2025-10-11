@@ -1,4 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
+import ProductFeedback from './ProductFeedback';
 
 export default function DayNightTabs() {
     const { pathname } = useLocation();
@@ -7,7 +8,7 @@ export default function DayNightTabs() {
     const basePath = pathname.split('/').slice(2, 3)[0] || 'daily-skincare';
 
     return (
-        <div className="flex border-b border-gray-200 mt-6">
+        <div className="relative flex border-b border-gray-200 mt-6">
             <NavLink
                 to={`/tracker/${basePath}/day`}
                 end
@@ -32,6 +33,15 @@ export default function DayNightTabs() {
             >
                 Night
             </NavLink>
+
+
+            {/* Give your Feedback */}
+            <div className="absolute -top-33 -right-6 z-50">
+              <ProductFeedback></ProductFeedback>
+            </div> 
+
+
+
         </div>
     );
 }
