@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom"; // ✅ Make sure this is imported
 import productImage from '../../assets/ProductIMG.png';
 import { Sun, Moon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import axiosApi from "@/api/axiosApi";
 
 const routineMap = {
     day: {
@@ -71,8 +73,75 @@ const DailyRoutineTracker = () => {
         console.log("Current mode:", mode);
     }, [mode]);
 
-    const location =useLocation();
+    const location = useLocation();
+
+    console.log(location.pathname.split("/")[2])
     console.log(location)
+
+
+    const { isPending, error, data } = useQuery({
+        queryKey: ['trackersAllData'],
+        queryFn: async () => {
+            const res = await axiosApi.get('/products/api/v1/user-routine')
+            return res.data;
+        }
+    })
+    console.log("Trackers All Data: ", data)
+
+    // if (
+    //     data && location.pathname.split("/")[2] === "daily-skincare"
+    // ) {
+
+    // }
+
+    // if (data && location.pathname.split("/")[2] === "daily-skincare") {
+    //     const amData = data.filter(item => item.daily === "AM" || item.daily === "Both");
+    //     const pmData = data.filter(item => item.daily === "PM" || item.daily === "Both");
+
+    //     const dailyData = {
+    //         AM: amData,
+    //         PM: pmData,
+    //     };
+
+    //     console.log(dailyData);
+    // }
+    if (data && location.pathname.split("/")[2] === "daily-skincare") {
+        // Step 1: Only skincare products
+        const skincareProducts = data.filter(item => item.category === "Skincare");
+
+        // Step 2: Split by daily
+        const amData = skincareProducts.filter(
+            item => item.daily === "AM" || item.daily === "Both"
+        );
+        const pmData = skincareProducts.filter(
+            item => item.daily === "PM" || item.daily === "Both"
+        );
+
+        // Step 3: Create structured object
+        const skincareDaily = {
+            AM: amData,
+            PM: pmData,
+        };
+
+        console.log(skincareDaily);
+    }
+
+
+
+
+    if (isPending) return 'Loading...'
+    if (error) return 'An error has occurred: ' + error.message
+
+
+
+
+
+
+
+
+
+
+
     return (
         <div className="relative p-6 text-[#181818]">
             {/* Question */}

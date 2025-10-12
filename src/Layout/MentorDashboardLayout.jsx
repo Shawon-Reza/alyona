@@ -52,8 +52,8 @@ const MentorDashboardLayout = () => {
                 {/* Content */}
                 {(viewMode === 'outlet' || viewMode === 'both') && (
                     <div
-                        style={{ height: 'calc(100vh - 100px)' }}
-                        className="overflow-auto"
+                        style={{ height: 'calc(100vh - 120px)' }}
+                        className="overflow-auto rounded-xl" 
                     >
                         {/* Navbar for small screens (inside scrollable area) */}
                         {isBelowMd && (

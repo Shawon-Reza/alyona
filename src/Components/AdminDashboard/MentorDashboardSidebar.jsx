@@ -5,7 +5,7 @@ import logo from '../../assets/logo.png'
 
 const MentorDashboardSidebar = ({handleSidebarItemClick}) => {
     return (
-        <div className="h-full w-[calc(100vw-50px)] md:w-72 bg-white shadow-md p-6 rounded-2xl">
+        <div className="h-full max-h-[calc(100vh-50px)] w-[calc(100vw-50px)] md:w-72 bg-white shadow-md p-6 rounded-2xl">
             {/* Logo */}
             <div className="flex items-center mb-8">
                 <img

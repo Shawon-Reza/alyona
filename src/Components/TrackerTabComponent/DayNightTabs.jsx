@@ -1,11 +1,20 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import ProductFeedback from './ProductFeedback';
+import axiosApi from '@/api/axiosApi';
+import { useQuery } from '@tanstack/react-query';
 
 export default function DayNightTabs() {
     const { pathname } = useLocation();
 
     // Extract the base path (e.g., "daily-skincare", "addon-skincare", etc.)
     const basePath = pathname.split('/').slice(2, 3)[0] || 'daily-skincare';
+
+
+
+   
+
+
+
 
     return (
         <div className="relative flex border-b border-gray-200 mt-6">
@@ -36,9 +45,9 @@ export default function DayNightTabs() {
 
 
             {/* Give your Feedback */}
-            <div className="absolute -top-33 -right-6 z-50">
-              <ProductFeedback></ProductFeedback>
-            </div> 
+            <div className="absolute -top-33 -right-6 z-50 hidden">
+                <ProductFeedback></ProductFeedback>
+            </div>
 
 
 

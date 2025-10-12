@@ -30,7 +30,7 @@ const MentorInboxComponent = () => {
     );
 
     return (
-        <div className="min-h-screen">
+        <div className="max-h-[calc(100vh-100px)]">
             <div>
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-4 md:px-0 md:py-0">
@@ -105,15 +105,45 @@ const MentorInboxComponent = () => {
                                 >
                                     {/* Avatar with Online Status */}
                                     <div className="relative flex-shrink-0">
-                                        <div className="avatar">
-                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full">
-                                                <img
-                                                    src={conversation.other_user_image || "/placeholder.svg"}
-                                                    alt={`${conversation.other_user} avatar`}
-                                                    className="rounded-full object-cover"
-                                                />
-                                            </div>
-                                        </div>
+<div className="avatar">
+  <div
+    className={`relative w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden
+      ${!conversation?.other_user_image ? "bg-gray-100" : ""}
+    `}
+  >
+    <img
+      src={
+        conversation?.other_user_image
+          ? `http://10.10.13.59:8005${conversation.other_user_image}`
+          : "/placeholder.svg"
+      }
+      alt="User avatar"
+      className="w-full h-full rounded-full object-cover border border-gray-200 transition-opacity duration-500 ease-in-out opacity-0"
+      onError={(e) => {
+        if (!e.target.src.includes("placeholder.svg")) {
+          e.target.src = "/placeholder.svg";
+        }
+      }}
+      onLoad={(e) => {
+        e.target.style.opacity = 1; // smooth fade-in
+      }}
+    />
+
+    {/* Optional: show initials if no image */}
+    {!conversation?.other_user_image && (
+      <span className="text-gray-400 font-bold">
+        {conversation?.other_user_name?.[0] || "U"}
+      </span>
+    )}
+  </div>
+</div>
+
+
+                                        {conversation?.unseen_count > 0 && (
+                                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                                                        {conversation?.unseen_count}
+                                                    </span>
+                                                )}
                                     </div>
 
                                     {/* Message Content */}

@@ -8,7 +8,7 @@ const ChatWithUser = () => {
     const [showMobileRecommendations, setShowMobileRecommendations] = useState(false)
 
     return (
-        <div>
+        <div className='max-h-[calc(100vh-100px)]'>
             {/* Chat Panel Header */}
             <div className='bg-white rounded-2xl my-4'>
                 <MentorChatPalenHeader></MentorChatPalenHeader>
@@ -35,7 +35,7 @@ const ChatWithUser = () => {
                 </div>
 
                 {/* Rightside Content */}
-                <div className={`w-full md:w-[70%] xl:w-[80%] bg-white rounded-xl h-[calc(100vh-0px)] transition-opacity duration-300 ${showMobileRecommendations ? 'md:opacity-100 opacity-50' : 'opacity-100'}`}>
+                <div className={`w-full md:w-[70%] xl:w-[80%] bg-white rounded-xl h-[calc(100vh-0px)] transition-opacity duration-300 ${showMobileRecommendations ? 'md:opacity-100 opacity-50' : 'opacity-100'} max-h-[calc(100vh-215px)]`}>
                     {/* Mobile AI Recommendations Button - Only visible on mobile */}
                     <div className='md:hidden p-4 border-b border-gray-100'>
                         <button 

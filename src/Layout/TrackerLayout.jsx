@@ -7,31 +7,26 @@ import { ChevronRight, Sparkle } from "lucide-react";
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import TrackerTabs from "../Components/TrackerTabs";
 import DayNightTabs from "../Components/TrackerTabComponent/DayNightTabs";
-import { FaGreaterThan } from "react-icons/fa";
-import { PiGreaterThan, PiGreaterThanBold } from "react-icons/pi";
+import { PiGreaterThanBold } from "react-icons/pi";
 import GoalSettingComponent from "@/Components/TrackerTabComponent/GoalSettingComponent";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import GoalHistory from "@/Components/TrackerTabComponent/GoalHistory";
 
 const TrackerLayout = () => {
-
-    // Set goal popup visibility state
     const [isGoalPopupVisible, setIsGoalPopupVisible] = useState(false);
-    // Set history goal popup visibility state
     const [isGoalHistoryPopup, setIsGoalHistoryPopup] = useState(false);
 
-    // handle open goal popup
     const openGoalPopup = () => {
-        console.log("setGoal is clicked")
-        setIsGoalPopupVisible(!isGoalPopupVisible);
-
+        console.log("Set Goal clicked");
+        setIsGoalPopupVisible(true);
+        setIsGoalHistoryPopup(false);
     };
 
     const handleGoalHistory = () => {
-        console.log("Goal history is clicked")
-        setIsGoalHistoryPopup(!isGoalHistoryPopup);
-    }
-
+        console.log("Goal history clicked");
+        setIsGoalHistoryPopup(true);
+        setIsGoalPopupVisible(false);
+    };
 
     const recommendations = [
         {
@@ -51,23 +46,22 @@ const TrackerLayout = () => {
     ];
 
     return (
-        <div className=" relative min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF]">
+        <div className="relative min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF]">
             {/* Navbar */}
             <div className="px-4 lg:px-10 pt-6">
                 <Navbar />
             </div>
 
             {/* Overlapping Image */}
-            <div className="absolute bottom-20 right-0 hidden lg:block">
-                <img src={LoginPageOverLap} alt="OverlapIMG" className="scale-125" />
+            <div className="fixed bottom-8 right-0 z-0 hidden lg:block">
+                <img src={LoginPageOverLap} alt="OverlapIMG" className="w-96 opacity-80" />
             </div>
 
             {/* Main Layout */}
             <div className="flex flex-col-reverse lg:flex-row px-4 lg:px-10 mt-6 lg:mt-10 gap-6 lg:gap-8">
 
-                {/* Sidebar (bottom on mobile, left on desktop) */}
+                {/* Sidebar */}
                 <div className="relative w-full lg:w-1/4 min-w-[320px] space-y-6 mb-2 px-1">
-                    {/* Calendar */}
                     <PopUpCalendarOnClick />
 
                     {/* Routine Prompt */}
@@ -84,7 +78,7 @@ const TrackerLayout = () => {
                                     Start now and don’t lose your streak
                                 </p>
                             </div>
-                            <span className="text-lg text-gray-400 cursor-pointer">›</span>
+                            <span className="text-lg text-gray-400 cursor-pointer">&#8250;</span>
                         </div>
 
                         <div className="flex gap-3 mt-4">
@@ -97,7 +91,7 @@ const TrackerLayout = () => {
                         </div>
                     </div>
 
-                    {/* Skin Info */}
+                    {/* Skin Info & Goal */}
                     <div className="space-y-4">
                         <div className="bg-white border border-base-300 shadow-md p-4 rounded-xl">
                             <p className="text-[18px] font-bold">Skin type: Normal</p>
@@ -148,12 +142,11 @@ const TrackerLayout = () => {
                         ))}
                     </div>
 
-                    {/* Routine Survey Card */}
+                    {/* Routine Survey */}
                     <div className="bg-white/50 rounded-2xl p-4 shadow-sm flex items-start justify-between hover:shadow-md text-[18px] border border-base-300">
                         <div>
                             <div className="text-[#a688f7] flex items-center gap-2">
-                                <Sparkle size={16} />
-                                Routine
+                                <Sparkle size={16} /> Routine
                             </div>
                             <div className="text-black font-semibold text-base mt-1">
                                 Assess your skin well being
@@ -165,53 +158,28 @@ const TrackerLayout = () => {
                         </div>
                     </div>
 
-                    {/* Set Goal left side modal..................... */}
-
-                    <div
-                        className={`absolute top-0 bottom-0 left-0 right-0 
-                            transition-all duration-500 ease-in-out 
-                            ${isGoalPopupVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-5 pointer-events-none'}
-                          `}
-                    >
+                    {/* Goal Popup */}
+                    <div className={`absolute top-0 bottom-0 lg:left-0 right-0 transition-all duration-500 ease-in-out ${isGoalPopupVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-5 pointer-events-none'}`}>
                         <GoalSettingComponent />
-
                         <div
                             className="absolute top-7 right-4 text-gray-500 cursor-pointer"
-                            onClick={openGoalPopup}
+                            onClick={() => setIsGoalPopupVisible(false)}
                         >
-                            <IoCloseCircleOutline
-                                size={28}
-                                className="hover:scale-110 transform transition-transform duration-700 ease-in-out"
-                            />
+                            <IoCloseCircleOutline size={28} className="hover:scale-110 transform transition-transform duration-700 ease-in-out" />
                         </div>
                     </div>
 
-                    {/* Goal History left side modal */}
-                    <div
-                        className={`max-h-screen bg-[#F5EADF]/50  rounded-2xl absolute top-0 bottom-0 left-0 right-0 
-                            transition-all duration-500 ease-in-out 
-                            ${isGoalHistoryPopup ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-5 pointer-events-none'}
-                          `}
-                    >
-                        <GoalHistory> </GoalHistory>
-
+                    {/* Goal History Popup */}
+                    <div className={`max-h-screen rounded-2xl absolute top-0 bottom-0 lg:left-0 right-0 transition-all duration-500 ease-in-out ${isGoalHistoryPopup ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-5 pointer-events-none'}`}>
+                        <GoalHistory />
                         <div
                             className="absolute top-7 right-4 text-gray-500 cursor-pointer"
-                            onClick={handleGoalHistory}
+                            onClick={() => setIsGoalHistoryPopup(false)}
                         >
-                            <IoCloseCircleOutline
-                                size={28}
-                                className="hover:scale-110 transform transition-transform duration-700 ease-in-out"
-                            />
+                            <IoCloseCircleOutline size={28} className="hover:scale-110 transform transition-transform duration-700 ease-in-out" />
                         </div>
                     </div>
-
-
-
-
                 </div>
-
-
 
                 {/* Right Content */}
                 <div className="w-full lg:flex-1 p-6 bg-white rounded-2xl shadow-xl mb-15">
