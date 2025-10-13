@@ -1,7 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import ProductFeedback from './ProductFeedback';
-import axiosApi from '@/api/axiosApi';
-import { useQuery } from '@tanstack/react-query';
+
 
 export default function DayNightTabs() {
     const { pathname } = useLocation();
@@ -44,10 +43,7 @@ export default function DayNightTabs() {
             </NavLink>
 
 
-            {/* Give your Feedback */}
-            <div className="absolute -top-33 -right-6 z-50 hidden">
-                <ProductFeedback></ProductFeedback>
-            </div>
+          
 
 
 

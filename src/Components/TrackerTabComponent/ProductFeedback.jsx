@@ -219,7 +219,7 @@ const ProductFeedback = () => {
   );
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg h-screen">
       {/* Header */}
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Give your feedback</h1>
 

@@ -4,6 +4,7 @@ import productImage from '../../assets/ProductIMG.png';
 import { Sun, Moon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import axiosApi from "@/api/axiosApi";
+import ProductFeedback from "./ProductFeedback";
 
 const routineMap = {
     day: {
@@ -225,6 +226,11 @@ const DailyRoutineTracker = () => {
                         </div>
                     ))}
                 </div>
+            </div>
+
+            {/* Give your Feedback */}
+            <div className="absolute -top-33 -right-6 z-50 hidden ">
+                <ProductFeedback></ProductFeedback>
             </div>
         </div>
     );

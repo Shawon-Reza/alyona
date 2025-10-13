@@ -7,6 +7,7 @@ import annaImg from '../assets/annaImg.png';
 import { Bell, ChevronRight, Info, LogOut, Pencil, Phone } from 'lucide-react';
 import NotificationPopup from './NotificationPopup'; // Import the popup component
 import useCurrentUser from '../hooks/useCurrentUser'; // Custom hook to fetch current user info
+import { connectWebSocketForNotifications, getnotifications } from '@/Chat/chatService';
 
 
 const Navbar = () => {
@@ -14,7 +15,10 @@ const Navbar = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false); // State to manage popup visibility
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false); // State to manage profile menu visibility
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State to manage mobile menu visibility
+    const [notifications, setNotifications] = useState([]);
+    const [unSeenCount, setUnSeenCout] = useState(null);
 
+    const socketRef = useRef(null);
     const mobileMenuRef = useRef(null);
     const mobileButtonRef = useRef(null);
 
@@ -83,11 +87,66 @@ const Navbar = () => {
     // Navigation routes
     const navRoutes = ["dashboard", "library", "chat", "tracker"];
 
+    const handleGetNotifications = async (notificationId) => {
+        console.log(" Get All Notifications clicked:");
+        // Implement navigation or action based on notification type
+        // 1. Fetch initial notifications
+        const notifications = await getnotifications();
+        setNotifications(notifications);
+        setUnSeenCout(0); // Reset unseen count when popup is opened
+
+        console.log(notifications)
+    }
+
+    // ✅ Load Notification + connect WebSocket
+    useEffect(() => {
+        (async () => {
+            try {
+                // Connect WebSocket for real-time updates
+                socketRef.current = connectWebSocketForNotifications((newNotification) => {
+                    console.log("Received via WS:", newNotification);
+
+                    if (newNotification?.type === "count") {
+                        setUnSeenCout(newNotification?.unread_count);
+                    } else if (newNotification?.type === "notification") {
+                        console.log('new msg:', newNotification)
+
+                        setNotifications((prev) => {
+                            const updated = prev.find((n) => n.id === newNotification.data.id)
+                                ? prev
+                                : [newNotification.data, ...prev];
+
+                            console.log("Updated notifications in setState:", updated);
+                            return updated;
+                        });
+
+                    }
+                });
+            } catch (err) {
+                console.error("Error loading notifications:", err);
+            }
+        })();
+
+        // Cleanup on unmount
+        return () => {
+            socketRef.current?.close();
+            console.log("🧹 Notification WebSocket closed");
+        };
+    }, []);
+    console.log("All Notifications: ", notifications)
+
+
+
+
+
+
+
+
     return (
         <div className="w-full bg-white shadow-md rounded-xl px-4 sm:px-8 flex justify-between items-center h-[70px] relative">
             {/* Logo */}
             <div
-                onClick={ () => navigate('/maindashboard') }
+                onClick={() => navigate('/maindashboard')}
                 className="flex items-center gap-2 h-16 whitespace-nowrap cursor-pointer">
                 <img src={AuthNavIcon || "/placeholder.svg"} alt="Brand Logo" className="w-14 h-18" />
                 <span className="font-semibold lg:text-xl hidden sm:block">YOURSELF BEAUTY</span>
@@ -109,11 +168,18 @@ const Navbar = () => {
                 ))}
             </ul>
 
+
             {/* Auth/Profile & Menu */}
             <div className="flex items-center gap-3 sm:gap-4">
                 {/* Notification Icon */}
-                <div className="p-2 rounded-full border border-base-300 cursor-pointer" onClick={togglePopup}>
+                <div
+                    onClickCapture={handleGetNotifications}
+                    className=" relative p-2 z-100 rounded-full border border-base-300 cursor-pointer" onClick={togglePopup}>
                     <Bell />
+
+                    <div className={`${unSeenCount > 0 ? " absolute flex items-center justify-center -top-2 right-0 h-4 w-4 p-2 rounded-full bg-red-500 text-xs" : "hidden"}`}>
+                        {unSeenCount}
+                    </div>
                 </div>
 
                 <div className="relative">
@@ -219,7 +285,7 @@ const Navbar = () => {
             )}
 
             {/* Notification Popup */}
-            <NotificationPopup isOpen={isPopupOpen} onClose={togglePopup} />
+            <NotificationPopup isOpen={isPopupOpen} onClose={togglePopup} notifications={notifications} setNotifications={setNotifications} />
         </div>
     );
 };

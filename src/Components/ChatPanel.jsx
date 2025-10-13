@@ -79,24 +79,21 @@ const ChatPanel = () => {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`flex flex-col gap-1 max-w-[80%] ${
-              msg.sender === userID ? "items-end ml-auto" : "items-start"
-            }`}
+            className={`flex flex-col gap-1 max-w-[80%] ${msg.sender === userID ? "items-end ml-auto" : "items-start"
+              }`}
           >
             <div
-              className={`px-4 py-2 rounded-xl text-sm shadow-sm ${
-                msg.sender === userID
-                  ? "bg-[#695CFF] text-white"
-                  : "bg-white text-gray-800"
-              }`}
+              className={`px-4 py-2 rounded-xl text-sm shadow-sm ${msg.sender === userID
+                ? "bg-[#695CFF] text-white"
+                : "bg-white text-gray-800"
+                }`}
             >
               {msg.text}
             </div>
 
             <span
-              className={`text-xs text-gray-400 ${
-                msg.sender === userID ? "pr-1 text-right" : "pl-1"
-              }`}
+              className={`text-xs text-gray-400 ${msg.sender === userID ? "pr-1 text-right" : "pl-1"
+                }`}
             >
               {msg.created_at?.slice(11, 16)}
             </span>

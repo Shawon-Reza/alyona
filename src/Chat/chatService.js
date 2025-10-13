@@ -49,3 +49,44 @@ export const connectWebSocket = (roomId, onMessage, onSeen) => {
     socket.onerror = (e) => console.error("⚠️ WebSocket error", e);
     return socket;
 };
+
+// For notifications 
+export const getnotifications = async () => {
+    const res = await axiosApi.get('/messaging/api/v1/notifications');
+    console.log(res.data)
+    return res.data;
+}
+
+
+// For notifications
+export const connectWebSocketForNotifications = (onNotification) => {
+    let token;
+    try {
+        token = JSON.parse(localStorage.getItem('token'))
+            || JSON.parse(localStorage.getItem('mtrtoken'));
+    } catch (e) {
+        token = null;
+    }
+    console.log(token);
+
+    const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const wsUrl = `${wsProtocol}://10.10.13.59:8005/ws/notifications/?token=${token}`;
+
+    const socket = new WebSocket(wsUrl); "wss://api.alyona.ai/ws/notifications/?token=${token}";
+
+
+    socket.onopen = () => console.log("✅ Notification WebSocket connected");
+
+    socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log("Notification received:", data);
+        onNotification(data);
+
+    };
+
+    socket.onclose = () => console.log("❌ Notification WebSocket disconnected");
+    socket.onerror = (e) => console.error("⚠️ Notification WebSocket error", e);
+    return socket;
+
+}
+
