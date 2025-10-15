@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaPaperPlane, FaRegFileAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import DownloadPDFButton from './PdfReport/DownloadPDFButton';
 
 const reports = [
     { month: 'May 2025' },
@@ -25,7 +26,12 @@ const MonthlySkinReport = () => {
                             }}
                             className="text-sm font-medium text-gray-800 cursor-pointer w-1/2">{report.month}</span>
                         <div className="flex space-x-3 text-base">
-                            <FaPaperPlane className="text-[#b5764f]" />
+
+                            <div>
+                                <FaPaperPlane className="text-[#b5764f]" />
+                            </div>
+                            {/* Download Button For PDF */}
+                            <DownloadPDFButton />
                             <FaRegFileAlt className="text-[#0f0e25]" />
                         </div>
                     </div>

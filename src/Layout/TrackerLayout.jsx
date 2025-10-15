@@ -11,10 +11,18 @@ import { PiGreaterThanBold } from "react-icons/pi";
 import GoalSettingComponent from "@/Components/TrackerTabComponent/GoalSettingComponent";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import GoalHistory from "@/Components/TrackerTabComponent/GoalHistory";
+import useTrackerSidebar from "@/hooks/useTrackerSidebar";
 
 const TrackerLayout = () => {
     const [isGoalPopupVisible, setIsGoalPopupVisible] = useState(false);
     const [isGoalHistoryPopup, setIsGoalHistoryPopup] = useState(false);
+
+    // Custom hook to get sidebar data.............................
+    const { trackerSidebarData } = useTrackerSidebar();
+    if (trackerSidebarData) {
+        console.log("Tracker Sidebar Data:", trackerSidebarData);
+    }
+
 
     const openGoalPopup = () => {
         console.log("Set Goal clicked");
@@ -28,23 +36,7 @@ const TrackerLayout = () => {
         setIsGoalPopupVisible(false);
     };
 
-    const recommendations = [
-        {
-            id: 1,
-            title: "Try a toner that matches 100% with your skin type",
-            image: Productimgfordetails,
-            caption: "Tone SB",
-            description: "100% Moisturizer",
-        },
-        {
-            id: 2,
-            title: "Protect your skin from UV radiation",
-            image: Productimgfordetails,
-            caption: "Sun Protection SPF50 Stick",
-            description: "100% Sunscreen",
-        },
-    ];
-
+// console.log(trackerSidebarData?.tracker_records)
     return (
         <div className="relative min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF]">
             {/* Navbar */}
@@ -62,7 +54,7 @@ const TrackerLayout = () => {
 
                 {/* Sidebar */}
                 <div className="relative w-full lg:w-1/4 min-w-[320px] space-y-6 mb-2 px-1">
-                    <PopUpCalendarOnClick />
+                    <PopUpCalendarOnClick calenderData={trackerSidebarData?.tracker_records} />
 
                     {/* Routine Prompt */}
                     <div className="bg-white/50 border border-base-300 rounded-md p-4 shadow-lg">
@@ -121,25 +113,32 @@ const TrackerLayout = () => {
                             Today’s recommendations
                         </h1>
 
-                        {recommendations.map((item) => (
-                            <div key={item.id} className="mb-4">
-                                <h2 className="text-[16px] text-gray-800 mb-2">{item.title}</h2>
-                                <div className="flex items-center justify-between bg-white/50 rounded-lg shadow-sm px-4 py-3 border border-base-300">
-                                    <div className="flex items-center">
-                                        <img
-                                            src={item.image}
-                                            alt={item.caption}
-                                            className="w-14 h-14 rounded-lg object-cover mr-4"
-                                        />
-                                        <div>
-                                            <p className="font-medium text-gray-800">{item.caption}</p>
-                                            <p className="text-gray-500 text-[14px]">{item.description}</p>
+                        {trackerSidebarData?.recommended_products.map((item) => (
+                            <a href={item?.product_url} target="_blank" rel="noopener noreferrer">
+                                <div key={item.id} className="mb-4">
+                                    <h2 className="text-[16px] text-gray-800 mb-2">{item.title}</h2>
+                                    <div className="flex items-center justify-between bg-white/50 rounded-lg shadow-sm px-4 py-3 border border-base-300">
+                                        <div className="flex items-center">
+                                            <img
+                                                src={item?.image_url}
+                                                alt={item.caption}
+                                                className="w-14 h-14 rounded-lg object-cover mr-4"
+                                            />
+                                            <div>
+                                                <p className="font-semibold text-gray-800">{item.name}</p>
+                                                <div className="flex gap-2 items-center">
+                                                    <p className="text-sm text-blue-500">{item.compatibility_score.toFixed(1)}%</p>
+                                                    <p className="text-gray-500 text-[14px]">{item.product_type}</p>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <ChevronRight size={18} />
                                     </div>
-                                    <ChevronRight size={18} />
                                 </div>
-                            </div>
+                            </a>
+
                         ))}
+
                     </div>
 
                     {/* Routine Survey */}
@@ -162,7 +161,7 @@ const TrackerLayout = () => {
                     <div className={`absolute top-0 bottom-0 lg:left-0 right-0 transition-all duration-500 ease-in-out ${isGoalPopupVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-5 pointer-events-none'}`}>
                         <GoalSettingComponent />
                         <div
-                            className="absolute top-7 right-4 text-gray-500 cursor-pointer"
+                            className="absolute top-7 right-4 2xl:right-12 text-gray-500 cursor-pointer"
                             onClick={() => setIsGoalPopupVisible(false)}
                         >
                             <IoCloseCircleOutline size={28} className="hover:scale-110 transform transition-transform duration-700 ease-in-out" />
@@ -188,7 +187,7 @@ const TrackerLayout = () => {
                     <Outlet />
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

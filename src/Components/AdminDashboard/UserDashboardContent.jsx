@@ -13,7 +13,7 @@ const UserDashboardContent = () => {
 
     return (
         <div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left Column (Image + Description) */}
                 <div className="col-span-1 hidden sm:block bg-white/50 shadow-lg rounded-2xl p-6 mb-10">
                     {/* Skin Type Image */}

@@ -41,6 +41,19 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
         );
     }
 
+    const handleDeleteAllNotifications = () => {
+        axiosApi.delete(`/messaging/api/v1/notifications`)
+            .then(res => {
+                console.log("All Notifications deleted: ", res.data);
+                setNotifications([]);
+            })
+            .catch(err => {
+                console.error("Error deleting all notifications:", err);
+            });
+
+    }
+
+
 
     if (!isOpen) return null;
     console.log(notifications)
@@ -59,7 +72,7 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
             </div>
 
             {/* Tabs */}
-            <div className="flex justify-between mb-4">
+            <div className="flex justify-between ">
                 <NavLink
                     to="#"
                     onClick={() => setActiveTab('all')}
@@ -74,6 +87,14 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
                 >
                     Unread
                 </NavLink>
+            </div>
+            <div className='my-1 mt-2 flex justify-between cursor-pointer underline underline-offset-4 decoration-gray-500 text-sm'>
+                <p></p>
+                <p
+                    onClick={() => {
+                        handleDeleteAllNotifications()
+                    }}
+                >Delete All</p>
             </div>
 
             {/* Notifications */}
