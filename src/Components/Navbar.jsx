@@ -15,6 +15,7 @@ const Navbar = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false); // State to manage popup visibility
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false); // State to manage profile menu visibility
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State to manage mobile menu visibility
+    // States for notifications...............................
     const [notifications, setNotifications] = useState([]);
     const [unSeenCount, setUnSeenCout] = useState(null);
 
@@ -87,6 +88,9 @@ const Navbar = () => {
     // Navigation routes
     const navRoutes = ["dashboard", "library", "chat", "tracker"];
 
+
+    // Real time notifications with WebSocket................................................
+    // Handle notification click
     const handleGetNotifications = async (notificationId) => {
         console.log(" Get All Notifications clicked:");
         // Implement navigation or action based on notification type

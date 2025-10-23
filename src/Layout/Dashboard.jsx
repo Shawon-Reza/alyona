@@ -20,6 +20,9 @@ import useIsBelowMd from '../hooks/useIsBelowMd';
 import { BsLayoutSidebarInset } from 'react-icons/bs';
 import Swal from 'sweetalert2';
 import useCurrentUser from '@/hooks/useCurrentUser';
+import MultiPagePDF from '@/Components/PdfGenerate/MultiPagePDF';
+import DownloadPDFButton from '@/Components/PdfReport/DownloadPDFButton';
+
 
 const plans = [
     {
@@ -166,9 +169,9 @@ const Dashboard = () => {
                 {/* Navbar */}
                 <div className="w-full bg-white shadow-md rounded-xl px-4 sm:px-8 flex justify-between items-center h-[70px]">
                     {/* Logo */}
-                    <div 
-                    onClick={ () => navigate('/maindashboard') }
-                    className="flex items-center gap-2 h-16 whitespace-nowrap cursor-pointer">
+                    <div
+                        onClick={() => navigate('/maindashboard')}
+                        className="flex items-center gap-2 h-16 whitespace-nowrap cursor-pointer">
                         <img src={AuthNavIcon || "/placeholder.svg"} alt="Brand Logo" className="w-14 h-18" />
                         <span className="font-semibold lg:text-xl hidden sm:block">YOURSELF BEAUTY</span>
                     </div>
@@ -478,7 +481,15 @@ const Dashboard = () => {
                                 </span>
                                 <input type="checkbox" className="toggle toggle-sm scale-75" />
                             </div>
+
+                            <div className=''>
+                                <DownloadPDFButton></DownloadPDFButton>
+                            </div>
+
+
+
                         </div>
+
                     </aside>
                 )}
 

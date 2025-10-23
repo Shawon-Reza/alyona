@@ -30,9 +30,10 @@ const MonthlySkinReport = () => {
                             <div>
                                 <FaPaperPlane className="text-[#b5764f]" />
                             </div>
+
                             {/* Download Button For PDF */}
                             <DownloadPDFButton />
-                            <FaRegFileAlt className="text-[#0f0e25]" />
+                            {/* <FaRegFileAlt className="text-[#0f0e25]" /> */}
                         </div>
                     </div>
                 ))}

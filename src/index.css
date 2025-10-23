@@ -26,3 +26,13 @@
 
 
 /* url('/src/assets/fonts/Satoshi-Regular.woff') format('woff'); */
+
+
+/* For pdf generation */
+.pdf-page {
+  width: 794px;      /* A4 width @ 96 DPI */
+  height: 1123px;    /* A4 height @ 96 DPI */
+  background: white;
+  padding: 40px;
+  box-sizing: border-box;
+}

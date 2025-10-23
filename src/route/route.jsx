@@ -69,6 +69,7 @@ import AddProductRequestPage from "../Pages/AdminDashboard/AddProductRequestPage
 import { version } from "react";
 import PrivateRoute from "./PrivateRoute";
 import PrivetAdminRoute from "./PrivetAdminRoute";
+import DownloadPDFButton from "@/Components/PdfReport/DownloadPDFButton";
 
 const router = createBrowserRouter([
     {
@@ -403,6 +404,10 @@ const router = createBrowserRouter([
             },
 
         ]
+    },
+    {
+        path:"/pdf",
+        element : <DownloadPDFButton></DownloadPDFButton>
     }
 
 
