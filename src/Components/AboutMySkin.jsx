@@ -1,11 +1,7 @@
 import React from "react";
 import { PieChart, Pie, Cell } from "recharts";
 
-const skinStats = [
-    { label: "Low moisture", value: 22 },
-    { label: "Aging", value: 12 },
-    { label: "Skin satisfaction", value: 87 },
-];
+
 
 const COLORS = ["#6366f1", "#e5e7eb"]; // Primary + Background
 
@@ -37,7 +33,13 @@ const RadialProgress = ({ value, label }) => {
     );
 };
 
-export default function AboutMySkin() {
+export default function AboutMySkin({ data }) {
+
+    const skinStats = [
+        { label: "Low moisture", value: parseFloat((data?.avg_hydration_level || 0).toFixed(1)) },
+        { label: "Aging", value: parseFloat((data?.avg_aging_index || 0).toFixed(1)) },
+        { label: "Skin satisfaction", value: parseFloat((data?.avg_skin_satisfaction || 0).toFixed(1)) },
+    ];
     return (
         <div className="bg-[#7271E30D] rounded-2xl p-6">
             <h2 className="text-xl font-bold mb-4">About my Skin</h2>

@@ -14,6 +14,8 @@ import RecomendationsForUser from "../Components/RecomendationsForUser";
 import ProfileImageUploader from "../Components/ProfileImageUploader";
 import { hasTakenQuizToday } from "@/lib/utils";
 import DailyQuizPopup from "@/Components/DailyQuizPopup";
+import { useQuery } from "@tanstack/react-query";
+import axiosApi from "@/api/axiosApi";
 
 const user = {
     name: "Anna",
@@ -54,19 +56,14 @@ export default function MainDashboard() {
     const [CalendarPopUp, setCalendarPopup] = useState(false);
 
 
-    
+
     const today = new Date();
     const monthStart = startOfMonth(today);
     const daysInMonth = getDaysInMonth(monthStart);
     const startOffset = (getDay(monthStart) + 6) % 7;
 
     const [selectedDate, setSelectedDate] = useState(format(today, 'yyyy-MM-dd'));
-    const [completedDates, setCompletedDates] = useState([
-        '2025-07-15',
-        '2025-07-10',
-        '2025-07-12',
-        '2025-07-31',
-    ]);
+    const [completedDates, setCompletedDates] = useState([]);
 
     const days = getLast7Days();
 
@@ -77,7 +74,72 @@ export default function MainDashboard() {
         }
     }, []);
 
+    
 
+
+    // Use React Query + axios to fetch dashboard data from the backend
+    const { data: dashboardData, isLoading: dashboardLoading, error: dashboardError } = useQuery({
+        queryKey: ["dashboard"],
+        queryFn: () => axiosApi.get("/accounts/api/v1/dashboard").then((res) => res.data),
+        staleTime: 1000 * 60, // 1 minute
+    });
+
+    // When dashboard data arrives, derive completed / mention dates for the calendar
+    useEffect(() => {
+        if (!dashboardData) return
+
+        const parsed = new Set()
+
+        const toIso = (s) => {
+            if (!s) return null
+            // If already in yyyy-MM-dd
+            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s
+            // If format dd-MM-yyyy or d-M-yyyy
+            if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(s)) {
+                const [d, m, y] = s.split('-')
+                const dd = String(d).padStart(2, '0')
+                const mm = String(m).padStart(2, '0')
+                return `${y}-${mm}-${dd}`
+            }
+            // Try Date parse
+            const dt = new Date(s)
+            if (!isNaN(dt.getTime())) {
+                return format(dt, 'yyyy-MM-dd')
+            }
+            return null
+        }
+
+        // 1) direct completedDates field from backend
+        if (Array.isArray(dashboardData.completedDates) && dashboardData.completedDates.length) {
+            dashboardData.completedDates.forEach(d => {
+                const iso = toIso(d)
+                if (iso) parsed.add(iso)
+            })
+        }
+
+        // 2) trackers => days
+        if (Array.isArray(dashboardData.trackers)) {
+            dashboardData.trackers.forEach(tr => {
+                const days = Array.isArray(tr.days) ? tr.days : []
+                days.forEach(d => {
+                    const iso = toIso(d)
+                    if (iso) parsed.add(iso)
+                })
+            })
+        }
+
+        // 3) any other known keys (compatibility with varied backends)
+        if (Array.isArray(dashboardData.mentioned_dates)) {
+            dashboardData.mentioned_dates.forEach(d => {
+                const iso = toIso(d)
+                if (iso) parsed.add(iso)
+            })
+        }
+
+        setCompletedDates(Array.from(parsed).sort())
+    }, [dashboardData])
+
+    console.log(dashboardData)
 
     return (
         <div className="relative p-6 bg-gray-50 min-h-screen text-gray-800 font-sans">
@@ -106,15 +168,15 @@ export default function MainDashboard() {
                             <h2 className="text-lg font-semibold mb-2">Hello {user?.user}!</h2>
 
                             <div className="flex gap-3 items-center mb-3">
-                                <div className="px-3 py-1 text-sm border border-gray-300 rounded-full">Level {user.level}</div>
+                                <div className="px-3 py-1 text-sm border border-gray-300 rounded-full">Level {dashboardData?.user_level?.current_level}</div>
                                 <div className="px-3 py-1 text-sm border border-gray-300 rounded-full flex items-center gap-2">
                                     <span role="img" aria-label="flame">🔥</span>
-                                    {user.streak} days streak
+                                    {dashboardData?.user_level?.streak} days streak
                                 </div>
                             </div>
 
                             <div className="text-sm text-gray-500 mb-4">
-                                Your skincare is {user.efficiency}% efficient
+                                Your skincare is {dashboardData?.about_my_skin?.avg_efficiency}% efficient
                             </div>
 
                             {/* Efficiency bar */}
@@ -212,30 +274,30 @@ export default function MainDashboard() {
                     </div>
 
                     {/* Recommendations */}
+                    <RecomendationsForUser data={dashboardData?.extra_quiz_result} />
 
-                    <RecomendationsForUser></RecomendationsForUser>
                 </div>
 
                 {/* Right Column */}
                 <div className="lg:col-span-3 space-y-6">
                     <div className="md:flex gap-5">
                         <div className="md:w-1/2 w-full">
-                            <AboutMySkin />
+                            <AboutMySkin data={dashboardData?.about_my_skin} />
                         </div>
 
                         <div className="md:w-1/2 w-full bg-[#fff6f6] p-4 rounded-2xl shadow-sm">
                             <h3 className="text-base font-semibold">Your skincare proficiency level</h3>
-                            <p className="text-lg font-medium mt-1">Level 3</p>
+                            <p className="text-lg font-medium mt-1"> {dashboardData?.user_level?.current_level}</p>
                             <div className="w-full h-3 bg-gray-200 rounded-full mt-3 relative overflow-hidden">
                                 <div className="h-3 bg-pink-400 rounded-full w-[70%]"></div>
                             </div>
-                            <p className="text-sm text-gray-500 mt-2">10 points to reach next level</p>
+                            <p className="text-sm text-gray-500 mt-2">{dashboardData?.user_level?.points_to_reach_next_level} points to reach next level</p>
                         </div>
                     </div>
 
-                    <PersonalizedSuggestions />
-                    <ProductRecommendations />
-                    <MyBadges />
+                    <PersonalizedSuggestions data={dashboardData?.new_product} onShowQuiz={() => setShowQuiz(true)} />
+                    <ProductRecommendations data={dashboardData?.top_recommended_products} />
+                    <MyBadges data={dashboardData?.user_badges} />
                 </div>
             </div>
         </div>
