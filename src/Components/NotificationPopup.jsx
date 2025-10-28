@@ -2,6 +2,7 @@ import axiosApi from '@/api/axiosApi';
 import React, { useState } from 'react';
 import { MdDeleteOutline } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotifications }) => {
     const [activeTab, setActiveTab] = useState('all');
@@ -42,14 +43,32 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
     }
 
     const handleDeleteAllNotifications = () => {
-        axiosApi.delete(`/messaging/api/v1/notifications`)
-            .then(res => {
-                console.log("All Notifications deleted: ", res.data);
-                setNotifications([]);
-            })
-            .catch(err => {
-                console.error("Error deleting all notifications:", err);
-            });
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete all!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axiosApi.delete(`/messaging/api/v1/notifications`)
+                    .then(res => {
+                        console.log("All Notifications deleted: ", res.data);
+                        setNotifications([]);
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "All notifications have been deleted.",
+                            icon: "success"
+                        });
+                    })
+                    .catch(err => {
+                        console.error("Error deleting all notifications:", err);
+                    });
+            }
+        });
 
     }
 
@@ -71,30 +90,32 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
                 </button>
             </div>
 
-            {/* Tabs */}
-            <div className="flex justify-between ">
-                <NavLink
-                    to="#"
-                    onClick={() => setActiveTab('all')}
-                    className={`text-sm font-medium ${activeTab === 'all' ? 'text-[#BB9777]' : 'text-gray-600'}`}
-                >
-                    All
-                </NavLink>
-                <NavLink
-                    to="#"
-                    onClick={() => setActiveTab('unread')}
-                    className={`text-sm font-medium ${activeTab === 'unread' ? 'text-[#BB9777]' : 'text-gray-600'}`}
-                >
-                    Unread
-                </NavLink>
-            </div>
-            <div className='my-1 mt-2 flex justify-between cursor-pointer underline underline-offset-4 decoration-gray-500 text-sm'>
-                <p></p>
-                <p
-                    onClick={() => {
-                        handleDeleteAllNotifications()
-                    }}
-                >Delete All</p>
+            <div className='flex items-center  justify-between '>
+                {/* Tabs */}
+                <div className="flex gap-5 ">
+                    <NavLink
+                        to="#"
+                        onClick={() => setActiveTab('all')}
+                        className={`text-sm font-medium ${activeTab === 'all' ? 'text-[#BB9777]' : 'text-gray-600'}`}
+                    >
+                        All
+                    </NavLink>
+                    <NavLink
+                        to="#"
+                        onClick={() => setActiveTab('unread')}
+                        className={`text-sm font-medium ${activeTab === 'unread' ? 'text-[#BB9777]' : 'text-gray-600'}`}
+                    >
+                        Unread
+                    </NavLink>
+                </div>
+                <div className='my-1 mt-2 flex justify-between cursor-pointer underline underline-offset-4 decoration-gray-500 text-sm'>
+                    <p></p>
+                    <p
+                        onClick={() => {
+                            handleDeleteAllNotifications()
+                        }}
+                    >Delete All</p>
+                </div>
             </div>
 
             {/* Notifications */}

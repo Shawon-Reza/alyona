@@ -138,13 +138,13 @@ const NotificationComposer = () => {
 
     // send notification to backend in requested shape
     const sendNotification = useCallback(async () => {
-        const recipient = selectedReceiver?.id ?? 0;
+
         const selectedProductDetails = getSelectedProductDetails();
         const recommendationArray = selectedProductDetails.map(p => ({ id: p.id, productName: p.name }));
         const payload = {
-            ...(userGroup && { user_group: userGroup }),
-            recipient,
-            category: 'Mentor',
+            user_group: userGroup,
+            recipient: selectedReceiver?.id,
+            category: userRole=='admin' ? 'Admin' : 'Mentor',
             custom_title: formData.title || '',
             text: formData.body || '',
             target_url: '',
@@ -177,6 +177,9 @@ const NotificationComposer = () => {
             // ignore token parse errors in UI
         }
     }, []);
+
+    console.log(selectedReceiver)
+    console.log(userGroup)
 
     // admin searches handled above via adminSearch query
 
@@ -257,11 +260,13 @@ const NotificationComposer = () => {
                                 }}
                             >
                                 <option value="">Select group</option>
+                                <option value="All">All</option>
                                 <option value="Normal">Normal</option>
                                 <option value="Dry">Dry</option>
                                 <option value="Oily">Oily</option>
                                 <option value="Combination">Combination</option>
                                 <option value="Sensitive">Sensitive</option>
+                                <option value="Mentors">Mentors</option>
                             </select>
 
                         </div>
