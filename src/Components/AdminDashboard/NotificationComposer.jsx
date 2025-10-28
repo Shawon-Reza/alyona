@@ -1,30 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { ChevronRight, Search, ChevronDown } from 'lucide-react';
 import axiosApi from '@/api/axiosApi';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { toast } from 'react-toastify';
-import { set } from 'date-fns';
 
 const NotificationComposer = () => {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [receiverDropdown, setReceiverDropdown] = useState(false);
     const [receiverQuery, setReceiverQuery] = useState('');
     // user_group selectable by admin; category is fixed to 'Mentor'
-    // start with no group selected
     const [userGroup, setUserGroup] = useState('');
     const [isSending, setIsSending] = useState(false);
     const [userRole, setUserRole] = useState('mentor');
-    const [receiverName, setReceiverName] = useState('');
-    const [receiverList, setReceiverList] = useState([]);
-
 
     const [selectedReceiver, setSelectedReceiver] = useState(null);
-    const [formData, setFormData] = useState({
-        product: '',
-        title: '',
-        body: ''
-    });
+    const [formData, setFormData] = useState({ product: '', title: '', body: '' });
 
     const recommendedProducts = [
         {
@@ -53,20 +43,13 @@ const NotificationComposer = () => {
         }
     ];
 
-    const toggleProductSelection = (productId) => {
-        setSelectedProducts(prev =>
-            prev.includes(productId)
-                ? prev.filter(id => id !== productId)
-                : [...prev, productId]
-        );
-    };
+    const toggleProductSelection = useCallback((productId) => {
+        setSelectedProducts(prev => prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]);
+    }, []);
 
-    const handleInputChange = (field, value) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: value
-        }));
-    };
+    const handleInputChange = useCallback((field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    }, []);
 
     // Handlers to inspect current input state
     const handleGetBack = () => {
@@ -87,19 +70,10 @@ const NotificationComposer = () => {
         console.log('Selected receiver data:', selectedReceiver);
     };
 
-    // Get assigned userlist under mentor
-    const {
-        data: UserList = [],
-        isPending: isUsersPending,
-        isError: isUsersError,
-        error: usersError,
-    } = useQuery({
+    // assigned users for mentor
+    const { data: assignedUsers = [] } = useQuery({
         queryKey: ['assignedUsers'],
-        queryFn: async () => {
-            const response = await axiosApi.get('/mentor/api/v1/assigned-users');
-            setReceiverList(response.data);
-            return response.data;
-        },
+        queryFn: () => axiosApi.get('/mentor/api/v1/assigned-users').then(res => res.data),
         staleTime: 5 * 60 * 1000,
         refetchOnWindowFocus: false,
     });
@@ -107,12 +81,7 @@ const NotificationComposer = () => {
 
 
     // Get recommended product list for specific user
-    const {
-        data: RecommendationProductList = [],
-        isPending: isProductsPending,
-        isError: isProductsError,
-        error: productsError,
-    } = useQuery({
+    const { data: RecommendationProductList = [] } = useQuery({
         queryKey: ['recommendedProducts', selectedReceiver?.id],
         queryFn: () => axiosApi.get(`/mentor/api/v1/recommended-product/${selectedReceiver.id}`).then(res => res.data),
         enabled: !!selectedReceiver?.id,
@@ -121,70 +90,57 @@ const NotificationComposer = () => {
     });
 
 
-    // derive filtered users from query + sort results to prioritize prefix matches
-    const filteredUsers = React.useMemo(() => {
-        const list = Array.isArray(receiverList) ? receiverList : [];
+    // dropdown users: mentors see assigned users (filtered by query), admins get server search results
+    const { data: adminSearch = [] } = useQuery({
+        queryKey: ['adminUserList', receiverQuery],
+        queryFn: () => axiosApi.get(`/admin_panel/api/v1/user-list?search=${encodeURIComponent(receiverQuery)}`).then(res => res.data),
+        enabled: userRole === 'admin' && (receiverQuery || '').trim().length > 0,
+        staleTime: 5 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
+
+    const dropdownUsers = useMemo(() => {
+        if (userRole === 'admin') {
+            // admin endpoint may return { results: [] } or an array
+            if (!adminSearch) return [];
+            return Array.isArray(adminSearch) ? adminSearch : adminSearch.results || [];
+        }
+        const list = Array.isArray(assignedUsers) ? assignedUsers : [];
         const q = (receiverQuery || '').trim().toLowerCase();
         if (!q) return list;
-        const matches = list
-            .map((u) => ({
-                ...u,
-                _score: ((u.full_name || '').toLowerCase().startsWith(q) ? 2 : 0)
-            }))
+        return list
+            .map(u => ({ ...u, _score: ((u.full_name || '').toLowerCase().startsWith(q) ? 2 : 0) }))
             .filter(u => (u.full_name || '').toLowerCase().includes(q))
             .sort((a, b) => b._score - a._score || (a.full_name || '').localeCompare(b.full_name || ''));
-        return matches;
-    }, [receiverList, receiverQuery]);
+    }, [userRole, adminSearch, assignedUsers, receiverQuery]);
 
     // choose which product list to render: backend recommendations when available, otherwise static demo list
-    const productsToShow = (Array.isArray(RecommendationProductList) && RecommendationProductList.length)
-        ? RecommendationProductList
-        : recommendedProducts;
+    const productsToShow = useMemo(() => (Array.isArray(RecommendationProductList) && RecommendationProductList.length) ? RecommendationProductList : recommendedProducts, [RecommendationProductList]);
 
     // helper: return selected product objects (not just ids)
-    const getSelectedProductDetails = () => {
+    const getSelectedProductDetails = useCallback(() => {
         if (!Array.isArray(selectedProducts) || selectedProducts.length === 0) return [];
-        return selectedProducts
-            .map(id => productsToShow.find(p => p.id === id))
-            .filter(Boolean);
-    };
+        return selectedProducts.map(id => productsToShow.find(p => p.id === id)).filter(Boolean);
+    }, [selectedProducts, productsToShow]);
 
     // log all input/form data including selected recommendation product objects
-    const logAllInputData = () => {
+    const logAllInputData = useCallback(() => {
         const selectedProductDetails = getSelectedProductDetails();
-        console.log('All notification input data:', {
-            formData,
-            selectedReceiver: selectedReceiver || 'General users',
-            selectedProductIds: selectedProducts,
-            selectedProductDetails,
-            productsToShow
-        });
-    };
+        // keep developer logs minimal
+        console.log('Notification input:', { formData, selectedReceiver, selectedProducts: selectedProductDetails.length ? selectedProductDetails : selectedProducts });
+    }, [formData, selectedReceiver, selectedProducts, getSelectedProductDetails]);
 
-    const handleSend = () => {
-        // keep the separate selected-user logger
+    const handleSend = useCallback(() => {
         logSelectedUserData();
-        // log all form/input data
         logAllInputData();
-
-        // existing payload-style log for backwards compatibility
-        console.log('Send notification payload:', {
-            product: formData.product,
-            title: formData.title,
-            body: formData.body,
-            selectedProducts,
-            receiver: selectedReceiver || 'General users'
-        });
-        // finally actually send to backend
         sendNotification();
-    };
+    }, [logAllInputData, logSelectedUserData]);
 
     // send notification to backend in requested shape
-    const sendNotification = async () => {
+    const sendNotification = useCallback(async () => {
         const recipient = selectedReceiver?.id ?? 0;
         const selectedProductDetails = getSelectedProductDetails();
         const recommendationArray = selectedProductDetails.map(p => ({ id: p.id, productName: p.name }));
-        console.log(recommendationArray)
         const payload = {
             ...(userGroup && { user_group: userGroup }),
             recipient,
@@ -196,51 +152,33 @@ const NotificationComposer = () => {
             additional_info: formData.product || ''
         };
 
-        console.log('Posting notification payload to server:', payload);
         try {
+            setIsSending(true);
             const response = await axiosApi.post('/mentor/api/v1/notification', payload);
-            console.log('Notification sent successfully:', response.data);
             toast.success('Notification sent successfully!');
+            return response.data;
         } catch (error) {
-            console.error('Error sending notification:', error);
-            toast.error('Error sending notification', error);
+            toast.error('Error sending notification');
+            throw error;
+        } finally {
+            setIsSending(false);
         }
-    };
+    }, [selectedReceiver, getSelectedProductDetails, userGroup, formData]);
 
     // For admin..........................................................
 
     useEffect(() => {
         const adminToken = localStorage.getItem('adtoken');
-        if (adminToken) {
-            try {
-                const tokenData = JSON.parse(atob(adminToken.split('.')[1]));
-                console.log('Token data:', tokenData?.role);
-                setUserRole(tokenData?.role || 'mentor');
-            } catch (error) {
-                console.error('Error extracting token data:', error);
-            }
+        if (!adminToken) return;
+        try {
+            const tokenData = JSON.parse(atob(adminToken.split('.')[1]));
+            setUserRole(tokenData?.role || 'mentor');
+        } catch (error) {
+            // ignore token parse errors in UI
         }
     }, []);
 
-    const {
-        data: AdminUserList = [],
-        isPending: isAdminUsersPending,
-        isError: isAdminUsersError,
-        error: adminUsersError,
-    } = useQuery({
-        queryKey: ['adminUserList', selectedReceiver?.full_name, receiverName],
-        queryFn: async () => {
-            const response = await axiosApi.get(`/admin_panel/api/v1/user-list?search=${receiverName}`)
-            setReceiverList(response.data.results);
-            return response.data;
-        },
-        enabled: userRole == 'admin' && !!receiverName,
-        staleTime: 5 * 60 * 1000,
-        refetchOnWindowFocus: false,
-    });
-    console.log("receiverName", receiverName)
-    console.log('Admin user:', AdminUserList?.results)
-    console.log("receiver list:", receiverList)
+    // admin searches handled above via adminSearch query
 
     return (
         <div className="min-h-screen mt-10 ">
@@ -269,8 +207,6 @@ const NotificationComposer = () => {
                                     setReceiverQuery(e.target.value);
                                     setSelectedReceiver(null);
                                     setReceiverDropdown(true);
-                                    setReceiverName(e.target.value);
-
                                 }}
                                 onFocus={() => setReceiverDropdown(true)}
                             />
@@ -279,10 +215,10 @@ const NotificationComposer = () => {
                             {receiverDropdown && (
                                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-auto">
                                     <div className="p-2">
-                                        {filteredUsers.length === 0 ? (
+                                        {(!Array.isArray(dropdownUsers) || dropdownUsers.length === 0) ? (
                                             <div className="px-3 py-2 text-sm text-gray-500">No users found</div>
                                         ) : (
-                                            filteredUsers.map((u) => (
+                                            dropdownUsers.map((u) => (
                                                 <button
                                                     key={u.id}
                                                     type="button"
@@ -293,7 +229,7 @@ const NotificationComposer = () => {
                                                     }}
                                                     className="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-center gap-2"
                                                 >
-                                                    <div className="text-sm text-gray-800">{u.full_name}</div>
+                                                    <div className="text-sm text-gray-800">{u.full_name || u.name || u.email}</div>
                                                     <div className="ml-auto text-xs text-gray-400">{u.id}</div>
                                                 </button>
                                             ))
