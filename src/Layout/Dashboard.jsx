@@ -482,9 +482,6 @@ const Dashboard = () => {
                                 <input type="checkbox" className="toggle toggle-sm scale-75" />
                             </div>
 
-                            <div className=''>
-                                <DownloadPDFButton></DownloadPDFButton>
-                            </div>
 
 
 

@@ -46,11 +46,11 @@ const DownloadPDFButton = ({ reportData = sampleData }) => {
     return (
         <div className="inline-block">
 
-            <div style={{ height: '100vh', width:"100vh", border: '1px solid #ccc' }}>
+            {/* <div style={{ height: '100vh', width:"100vh", border: '1px solid #ccc' }}>
                 <PDFViewer width="100%" height="100%">
                     <PDFReport data={reportData} />
                 </PDFViewer>
-            </div>
+            </div> */}
             <PDFDownloadLink
                 document={<PDFReport data={reportData} />}
                 fileName={`skincare-report-${new Date().toISOString().split('T')[0]}.pdf`}

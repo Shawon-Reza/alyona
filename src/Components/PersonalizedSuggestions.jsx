@@ -11,7 +11,7 @@ const PersonalizedSuggestions = ({ data, onShowQuiz }) => {
                 <h1 className="text-xl font-bold">Improve your routine</h1>
                 <div className="flex flex-col sm:flex-row gap-4">
                     {/* Skincare efficiency */}
-                    <div className="bg-white rounded-xl border-base-700 p-4 shadow-sm flex-1">
+                    <div className="bg-white rounded-xl border-base-700 p-4 shadow-sm flex-1 hover:scale-101 transition-transform duration-300 ease-in-out">
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-sm font-semibold text-purple-600 flex items-center gap-1">
@@ -28,7 +28,7 @@ const PersonalizedSuggestions = ({ data, onShowQuiz }) => {
                     {/* Quiz */}
                     <div
                         onClick={() => onShowQuiz && onShowQuiz()}
-                        className="bg-white rounded-xl border-base-700 p-4 shadow-sm flex-1 cursor-pointer">
+                        className="bg-white rounded-xl border-base-700 p-4 shadow-sm flex-1 cursor-pointer hover:scale-101 transition-transform duration-300 ease-in-out">
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-sm font-semibold text-pink-500 flex items-center gap-1">
@@ -53,8 +53,8 @@ const PersonalizedSuggestions = ({ data, onShowQuiz }) => {
                         onClick={() => {
                             navigate("/tracker/daily-skincare/day")
                         }}
-                        className="bg-white border-2 border-base-200  rounded-xl p-4 shadow-lg flex-1">
-                        <div className="flex justify-between items-start">
+                        className="bg-white border-2 border-base-200  rounded-xl p-4 shadow-lg flex-1 hover:scale-101 transition-transform duration-300 ease-in-out">
+                        <div className="flex justify-between items-start ">
                             <div>
                                 <p className="text-sm font-semibold text-[#7271E3] flex items-center gap-1">
                                     <span>✨</span> Mi Daily Routine
@@ -85,7 +85,7 @@ const PersonalizedSuggestions = ({ data, onShowQuiz }) => {
                         onClick={() => {
                             navigate(`/library/product-detail/${data?.id}`)
                         }}
-                        className="bg-white rounded-xl border-base-700 p-4 shadow-sm flex-1">
+                        className="bg-white rounded-xl border-base-700 p-4 shadow-sm flex-1 ">
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-sm font-semibold text-cyan-600 flex items-center gap-1">

@@ -34,11 +34,11 @@ const MyBadges = ({ data }) => {
     return (
         <div className="">
             <h2 className="text-base font-semibold text-gray-800 mb-3">My Badges</h2>
-            <div className="flex overflow-x-auto space-x-3 pb-2">
+            <div className="flex overflow-x-auto space-x-3 pb-2  ">
                 {badges.map((badge, i) => {
                     const isFlipped = flippedIndex === i
                     return (
-                        <div key={i} className="flex-shrink-0">
+                        <div key={i} className="flex-shrink-0 hover:scale-101 transition-transform duration-300 ease-in-out">
                             {/* perspective wrapper */}
                             <div style={{ perspective: 1000 }} className="min-w-[140px]">
                                 <button

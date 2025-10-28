@@ -8,7 +8,7 @@ import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import img from '../assets/annaImg.png';
 import { IoIosSearch } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
-import { format, startOfMonth, getDay, addDays, getDaysInMonth } from 'date-fns';
+import { format, startOfMonth, getDay, addDays, getDaysInMonth, addMonths } from 'date-fns';
 import Navbar from "../Components/Navbar";
 import RecomendationsForUser from "../Components/RecomendationsForUser";
 import ProfileImageUploader from "../Components/ProfileImageUploader";
@@ -58,7 +58,9 @@ export default function MainDashboard() {
 
 
     const today = new Date();
-    const monthStart = startOfMonth(today);
+    const [displayedMonth, setDisplayedMonth] = useState(new Date());
+
+    const monthStart = startOfMonth(displayedMonth);
     const daysInMonth = getDaysInMonth(monthStart);
     const startOffset = (getDay(monthStart) + 6) % 7;
 
@@ -216,9 +218,27 @@ export default function MainDashboard() {
                     {/* Calendar Popup */}
                     <div className={`p-4 rounded-xl bg-white shadow-md ${CalendarPopUp ? 'block' : 'hidden'}`}>
                         <div className="text-center mb-3">
-                            <h2 className="text-lg font-semibold text-[#5B5B5B]">
-                                {format(today, 'MMMM yyyy')}
-                            </h2>
+                            <div className="flex items-center justify-between">
+                                <button
+                                    aria-label="Previous month"
+                                    onClick={() => setDisplayedMonth((d) => addMonths(d, -1))}
+                                    className="px-2 py-1 rounded hover:bg-gray-100"
+                                >
+                                    ‹
+                                </button>
+
+                                <h2 className="text-lg font-semibold text-[#5B5B5B]">
+                                    {format(monthStart, 'MMMM yyyy')}
+                                </h2>
+
+                                <button
+                                    aria-label="Next month"
+                                    onClick={() => setDisplayedMonth((d) => addMonths(d, 1))}
+                                    className="px-2 py-1 rounded hover:bg-gray-100"
+                                >
+                                    ›
+                                </button>
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-7 gap-1 text-sm text-center mb-2 text-[#5B5B5B]">
@@ -285,7 +305,7 @@ export default function MainDashboard() {
                             <AboutMySkin data={dashboardData?.about_my_skin} />
                         </div>
 
-                        <div className="md:w-1/2 w-full bg-[#fff6f6] p-4 rounded-2xl shadow-sm">
+                        <div className="md:w-1/2 w-full bg-[#fff6f6] p-4 rounded-2xl shadow-sm hover:scale-101 transform transition-transform duration-700 ease-in-out">
                             <h3 className="text-base font-semibold">Your skincare proficiency level</h3>
                             <p className="text-lg font-medium mt-1"> {dashboardData?.user_level?.current_level}</p>
                             <div className="w-full h-3 bg-gray-200 rounded-full mt-3 relative overflow-hidden">

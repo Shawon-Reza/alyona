@@ -25,7 +25,7 @@ const ProductRecommendations = ({ data }) => {
                     <button
                         key={prod.id || idx}
                         onClick={() => navigate(`/library/product-detail/${prod.id}`)}
-                        className="w-full text-left bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-start justify-between hover:shadow-md transition"
+                        className="w-full text-left bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-start justify-between hover:shadow-md transition hover:scale-101 transition-transform duration-700 ease-in-out z-10"
                     >
                         <div className="flex items-start gap-4">
                             <img src={prod.image} alt={prod.name} className="w-12 h-20 object-contain rounded-2xl" />

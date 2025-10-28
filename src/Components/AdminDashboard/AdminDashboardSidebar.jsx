@@ -3,6 +3,7 @@ import { LayoutGrid, Users, ShoppingBag, UserPlus, LogOut } from "lucide-react";
 import AdminDashboardNavbar from "./AdminDashboardNavbar";
 import useIsBelowMd from "../../hooks/useIsBelowMd";
 import logo from "../../assets/logo.png"
+import { IoNotifications } from "react-icons/io5";
 
 export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleView }) {
     const isBelowMd = useIsBelowMd();
@@ -19,15 +20,15 @@ export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleVi
                     </div>
                 )}
 
-                 {/* Logo */}
-                            <div className="flex items-center mb-8">
-                                <img
-                                    src={logo} // Replace with your actual logo path
-                                    alt="Logo"
-                                    className="w-10 md:w-12 h-12 md:h-15 rounded-full"
-                                />
-                                <span className="ml-3 font-semibold text-lg text-gray-700">YOURSELF BEAUTY</span>
-                            </div>
+                {/* Logo */}
+                <div className="flex items-center mb-8">
+                    <img
+                        src={logo} // Replace with your actual logo path
+                        alt="Logo"
+                        className="w-10 md:w-12 h-12 md:h-15 rounded-full"
+                    />
+                    <span className="ml-3 font-semibold text-lg text-gray-700">YOURSELF BEAUTY</span>
+                </div>
 
                 {/* Navigation Items */}
                 <nav className="space-y-2">
@@ -78,6 +79,18 @@ export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleVi
                     >
                         <UserPlus className="w-5 h-5" />
                         <span>Create a mentor</span>
+                    </NavLink>
+
+                    {/* Send notification*/}
+                    <NavLink
+                        to="admin-notifications"
+
+                        className={({ isActive }) =>
+                            `flex items-center gap-3 px-4 py-3 rounded-lg ${isActive ? 'bg-orange-100 text-gray-800 font-medium' : 'text-gray-600 hover:bg-orange-100 hover:text-gray-800'} transition-colors`
+                        }
+                    >
+                        <IoNotifications className="w-5 h-5" />
+                        <span>Send Notification</span>
                     </NavLink>
 
                     {/* Log out */}

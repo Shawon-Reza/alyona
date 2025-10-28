@@ -268,7 +268,7 @@ const router = createBrowserRouter([
 
 
     },
-    
+
 
     {
         path: '/admindashboard',
@@ -296,6 +296,10 @@ const router = createBrowserRouter([
             {
                 path: 'newproduct-requestpage',
                 element: <NewProductRequestPage></NewProductRequestPage> // Content for the Users page
+            },
+            {
+                path: 'admin-notifications',
+                element: <NotificationComposer></NotificationComposer>
             },
             {
                 path: 'faq',
@@ -406,8 +410,8 @@ const router = createBrowserRouter([
         ]
     },
     {
-        path:"/pdf",
-        element : <DownloadPDFButton></DownloadPDFButton>
+        path: "/pdf",
+        element: <DownloadPDFButton></DownloadPDFButton>
     }
 
 

@@ -41,9 +41,9 @@ export default function AboutMySkin({ data }) {
         { label: "Skin satisfaction", value: parseFloat((data?.avg_skin_satisfaction || 0).toFixed(1)) },
     ];
     return (
-        <div className="bg-[#7271E30D] rounded-2xl p-6">
+        <div className="bg-[#7271E30D] rounded-2xl p-6 hover:scale-101 transition-transform duration-300 ease-in-out">
             <h2 className="text-xl font-bold mb-4">About my Skin</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ">
                 {skinStats.map((stat, index) => (
                     <div
                         key={index}

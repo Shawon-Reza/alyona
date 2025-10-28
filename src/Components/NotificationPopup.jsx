@@ -111,7 +111,7 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
                             } hover:bg-gray-50 transition`}
                     >
                         <div>
-                            <p className="text-sm font-semibold">Notification</p>
+                            <p className="text-sm font-semibold">{notification?.category}</p>
                             <p className="text-xs text-gray-500">{notification.text}</p>
                         </div>
 

@@ -52,7 +52,7 @@ const RecomendationsForUser = ({ data }) => {
 
             <div>
                 <p className="font-semibold mb-2">Recommended products</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-3">
                     {recommended.length === 0 && (
                         <div className="text-sm text-[#5B5B5B]">No recommendations available.</div>
                     )}

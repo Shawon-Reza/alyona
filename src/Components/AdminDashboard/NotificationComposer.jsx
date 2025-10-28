@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronRight, Search, ChevronDown } from 'lucide-react';
+import axiosApi from '@/api/axiosApi';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { set } from 'date-fns';
 
 const NotificationComposer = () => {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [receiverDropdown, setReceiverDropdown] = useState(false);
+    const [receiverQuery, setReceiverQuery] = useState('');
+    // user_group selectable by admin; category is fixed to 'Mentor'
+    // start with no group selected
+    const [userGroup, setUserGroup] = useState('');
+    const [isSending, setIsSending] = useState(false);
+    const [userRole, setUserRole] = useState('mentor');
+    const [receiverName, setReceiverName] = useState('');
+    const [receiverList, setReceiverList] = useState([]);
+
+
+    const [selectedReceiver, setSelectedReceiver] = useState(null);
     const [formData, setFormData] = useState({
         product: '',
         title: '',
@@ -52,6 +68,180 @@ const NotificationComposer = () => {
         }));
     };
 
+    // Handlers to inspect current input state
+    const handleGetBack = () => {
+        console.log('Get back clicked - current form state:', {
+            formData,
+            selectedProducts,
+            receiver: selectedReceiver || 'General users'
+        });
+    };
+
+    // Separate helper to log selected receiver/user data
+    const logSelectedUserData = () => {
+        if (!selectedReceiver) {
+            console.log('No receiver selected');
+            return;
+        }
+        // Log the selected receiver object in a clear, inspectable form
+        console.log('Selected receiver data:', selectedReceiver);
+    };
+
+    // Get assigned userlist under mentor
+    const {
+        data: UserList = [],
+        isPending: isUsersPending,
+        isError: isUsersError,
+        error: usersError,
+    } = useQuery({
+        queryKey: ['assignedUsers'],
+        queryFn: async () => {
+            const response = await axiosApi.get('/mentor/api/v1/assigned-users');
+            setReceiverList(response.data);
+            return response.data;
+        },
+        staleTime: 5 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
+
+
+
+    // Get recommended product list for specific user
+    const {
+        data: RecommendationProductList = [],
+        isPending: isProductsPending,
+        isError: isProductsError,
+        error: productsError,
+    } = useQuery({
+        queryKey: ['recommendedProducts', selectedReceiver?.id],
+        queryFn: () => axiosApi.get(`/mentor/api/v1/recommended-product/${selectedReceiver.id}`).then(res => res.data),
+        enabled: !!selectedReceiver?.id,
+        staleTime: 5 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
+
+
+    // derive filtered users from query + sort results to prioritize prefix matches
+    const filteredUsers = React.useMemo(() => {
+        const list = Array.isArray(receiverList) ? receiverList : [];
+        const q = (receiverQuery || '').trim().toLowerCase();
+        if (!q) return list;
+        const matches = list
+            .map((u) => ({
+                ...u,
+                _score: ((u.full_name || '').toLowerCase().startsWith(q) ? 2 : 0)
+            }))
+            .filter(u => (u.full_name || '').toLowerCase().includes(q))
+            .sort((a, b) => b._score - a._score || (a.full_name || '').localeCompare(b.full_name || ''));
+        return matches;
+    }, [receiverList, receiverQuery]);
+
+    // choose which product list to render: backend recommendations when available, otherwise static demo list
+    const productsToShow = (Array.isArray(RecommendationProductList) && RecommendationProductList.length)
+        ? RecommendationProductList
+        : recommendedProducts;
+
+    // helper: return selected product objects (not just ids)
+    const getSelectedProductDetails = () => {
+        if (!Array.isArray(selectedProducts) || selectedProducts.length === 0) return [];
+        return selectedProducts
+            .map(id => productsToShow.find(p => p.id === id))
+            .filter(Boolean);
+    };
+
+    // log all input/form data including selected recommendation product objects
+    const logAllInputData = () => {
+        const selectedProductDetails = getSelectedProductDetails();
+        console.log('All notification input data:', {
+            formData,
+            selectedReceiver: selectedReceiver || 'General users',
+            selectedProductIds: selectedProducts,
+            selectedProductDetails,
+            productsToShow
+        });
+    };
+
+    const handleSend = () => {
+        // keep the separate selected-user logger
+        logSelectedUserData();
+        // log all form/input data
+        logAllInputData();
+
+        // existing payload-style log for backwards compatibility
+        console.log('Send notification payload:', {
+            product: formData.product,
+            title: formData.title,
+            body: formData.body,
+            selectedProducts,
+            receiver: selectedReceiver || 'General users'
+        });
+        // finally actually send to backend
+        sendNotification();
+    };
+
+    // send notification to backend in requested shape
+    const sendNotification = async () => {
+        const recipient = selectedReceiver?.id ?? 0;
+        const selectedProductDetails = getSelectedProductDetails();
+        const recommendationArray = selectedProductDetails.map(p => ({ id: p.id, productName: p.name }));
+        console.log(recommendationArray)
+        const payload = {
+            ...(userGroup && { user_group: userGroup }),
+            recipient,
+            category: 'Mentor',
+            custom_title: formData.title || '',
+            text: formData.body || '',
+            target_url: '',
+            recommendation: recommendationArray,
+            additional_info: formData.product || ''
+        };
+
+        console.log('Posting notification payload to server:', payload);
+        try {
+            const response = await axiosApi.post('/mentor/api/v1/notification', payload);
+            console.log('Notification sent successfully:', response.data);
+            toast.success('Notification sent successfully!');
+        } catch (error) {
+            console.error('Error sending notification:', error);
+            toast.error('Error sending notification', error);
+        }
+    };
+
+    // For admin..........................................................
+
+    useEffect(() => {
+        const adminToken = localStorage.getItem('adtoken');
+        if (adminToken) {
+            try {
+                const tokenData = JSON.parse(atob(adminToken.split('.')[1]));
+                console.log('Token data:', tokenData?.role);
+                setUserRole(tokenData?.role || 'mentor');
+            } catch (error) {
+                console.error('Error extracting token data:', error);
+            }
+        }
+    }, []);
+
+    const {
+        data: AdminUserList = [],
+        isPending: isAdminUsersPending,
+        isError: isAdminUsersError,
+        error: adminUsersError,
+    } = useQuery({
+        queryKey: ['adminUserList', selectedReceiver?.full_name, receiverName],
+        queryFn: async () => {
+            const response = await axiosApi.get(`/admin_panel/api/v1/user-list?search=${receiverName}`)
+            setReceiverList(response.data.results);
+            return response.data;
+        },
+        enabled: userRole == 'admin' && !!receiverName,
+        staleTime: 5 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
+    console.log("receiverName", receiverName)
+    console.log('Admin user:', AdminUserList?.results)
+    console.log("receiver list:", receiverList)
+
     return (
         <div className="min-h-screen mt-10 ">
             <div className="">
@@ -70,19 +260,44 @@ const NotificationComposer = () => {
                             Receiver
                         </label>
                         <div className="relative">
-                            <div
-                                className="input input-bordered w-full bg-white flex items-center justify-between cursor-pointer"
-                                onClick={() => setReceiverDropdown(!receiverDropdown)}
-                            >
-                                <span className="text-gray-600">General users</span>
-                                <ChevronDown size={16} className="text-gray-400" />
-                            </div>
+                            <input
+                                type="text"
+                                className="input input-bordered w-full bg-white pr-10"
+                                placeholder="Search users by name"
+                                value={selectedReceiver ? selectedReceiver.full_name : receiverQuery}
+                                onChange={(e) => {
+                                    setReceiverQuery(e.target.value);
+                                    setSelectedReceiver(null);
+                                    setReceiverDropdown(true);
+                                    setReceiverName(e.target.value);
+
+                                }}
+                                onFocus={() => setReceiverDropdown(true)}
+                            />
+                            <ChevronDown size={16} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+
                             {receiverDropdown && (
-                                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-auto">
                                     <div className="p-2">
-                                        <div className="px-3 py-2 hover:bg-gray-50 cursor-pointer">General users</div>
-                                        <div className="px-3 py-2 hover:bg-gray-50 cursor-pointer">Premium users</div>
-                                        <div className="px-3 py-2 hover:bg-gray-50 cursor-pointer">New users</div>
+                                        {filteredUsers.length === 0 ? (
+                                            <div className="px-3 py-2 text-sm text-gray-500">No users found</div>
+                                        ) : (
+                                            filteredUsers.map((u) => (
+                                                <button
+                                                    key={u.id}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setSelectedReceiver(u);
+                                                        setReceiverQuery('');
+                                                        setReceiverDropdown(false);
+                                                    }}
+                                                    className="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-center gap-2"
+                                                >
+                                                    <div className="text-sm text-gray-800">{u.full_name}</div>
+                                                    <div className="ml-auto text-xs text-gray-400">{u.id}</div>
+                                                </button>
+                                            ))
+                                        )}
                                     </div>
                                 </div>
                             )}
@@ -95,47 +310,68 @@ const NotificationComposer = () => {
                             User group
                         </label>
                         <div className="relative">
-                            <input
-                                type="text"
-                                className="input input-bordered w-full bg-white pr-10"
-                                value="Sophia Brown"
-                                readOnly
-                            />
-                            <Search size={16} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            <select
+                                name="user_group"
+                                id="user_group"
+                                className='input input-bordered w-full bg-white pr-10'
+                                value={userGroup}
+                                onChange={(e) => {
+                                    setUserGroup(e.target.value);
+
+                                }}
+                            >
+                                <option value="">Select group</option>
+                                <option value="Normal">Normal</option>
+                                <option value="Dry">Dry</option>
+                                <option value="Oily">Oily</option>
+                                <option value="Combination">Combination</option>
+                                <option value="Sensitive">Sensitive</option>
+                            </select>
+
                         </div>
                     </div>
                 </div>
 
                 {/* Recommended Products */}
-                <div className="mb-8"> 
+                <div className="mb-8">
                     <h3 className="text-lg font-satoshi font-bold text-gray-800 mb-4">Popular products for this group</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {recommendedProducts.map((product) => (
-                            <div key={product.id} className="card bg-white shadow-sm border border-gray-100">
-                                <div className="card-body p-4">
-                                    <div className="flex items-start gap-3">
-                                        <div className={`w-12 h-12 ${product.color} rounded-lg flex items-center justify-center text-xl`}>
-                                            {product.image}
-                                        </div>
-                                        <div className="flex-1">
-                                            <h4 className="font-medium text-gray-800 text-sm leading-tight mb-1">
-                                                {product.name}
-                                            </h4>
-                                            <div className="flex items-center gap-2 text-xs text-gray-500">
-                                                <span className="font-medium">{product.rating}</span>
-                                                <span>{product.category}</span>
+                    <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                        {productsToShow.map((product) => {
+                            const compatibility = typeof product.compatibility === 'number'
+                                ? `${Math.round(product.compatibility * 100)}%`
+                                : product.rating || '';
+                            const category = product.product_type || product.category || '';
+                            return (
+                                <div key={product.id} className="card bg-white shadow-sm border border-gray-100">
+                                    <div className="card-body p-4">
+                                        <div className="flex items-start gap-3">
+                                            <div className={`w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden`}>
+                                                {product.image && typeof product.image === 'string' && product.image.startsWith('http') ? (
+                                                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="text-xl">{product.image}</div>
+                                                )}
                                             </div>
+                                            <div className="flex-1">
+                                                <h4 className="font-medium text-gray-800 text-sm leading-tight mb-1">
+                                                    {product.name}
+                                                </h4>
+                                                <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                    <span className="font-medium">{compatibility}</span>
+                                                    <span>{category}</span>
+                                                </div>
+                                            </div>
+                                            <input
+                                                type="checkbox"
+                                                className="checkbox checkbox-sm"
+                                                checked={selectedProducts.includes(product.id)}
+                                                onChange={() => toggleProductSelection(product.id)}
+                                            />
                                         </div>
-                                        <input
-                                            type="checkbox"
-                                            className="checkbox checkbox-sm"
-                                            checked={selectedProducts.includes(product.id)}
-                                            onChange={() => toggleProductSelection(product.id)}
-                                        />
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -188,10 +424,10 @@ const NotificationComposer = () => {
 
                 {/* Action Buttons */}
                 <div className="flex justify-end gap-3">
-                    <button className="btn btn-outline btn-neutral border-[#BB9777] ">
+                    <button onClick={handleGetBack} className="btn btn-outline btn-neutral border-[#BB9777] ">
                         Get back
                     </button>
-                    <button className="btn bg-[#BB9777] hover:bg-amber-800 text-white border-none">
+                    <button onClick={handleSend} className="btn bg-[#BB9777] hover:bg-amber-800 text-white border-none">
                         Send notification
                     </button>
                 </div>
