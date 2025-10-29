@@ -8,10 +8,11 @@ const AIChat = () => {
     const [files, setFiles] = useState([]);
     const [pendingQuestion, setPendingQuestion] = useState(null);
     const [previewUrls, setPreviewUrls] = useState([]);
+    const [lightboxSrc, setLightboxSrc] = useState(null);
     const scrollRef = useRef(null);
     const queryClient = useQueryClient();
-        // Base URL for conversation images returned by the backend
-        const IMG_BASE = 'http://10.10.13.59:8005';
+    // Base URL for conversation images returned by the backend
+    const IMG_BASE = 'http://10.10.13.59:8005';
 
     // Fetch conversation history
     const { data: history = [], isLoading, isError, error } = useQuery({
@@ -22,7 +23,7 @@ const AIChat = () => {
 
     // no longer need currentUser for placement — question/images always on right
 
-        // sort the history by created_at ascending so newest messages are at the bottom
+    // sort the history by created_at ascending so newest messages are at the bottom
     const sortedHistory = useMemo(() => {
         if (!Array.isArray(history)) return [];
         return [...history].sort((a, b) => {
@@ -126,41 +127,47 @@ const AIChat = () => {
         setFiles(f);
     };
 
-        // helper: normalize server-side image arrays in a message (supports new `conversation_images`)
-        const getMessageImageUrls = (msg) => {
-            // prefer the new field `conversation_images` if present
-            const conv = msg && msg.conversation_images;
-            if (Array.isArray(conv) && conv.length) {
-                return conv
-                    .map((p) => (typeof p === 'string' ? p : p.url || p.path || ''))
-                    .map((p) => (p && p.startsWith('/') ? IMG_BASE + p : p))
-                    .filter(Boolean);
-            }
+    // helper: normalize server-side image arrays in a message (supports new `conversation_images`)
+    const getMessageImageUrls = (msg) => {
+        // prefer the new field `conversation_images` if present
+        const conv = msg && msg.conversation_images;
+        if (Array.isArray(conv) && conv.length) {
+            return conv
+                .map((p) => (typeof p === 'string' ? p : p.url || p.path || ''))
+                .map((p) => (p && p.startsWith('/') ? IMG_BASE + p : p))
+                .filter(Boolean);
+        }
 
-            const candidates = msg.images || msg.files || msg.attachments || [];
-            if (!candidates) return [];
-            // candidates can be array of strings (urls) or objects with url/src
-            const normalized = Array.isArray(candidates)
-                ? candidates
-                        .map((it) => (typeof it === 'string' ? it : it.url || it.src || it.path || ''))
-                        .map((p) => (p && p.startsWith('/') ? IMG_BASE + p : p))
-                        .filter(Boolean)
-                : [];
+        const candidates = msg.images || msg.files || msg.attachments || [];
+        if (!candidates) return [];
+        // candidates can be array of strings (urls) or objects with url/src
+        const normalized = Array.isArray(candidates)
+            ? candidates
+                .map((it) => (typeof it === 'string' ? it : it.url || it.src || it.path || ''))
+                .map((p) => (p && p.startsWith('/') ? IMG_BASE + p : p))
+                .filter(Boolean)
+            : [];
 
-            // also support local preview URLs attached by the client on send
-            if (msg && Array.isArray(msg._local_preview_urls) && msg._local_preview_urls.length) {
-                return [...normalized, ...msg._local_preview_urls];
-            }
+        // also support local preview URLs attached by the client on send
+        if (msg && Array.isArray(msg._local_preview_urls) && msg._local_preview_urls.length) {
+            return [...normalized, ...msg._local_preview_urls];
+        }
 
-            return normalized;
-        };
+        return normalized;
+    };
 
     const renderImageList = (urls = []) => {
         if (!urls || urls.length === 0) return null;
         return (
             <div className="mt-2 flex flex-wrap gap-2">
                 {urls.map((u, i) => (
-                    <img key={i} src={u} alt={`img-${i}`} className="w-28 h-20 object-cover rounded-md border" />
+                    <img
+                        key={i}
+                        src={u}
+                        alt={`img-${i}`}
+                        className="w-28 h-20 object-cover rounded-md border cursor-pointer"
+                        onClick={() => setLightboxSrc(u)}
+                    />
                 ))}
             </div>
         );
@@ -174,8 +181,19 @@ const AIChat = () => {
         const trimmed = question.trim();
         // show pending user message and typing indicator
         setPendingQuestion(trimmed);
+        console.log("Question:", trimmed)
         sendMutation.mutate({ question: trimmed, files });
     };
+
+    // lightbox: close on Escape
+    useEffect(() => {
+        if (!lightboxSrc) return;
+        const onKey = (e) => {
+            if (e.key === 'Escape') setLightboxSrc(null);
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [lightboxSrc]);
 
     return (
         <div className="p-6">
@@ -189,41 +207,47 @@ const AIChat = () => {
                 ) : sortedHistory.length === 0 ? (
                     <div className="text-sm text-gray-500">No conversation history yet. Start a new chat.</div>
                 ) : (
-                      sortedHistory.map((msg, idx) => {
-                                    const imgs = getMessageImageUrls(msg) || [];
-                                    return (
-                                        <div key={idx} className="mb-4">
-                                            <div className="text-xs text-gray-400 mb-2">{new Date(msg.created_at).toLocaleString()}</div>
+                    sortedHistory.map((msg, idx) => {
+                        const imgs = getMessageImageUrls(msg) || [];
+                        return (
+                            <div key={idx} className="mb-4">
+                                <div className="text-xs text-gray-400 mb-2">{new Date(msg.created_at).toLocaleString()}</div>
 
-                                            {/* Question + images always shown on the right */}
-                                            <div className="flex justify-end mb-1">
-                                                <div className="max-w-[75%] text-right">
-                                                    <div className="text-sm font-medium text-gray-600">You</div>
-                                                    <div className="mt-1 inline-block bg-[#BB9777] text-white p-3 rounded-lg whitespace-pre-wrap">
-                                                        {msg.question}
-                                                    </div>
-                                                    {imgs.length > 0 && (
-                                                        <div className="mt-2 flex flex-wrap gap-2 justify-end">
-                                                            {imgs.map((u, i) => (
-                                                                <img key={i} src={u} alt={`img-${i}`} className="w-28 h-20 object-cover rounded-md border" />
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            {/* AI response always shown on the left below the question/images */}
-                                            <div className="flex justify-start">
-                                                <div className="max-w-[75%]">
-                                                    <div className="text-sm font-medium text-gray-600">AI</div>
-                                                    <div className="mt-1 bg-gray-100 text-gray-800 p-3 rounded-lg whitespace-pre-wrap">
-                                                        {msg.ai_response || <em className="text-gray-400">(no response)</em>}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                {/* Question + images always shown on the right */}
+                                <div className="flex justify-end mb-1">
+                                    <div className="max-w-[75%] text-right">
+                                        <div className="text-sm font-medium text-gray-600">You</div>
+                                        <div className="mt-1 inline-block bg-[#BB9777] text-white p-3 rounded-lg whitespace-pre-wrap">
+                                            {msg.question}
                                         </div>
-                                    );
-                                })
+                                        {imgs.length > 0 && (
+                                            <div className="mt-2 flex flex-wrap gap-2 justify-end">
+                                                {imgs.map((u, i) => (
+                                                    <img
+                                                        key={i}
+                                                        src={u}
+                                                        alt={`img-${i}`}
+                                                        className="w-28 h-20 object-cover rounded-md border cursor-pointer"
+                                                        onClick={() => setLightboxSrc(u)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* AI response always shown on the left below the question/images */}
+                                <div className="flex justify-start">
+                                    <div className="max-w-[75%]">
+                                        <div className="text-sm font-medium text-gray-600">AI</div>
+                                        <div className="mt-1 bg-gray-100 text-gray-800 p-3 rounded-lg whitespace-pre-wrap">
+                                            {msg.ai_response || <em className="text-gray-400">(no response)</em>}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
                 )}
                 {/* If we have a pending (just-sent) message, show it plus AI typing indicator */}
                 {pendingQuestion && (
@@ -254,7 +278,13 @@ const AIChat = () => {
                         {previewUrls.length > 0 && (
                             <div className="mt-2 flex flex-wrap gap-2 justify-end">
                                 {previewUrls.map((p, i) => (
-                                    <img key={i} src={p.url} alt={p.name} className="w-28 h-20 object-cover rounded-md border" />
+                                    <img
+                                        key={i}
+                                        src={p.url}
+                                        alt={p.name}
+                                        className="w-28 h-20 object-cover rounded-md border cursor-pointer"
+                                        onClick={() => setLightboxSrc(p.url)}
+                                    />
                                 ))}
                             </div>
                         )}
@@ -288,7 +318,7 @@ const AIChat = () => {
                     </div>
                 )}
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 justify-between">
                     <input type="file" multiple onChange={handleFilesChange} disabled={sendMutation.isLoading} />
                     <button
                         className="btn bg-[#BB9777] text-white"
@@ -299,6 +329,23 @@ const AIChat = () => {
                     </button>
                 </div>
             </div>
+            {/* Lightbox / fullscreen preview */}
+            {lightboxSrc && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+                    onClick={() => setLightboxSrc(null)}
+                >
+                    <div className="max-w-[95%] max-h-[95%]" onClick={(e) => e.stopPropagation()}>
+                        <img src={lightboxSrc} alt="preview" className="w-full h-auto max-h-[95vh] rounded" />
+                        <button
+                            className="mt-2 block ml-auto text-white bg-black/30 px-3 py-1 rounded"
+                            onClick={() => setLightboxSrc(null)}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
