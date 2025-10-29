@@ -358,7 +358,7 @@ const router = createBrowserRouter([
                 element: <AddProductRequestPage></AddProductRequestPage>,
             },
             {
-                path: "products/edit-product",
+                path: "products/edit-product/:id",
                 element: <EditProductPage></EditProductPage>,
             },
             {

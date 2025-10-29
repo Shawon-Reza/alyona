@@ -1,7 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronRight, X, Search } from "lucide-react"
+import { useParams } from "react-router-dom"
+import axiosApi from "@/api/axiosApi"
+import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom"
 
 const productData = {
     id: "YB001",
@@ -39,6 +43,62 @@ const fragrances = ["Floral", "Citrus", "Fresh", "Woody", "Fruity", "Herbal"]
 export default function EditProductPage() {
     const [formData, setFormData] = useState(productData)
     const [newInciIngredient, setNewInciIngredient] = useState("")
+    const [loading, setLoading] = useState(false)
+    const [saving, setSaving] = useState(false)
+    const [serverId, setServerId] = useState(null)
+
+    const { id } = useParams();
+    const navigate = useNavigate()
+    console.log("Product id:", id)
+
+    useEffect(() => {
+        // Fetch product by id and map to local form shape
+        if (!id) return
+        let mounted = true
+        setLoading(true)
+        axiosApi
+            .get(`/products/api/v1/product/${id}`)
+            .then((res) => {
+                if (!mounted) return
+                const data = res.data || {}
+                // map server fields to formData
+                setFormData((prev) => ({
+                    ...prev,
+                    id: data.productId || data.id || prev.id || id,
+                    productName: data.productName || data.product_name || prev.productName,
+                    pregnancySafe: data.pregnancy_safe ?? data.pregnancySafe ?? prev.pregnancySafe,
+                    category: data.category || prev.category,
+                    brand: data.brand || prev.brand,
+                    productType: data.product_type || data.productType || prev.productType,
+                    skinTypes: data.skin_types || data.skinTypes || prev.skinTypes,
+                    concerns: data.concerns || prev.concerns,
+                    ingredients: data.ingredients || prev.ingredients,
+                    inci: data.incl || data.inci || prev.inci,
+                    texture: Array.isArray(data.texture) ? data.texture[0] : data.texture || prev.texture,
+                    features: data.features || prev.features,
+                    natural: data.natural || prev.natural,
+                    organic: data.organic || prev.organic,
+                    priceRange: data.priceRange || data.price_range || prev.priceRange,
+                    fragranceFree: data.fragrance_free ?? data.fragranceFree ?? prev.fragranceFree,
+                    fragrance: data.fragrance || prev.fragrance,
+                    fragranceNotes: data.fragrance_notes || data.fragranceNotes || prev.fragranceNotes,
+                    productUrl: data.product_url || data.productUrl || prev.productUrl,
+                    imageUrl: data.image_url || data.imageUrl || prev.imageUrl,
+                }))
+
+                // keep server numeric id if provided
+                setServerId(data.id || null)
+            })
+            .catch((err) => {
+                console.error("Failed to load product:", err)
+                toast.error("Failed to load product")
+            })
+            .finally(() => setLoading(false))
+
+        return () => {
+            mounted = false
+        }
+    }, [id])
 
     const handleToggle = (field) => {
         setFormData({
@@ -91,7 +151,54 @@ export default function EditProductPage() {
     }
 
     const handleSave = () => {
-        console.log("Save product:", formData)
+        // Build payload matching backend contract
+        setSaving(true)
+
+        const payload = {
+            brand: formData.brand,
+            product_type: formData.productType || [],
+            volumes: formData.volumes || [],
+            ingredients: formData.ingredients || [],
+            incl: formData.inci || [],
+            texture: formData.texture ? [formData.texture] : [],
+            skin_types: formData.skinTypes || [],
+            features: formData.features || [],
+            fragrance_notes: formData.fragranceNotes || [],
+            concerns: formData.concerns || [],
+            productId: formData.id,
+            productName: formData.productName,
+            priceRange: formData.priceRange,
+            description: formData.description || "",
+            category: formData.category,
+            image_url: formData.imageUrl,
+            product_url: formData.productUrl,
+            fragranceFree: formData.fragranceFree,
+            natural: formData.natural,
+            organic: formData.organic,
+            pregnancy_safe: formData.pregnancySafe,
+        }
+
+        const targetId = serverId || id
+        if (!targetId) {
+            toast.error("No product id to save to")
+            setSaving(false)
+            return
+        }
+
+        axiosApi
+            .patch(`/products/api/v1/product/${targetId}`, payload)
+            .then((res) => {
+                console.log("Saved product response:", res.data)
+                toast.success("Product saved")
+                // Optionally navigate back to list
+                // navigate('/admindashboard')
+            })
+            .catch((err) => {
+                console.error("Save failed:", err)
+                const message = err.response?.data?.error || err.message
+                toast.error("Failed to save product: " + message)
+            })
+            .finally(() => setSaving(false))
     }
 
     const handleGetBack = () => {

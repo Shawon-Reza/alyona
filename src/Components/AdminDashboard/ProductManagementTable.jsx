@@ -144,7 +144,7 @@ export default function ProductManagementTable() {
 
     const handleEditProduct = (id) => {
         console.log("Edit product:", id)
-
+        navigate(`edit-product/${id}`)
     }
 
     const applyFilters = () => {
@@ -397,7 +397,7 @@ export default function ProductManagementTable() {
                                                     <button
                                                         onClick={() => {
                                                             handleEditProduct(product.id)
-                                                            navigate('edit-product')
+
                                                         }}
                                                         className="p-1 text-gray-400 hover:text-blue-600"
                                                     >
