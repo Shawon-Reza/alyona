@@ -70,6 +70,7 @@ import { version } from "react";
 import PrivateRoute from "./PrivateRoute";
 import PrivetAdminRoute from "./PrivetAdminRoute";
 import DownloadPDFButton from "@/Components/PdfReport/DownloadPDFButton";
+import AIChat from "@/Components/AIChat";
 
 const router = createBrowserRouter([
     {
@@ -197,6 +198,10 @@ const router = createBrowserRouter([
             {
                 path: "face-scan",
                 element: <FaceScan />, // <-- renders inside <Outlet />
+            },
+            {
+                path: "ai-chat",
+                element: <AIChat></AIChat>, // <-- renders inside <Outlet />
             },
         ]
     },
