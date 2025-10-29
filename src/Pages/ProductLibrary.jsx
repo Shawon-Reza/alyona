@@ -6,6 +6,8 @@ import LoginPageOverLap from "../assets/LoginPageOverLap.png";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axiosApi from "@/api/axiosApi";
+import { AiOutlineFileSearch } from "react-icons/ai";
+import { toast } from "react-toastify";
 
 export default function ProductLibrary() {
     const [selectedCategory, setSelectedCategory] = useState("");
@@ -73,6 +75,21 @@ export default function ProductLibrary() {
     });
 
     const products = data?.results ?? [];
+    const handleAddProductRequest = async () => {
+        try {
+            const res = await axiosApi.post('/products/api/v1/request-new-product', {
+                name: searchValue
+            });
+            toast.success("Product added to waitlist");
+            console.log("Product added to waitlist:", res.data);
+        } catch (err) {
+            console.error("Error adding product to waitlist:", err);
+            toast.error("Failed to add product to waitlist");
+        }
+    };
+
+
+
 
     return (
         <div className="p-4 sm:p-6 px-6 sm:px-10 min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF] relative">
@@ -108,20 +125,23 @@ export default function ProductLibrary() {
                         <div className="text-sm text-red-600">Error: {productsError.message}</div>
                     )}
 
-                    {/* CTA */}
-                    <button className="w-full bg-[#090642] hover:bg-[#1a1a4d] text-white rounded-lg py-3 text-sm font-medium flex items-center justify-center gap-2">
-                        <IoAdd className="text-lg" /> Didn't find a product?
-                    </button>
+
 
                     {/* Info Box */}
                     <div className="bg-[#07004D] rounded-2xl px-6 py-3 flex items-center justify-between shadow-md my-4">
                         <div>
                             <p className="text-white font-semibold text-base flex items-center gap-2">
-                                <span className="text-[18px]">🧬</span> Find a product
+                                <span className="text-[18px]"><AiOutlineFileSearch size={22} />
+                                </span> Don't find a product ?
                             </p>
                             <p className="text-[14px] text-white/70 mt-1">Add it to the waiting list</p>
                         </div>
-                        <button className="bg-white/30 rounded-lg w-10 h-10 flex items-center justify-center text-white font-semibold text-lg">
+                        <button
+
+                            onClick={() => {
+                                handleAddProductRequest()
+                            }}
+                            className="bg-white/30 rounded-lg w-10 h-10 flex items-center justify-center text-white font-semibold text-lg cursor-pointer hover:bg-white/40 transition">
                             <FaPlus />
                         </button>
                     </div>
@@ -142,8 +162,8 @@ export default function ProductLibrary() {
                                         key={cat}
                                         onClick={() => setSelectedCategory(cat)}
                                         className={`px-3 py-1 text-[16px] sm:text-[18px] rounded-xl border cursor-pointer ${(selectedCategory || "All") === cat
-                                                ? "bg-[#BB9777] text-white"
-                                                : "bg-white text-gray-700 border-gray-300"
+                                            ? "bg-[#BB9777] text-white"
+                                            : "bg-white text-gray-700 border-gray-300"
                                             }`}
                                     >
                                         {cat}
@@ -198,12 +218,12 @@ export default function ProductLibrary() {
                                     />
                                     <div
                                         className={`absolute top-2 left-2 text-[11px] font-semibold px-2 py-1 rounded-full ${score >= 90
-                                                ? "bg-purple-600 text-white"
-                                                : score >= 70
-                                                    ? "bg-blue-500 text-white"
-                                                    : score >= 50
-                                                        ? "bg-pink-400 text-white"
-                                                        : "bg-gray-300 text-gray-800"
+                                            ? "bg-purple-600 text-white"
+                                            : score >= 70
+                                                ? "bg-blue-500 text-white"
+                                                : score >= 50
+                                                    ? "bg-pink-400 text-white"
+                                                    : "bg-gray-300 text-gray-800"
                                             }`}
                                     >
                                         {Math.round(score)}%
