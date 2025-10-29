@@ -21,6 +21,7 @@ import { BsLayoutSidebarInset } from 'react-icons/bs';
 import Swal from 'sweetalert2';
 import useCurrentUser from '@/hooks/useCurrentUser';
 import axiosApi from '@/api/axiosApi';
+import { toast } from 'react-toastify';
 import MultiPagePDF from '@/Components/PdfGenerate/MultiPagePDF';
 import DownloadPDFButton from '@/Components/PdfReport/DownloadPDFButton';
 
@@ -369,13 +370,7 @@ const Dashboard = () => {
                                         <span className="text-2xl font-light">›</span>
                                     </NavLink>
                                 </li>
-                                <li className="border-t border-gray-300 flex justify-between items-center px-3 py-2 hover:bg-gray-100">
-                                    <span className="flex items-center space-x-2">
-                                        <PiBabyLight className="text-lg" />
-                                        <span>Pregnant or breastfeeding</span>
-                                    </span>
-                                    <input type="checkbox" className="toggle toggle-sm scale-75" />
-                                </li>
+                                
                                 <li className="border-t border-gray-300">
                                     <NavLink
                                         to="about-my-skin"
@@ -484,8 +479,9 @@ export default Dashboard;
 
 // Small inline component to manage notification settings (GET + PATCH)
 function NotificationSettings() {
-    const [settings, setSettings] = useState({ product_notification_settings: false, ai_recommendation: false });
+    const [settings, setSettings] = useState({ product_notification_settings: false, ai_recommendation: false, pregnancy_based_notification: false });
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState({}); // per-key saving state to avoid race/toggling issues
 
     useEffect(() => {
         let mounted = true;
@@ -506,25 +502,38 @@ function NotificationSettings() {
     }, []);
 
     const handleToggle = async (key) => {
-        // optimistic toggle locally
+        if (saving[key]) {
+            console.log('Already saving', key);
+            return;
+        }
+
+        const prev = settings;
         const next = { ...settings, [key]: !settings[key] };
+
+        // optimistic update
         setSettings(next);
+        setSaving(s => ({ ...s, [key]: true }));
         console.log('PATCH /accounts/api/v1/notification-settings payload:', next);
+
         try {
             const res = await axiosApi.patch('/accounts/api/v1/notification-settings', next);
             console.log('PATCH success:', res.data);
-            // update local state with server response if different
             setSettings(res.data || next);
+            toast.success('Notification updated');
         } catch (err) {
             console.error('PATCH failed:', err);
-            // revert on error by re-fetching
+            toast.error('Failed to update notification');
+            // try to refetch server state to revert UI
             try {
                 const ref = await axiosApi.get('/accounts/api/v1/notification-settings');
                 console.log('Refetch after failed patch:', ref.data);
-                setSettings(ref.data || settings);
+                setSettings(ref.data || prev);
             } catch (e) {
                 console.error('Refetch also failed:', e);
+                setSettings(prev);
             }
+        } finally {
+            setSaving(s => ({ ...s, [key]: false }));
         }
     };
 
@@ -548,6 +557,19 @@ function NotificationSettings() {
                     </div>
 
                     {/* UV alerts removed as requested */}
+
+                    <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
+                        <span className="h-5 flex items-center space-x-2">
+                            <PiBabyLight className="text-lg" />
+                            <span>Pregnant or breastfeeding</span>
+                        </span>
+                        <input
+                            type="checkbox"
+                            className="toggle toggle-sm scale-75"
+                            checked={!!settings.pregnancy_based_notification}
+                            onChange={() => handleToggle('pregnancy_based_notification')}
+                        />
+                    </div>
 
                     <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
                         <span className="h-5 flex items-center space-x-2">

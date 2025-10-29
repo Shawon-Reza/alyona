@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     FaStar,
     FaMagic,
@@ -43,6 +43,19 @@ const BadgeSection = ({ title, badges, color }) => (
 );
 
 const BadgesPage = () => {
+    useEffect(() => {
+        // fetch badges from backend and log the response
+        import('@/api/axiosApi').then(({ default: axiosApi }) => {
+            axiosApi.get('/accounts/api/v1/categorized-badges')
+                .then(res => {
+                    console.log('GET /accounts/api/v1/badges response:', res.data);
+                })
+                .catch(err => {
+                    console.error('Failed to fetch badges:', err);
+                });
+        }).catch(err => console.error('Failed to load axiosApi for badges:', err));
+    }, []);
+
     return (
         <div className="min-h-screen  py-12  px-5 text-gray-800">
 
