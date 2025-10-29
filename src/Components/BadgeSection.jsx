@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import axiosApi from '@/api/axiosApi';
 import {
     FaStar,
     FaMagic,
@@ -10,7 +11,7 @@ import {
     FaFlask
 } from 'react-icons/fa';
 
-const Badge = ({ label, icon: Icon, color = 'default' }) => {
+const Badge = ({ label, icon, color = 'default' }) => {
     const colorClasses = {
         blue: 'bg-blue-50 text-blue-700 border-blue-200',
         purple: 'bg-purple-50 text-purple-700 border-purple-200',
@@ -20,7 +21,18 @@ const Badge = ({ label, icon: Icon, color = 'default' }) => {
 
     return (
         <div className={`w-[130px] h-[90px] flex flex-col items-center justify-center rounded-xl border shadow-sm ${colorClasses[color]}`}>
-            <Icon className="text-xl mb-1" />
+            {/* icon can be a React component or a string/emoji from the API */}
+            {typeof icon === 'string' && icon ? (
+                <span className="text-xl mb-1">{icon}</span>
+            ) : (typeof icon === 'function' ? (
+                // icon is a React component (function/class)
+                (() => {
+                    const IconComp = icon;
+                    return <IconComp className="text-xl mb-1" />;
+                })()
+            ) : (
+                <FaFlask className="text-xl mb-1" />
+            ))}
             <span className="text-sm font-medium text-center">{label}</span>
         </div>
     );
@@ -43,72 +55,72 @@ const BadgeSection = ({ title, badges, color }) => (
 );
 
 const BadgesPage = () => {
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     useEffect(() => {
-        // fetch badges from backend and log the response
-        import('@/api/axiosApi').then(({ default: axiosApi }) => {
-            axiosApi.get('/accounts/api/v1/categorized-badges')
-                .then(res => {
-                    console.log('GET /accounts/api/v1/badges response:', res.data);
-                })
-                .catch(err => {
-                    console.error('Failed to fetch badges:', err);
-                });
-        }).catch(err => console.error('Failed to load axiosApi for badges:', err));
+        let mounted = true;
+        setLoading(true);
+        axiosApi.get('/accounts/api/v1/categorized-badges')
+            .then(res => {
+                console.log('GET /accounts/api/v1/categorized-badges response:', res.data);
+                if (!mounted) return;
+                setCategories(Array.isArray(res.data) ? res.data : []);
+            })
+            .catch(err => {
+                console.error('Failed to fetch badges:', err);
+                if (mounted) setError(err);
+            })
+            .finally(() => mounted && setLoading(false));
+
+        return () => { mounted = false; };
     }, []);
 
+    const mapColor = (c) => {
+        if (!c) return 'default';
+        const lc = String(c).toLowerCase();
+        if (lc.includes('blue')) return 'blue';
+        if (lc.includes('purple')) return 'purple';
+        if (lc.includes('orange')) return 'orange';
+        return 'default';
+    };
+
+    // Choose a deterministic color for a category when the API doesn't provide one.
+    const pickColorByName = (name, idx) => {
+        const palette = ['blue', 'purple', 'orange', 'default'];
+        if (!name) return palette[idx % palette.length];
+        // simple hash from name to pick a color deterministically
+        let h = 0;
+        for (let i = 0; i < name.length; i++) {
+            h = (h << 5) - h + name.charCodeAt(i);
+            h |= 0;
+        }
+        return palette[Math.abs(h) % palette.length];
+    };
+
     return (
-        <div className="min-h-screen  py-12  px-5 text-gray-800">
-
-            <div className=" ">
-
-                {/* Reviews */}
-                <BadgeSection
-                    title="Reviews badges:"
-                    color="blue"
-                    badges={[
-                        { label: 'My first review', icon: FaStar },
-                        { label: '5 reviews', icon: FaStar },
-                        { label: '10 reviews', icon: FaStar },
-                        { label: 'Skincare expert', icon: FaMedal },
-                        { label: 'Skincare expert', icon: FaMedal },
-                    ]}
-                />
-
-                {/* Routine */}
-                <BadgeSection
-                    title="Routine badges:"
-                    color="purple"
-                    badges={[
-                        { label: 'My first product', icon: FaMagic },
-                        { label: '3 products', icon: FaMagic },
-                        { label: '5 products', icon: FaMagic },
-                        { label: 'Day/Night', icon: FaSun },
-                    ]}
-                />
-
-                {/* Product */}
-                <BadgeSection
-                    title="Product badges:"
-                    color="orange"
-                    badges={[
-                        { label: "You've tried 3 cleansers", icon: FaHeart },
-                        { label: 'Add Facial Oil', icon: FaHeart },
-                        { label: 'Mask Lover', icon: FaHeart },
-                        { label: 'Mark Lover', icon: FaHeart },
-                    ]}
-                />
-
-                {/* Ingredients */}
-                <BadgeSection
-                    title="Ingredients badges:"
-                    color="default"
-                    badges={[
-                        { label: 'Aloe Vera', icon: FaLeaf },
-                        { label: 'Lotus flower extract', icon: FaLeaf },
-                        { label: 'Tea tree oil', icon: FaHeart },
-                        { label: 'Tea tree oil', icon: FaHeart },
-                    ]}
-                />
+        <div className="min-h-screen py-12 px-5 text-gray-800">
+            <div>
+                {loading ? (
+                    <div>Loading badges...</div>
+                ) : error ? (
+                    <div className="text-red-500">Failed to load badges.</div>
+                ) : categories.length === 0 ? (
+                    <div className="text-sm text-gray-500">No badges yet.</div>
+                ) : (
+                    categories.map((cat, idx) => {
+                        const categoryColor = cat.color ? mapColor(cat.color) : pickColorByName(cat.category, idx);
+                        return (
+                            <BadgeSection
+                                key={idx}
+                                title={cat.category}
+                                color={categoryColor}
+                                badges={(cat.badges || []).map(b => ({ label: b.name, icon: b.icon || '', color: b.color ? mapColor(b.color) : categoryColor }))}
+                            />
+                        );
+                    })
+                )}
             </div>
         </div>
     );
