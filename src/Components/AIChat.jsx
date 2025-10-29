@@ -196,10 +196,10 @@ const AIChat = () => {
     }, [lightboxSrc]);
 
     return (
-        <div className="p-6">
+        <div className="">
             <h2 className="text-xl font-semibold mb-4">AI Chat</h2>
 
-            <div className="border border-gray-300 rounded-md p-4 mb-4 max-h-[550px] overflow-auto bg-white" ref={scrollRef}>
+            <div className="border border-gray-300 rounded-md p-4 mb-4 max-h-[600px] overflow-auto bg-white" ref={scrollRef}>
                 {isLoading ? (
                     <div className="text-sm text-gray-500">Loading history...</div>
                 ) : isError ? (

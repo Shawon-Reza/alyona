@@ -20,6 +20,7 @@ import useIsBelowMd from '../hooks/useIsBelowMd';
 import { BsLayoutSidebarInset } from 'react-icons/bs';
 import Swal from 'sweetalert2';
 import useCurrentUser from '@/hooks/useCurrentUser';
+import axiosApi from '@/api/axiosApi';
 import MultiPagePDF from '@/Components/PdfGenerate/MultiPagePDF';
 import DownloadPDFButton from '@/Components/PdfReport/DownloadPDFButton';
 
@@ -446,30 +447,8 @@ const Dashboard = () => {
                         </div>
 
                         {/* NOTIFICATIONS */}
-                        <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Notifications</h2>
-                        <div className='bg-white shadow-md border-r border-gray-200 border rounded-2xl'>
-                            <div className="border-t border-gray-300 first:border-t-0 flex justify-between items-center px-3 py-4">
-                                <span className="h-5 flex items-center space-x-2">
-                                    <AiOutlineProduct className="text-lg" />
-                                    <span>New products</span>
-                                </span>
-                                <input type="checkbox" className="toggle toggle-sm scale-75" />
-                            </div>
-                            <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
-                                <span className="h-5 flex items-center space-x-2">
-                                    <PiSunLight className="text-lg" />
-                                    <span>UV alerts</span>
-                                </span>
-                                <input type="checkbox" className="toggle toggle-sm scale-75" />
-                            </div>
-                            <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
-                                <span className="h-5 flex items-center space-x-2">
-                                    <WiStars className="text-lg" />
-                                    <span>AI recommendations</span>
-                                </span>
-                                <input type="checkbox" className="toggle toggle-sm scale-75" />
-                            </div>
-                        </div>
+                                            <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Notifications</h2>
+                                            <NotificationSettings />
 
                         {/* HELP */}
                         <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Help & Privacy</h2>
@@ -503,31 +482,87 @@ const Dashboard = () => {
 
 export default Dashboard;
 
+// Small inline component to manage notification settings (GET + PATCH)
+function NotificationSettings() {
+    const [settings, setSettings] = useState({ product_notification_settings: false, ai_recommendation: false });
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        let mounted = true;
+        setLoading(true);
+        axiosApi.get('/accounts/api/v1/notification-settings')
+            .then((res) => {
+                console.log('GET /accounts/api/v1/notification-settings response:', res.data);
+                if (mounted) setSettings(res.data || {});
+            })
+            .catch((err) => {
+                console.error('Failed to fetch notification settings:', err);
+            })
+            .finally(() => {
+                if (mounted) setLoading(false);
+            });
 
+        return () => { mounted = false; };
+    }, []);
 
+    const handleToggle = async (key) => {
+        // optimistic toggle locally
+        const next = { ...settings, [key]: !settings[key] };
+        setSettings(next);
+        console.log('PATCH /accounts/api/v1/notification-settings payload:', next);
+        try {
+            const res = await axiosApi.patch('/accounts/api/v1/notification-settings', next);
+            console.log('PATCH success:', res.data);
+            // update local state with server response if different
+            setSettings(res.data || next);
+        } catch (err) {
+            console.error('PATCH failed:', err);
+            // revert on error by re-fetching
+            try {
+                const ref = await axiosApi.get('/accounts/api/v1/notification-settings');
+                console.log('Refetch after failed patch:', ref.data);
+                setSettings(ref.data || settings);
+            } catch (e) {
+                console.error('Refetch also failed:', e);
+            }
+        }
+    };
 
+    return (
+        <div className='bg-white shadow-md border-r border-gray-200 border rounded-2xl'>
+            {loading ? (
+                <div className="px-3 py-4">Loading notification settings...</div>
+            ) : (
+                <>
+                    <div className="border-t border-gray-300 first:border-t-0 flex justify-between items-center px-3 py-4">
+                        <span className="h-5 flex items-center space-x-2">
+                            <AiOutlineProduct className="text-lg" />
+                            <span>New products</span>
+                        </span>
+                        <input
+                            type="checkbox"
+                            className="toggle toggle-sm scale-75"
+                            checked={!!settings.product_notification_settings}
+                            onChange={() => handleToggle('product_notification_settings')}
+                        />
+                    </div>
 
+                    {/* UV alerts removed as requested */}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    <div className="border-t border-gray-300 flex justify-between items-center px-3 py-4">
+                        <span className="h-5 flex items-center space-x-2">
+                            <WiStars className="text-lg" />
+                            <span>AI recommendations</span>
+                        </span>
+                        <input
+                            type="checkbox"
+                            className="toggle toggle-sm scale-75"
+                            checked={!!settings.ai_recommendation}
+                            onChange={() => handleToggle('ai_recommendation')}
+                        />
+                    </div>
+                </>
+            )}
+        </div>
+    );
+}
