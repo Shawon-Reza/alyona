@@ -16,12 +16,13 @@ import {
 import { useNavigate } from "react-router-dom"
 import axiosApi from "@/api/axiosApi"
 import { toast } from "react-toastify"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 
 
 const priceRanges = ["$", "$$", "$$$"]
 
 export default function ProductManagementTable() {
+    const queryClient = useQueryClient()
     const [searchTerm, setSearchTerm] = useState("")
     const [sortConfig, setSortConfig] = useState({ key: "id", direction: "asc" })
     const [currentPage, setCurrentPage] = useState(1)
@@ -69,8 +70,29 @@ export default function ProductManagementTable() {
     const paginate = (pageNumber) => setCurrentPage(pageNumber)
 
     // Handle actions
-    const handleExportList = () => {
+    const handleExportList = async () => {
         console.log("Export list clicked")
+        try {
+            const res = await axiosApi.get("/products/api/v1/bulk-product", {
+                responseType: "blob", // Important for file download
+            })
+            console.log(res)
+
+            // Create a download link
+            const url = window.URL.createObjectURL(new Blob([res.data]))
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', 'products.xlsx') // Set filename
+            document.body.appendChild(link)
+            link.click()
+            link.remove()
+            window.URL.revokeObjectURL(url) // Clean up
+
+            toast.success("Exported successfully!")
+        } catch (error) {
+            console.error("Export error:", error)
+            toast.error("Export failed!")
+        }
     }
 
     const handleBulkUpload = () => {
@@ -107,12 +129,22 @@ export default function ProductManagementTable() {
         console.log("Add product clicked")
     }
 
-    const handleDeleteProduct = (id) => {
+    const handleDeleteProduct = async (id) => {
         console.log("Delete product:", id)
+        try {
+            await axiosApi.delete(`/products/api/v1/product/${id}`)
+            toast.success("Product deleted successfully!")
+            // Refetch the products list after deletion
+            queryClient.invalidateQueries(['productslist'])
+        } catch (error) {
+            console.error("Delete error:", error)
+            toast.error("Failed to delete product!")
+        }
     }
 
     const handleEditProduct = (id) => {
         console.log("Edit product:", id)
+
     }
 
     const applyFilters = () => {
