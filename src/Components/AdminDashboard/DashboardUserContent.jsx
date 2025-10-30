@@ -15,7 +15,8 @@ import {
 } from "recharts"
 import { ChevronLeft, ChevronRight, Trash2, Plus } from "lucide-react"
 import axiosApi from "@/api/axiosApi"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { toast } from "react-toastify"
 
 
 const skinConcerns = [
@@ -120,14 +121,34 @@ export default function DashboardUserContent() {
         }
     })
 
+    const queryClient = useQueryClient()
+
 
 
 
     // Removed global early returns. Each section renders its own loading / error state below.
 
 
+    const handleDeleteRequest = async (requestId) => {
+        console.log(requestId)
 
+        try {
+            await axiosApi.delete(`/admin_panel/api/v1/waiting-list-delete/${requestId}`)
+            console.log("Successfully deleted")
+            toast.success("Request deleted successfully")
+            // refetch the waitlist for the currently selected month so UI stays in sync
+            try {
+                await queryClient.invalidateQueries({ queryKey: ['waitList', selectedMonthWaitlist] })
+            } catch (e) {
+                // fallback: log but don't block user
+                console.error('Failed to invalidate waitList query', e)
+            }
+        } catch (error) {
+            console.error("Error deleting request:", error)
+            toast.error("Failed to delete request")
+        }
 
+    }
 
 
 
@@ -415,7 +436,12 @@ export default function DashboardUserContent() {
                                             <td className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <button className="btn btn-ghost btn-sm">
-                                                        <Trash2 className="w-4 h-4" />
+                                                        <Trash2
+                                                            onClick={() => {
+                                                                // Handle delete action
+                                                                handleDeleteRequest(request.id)
+                                                            }}
+                                                            className="w-4 h-4" />
                                                     </button>
                                                     <button className="btn btn-ghost btn-sm">
                                                         <Plus className="w-4 h-4" />
@@ -452,7 +478,12 @@ export default function DashboardUserContent() {
                                             </div>
                                             <div className="flex gap-1 ml-2">
                                                 <button className="btn btn-ghost btn-xs p-1">
-                                                    <Trash2 className="w-3 h-3" />
+                                                    <Trash2
+                                                        onClick={() => {
+                                                            // Handle delete action
+                                                            handleDeleteRequest(request.id)
+                                                        }}
+                                                        className="w-3 h-3" />
                                                 </button>
                                                 <button className="btn btn-ghost btn-xs p-1">
                                                     <Plus className="w-3 h-3" />

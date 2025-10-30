@@ -70,8 +70,8 @@ export default function SubscribersBySubscription() {
             <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
                 <h2 className="text-lg font-semibold text-gray-900">Subscribers by Subscription Type</h2>
 
-                <div className="flex items-center gap-3">
-                    {/* Filter Dropdown */}
+                {/* <div className="flex items-center gap-3">
+                   
                     <div className="relative">
                         <button
                             onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -97,12 +97,15 @@ export default function SubscribersBySubscription() {
                         )}
                     </div>
 
-                    {/* Download Button */}
+                 
                     <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition-colors">
                         Download data
                         <Download className="w-4 h-4" />
                     </button>
-                </div>
+                </div> */}
+
+                
+
             </div>
 
             {/* Loading State */}
