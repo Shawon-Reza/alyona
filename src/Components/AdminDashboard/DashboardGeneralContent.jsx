@@ -43,7 +43,7 @@ export default function DashboardGeneralContent() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    console.log(startDateFrequency, endDateFrequency);
+    // input debug removed
 
     const {
         isPending: topIngredientsLoading,
@@ -119,21 +119,7 @@ export default function DashboardGeneralContent() {
         },
     })
 
-    console.log(userFrequency)
-
-
-
-    // Loading / Error handling
-    // 🔹 Loading checks
-    if (topIngredientsLoading) return 'Loading Ingredients...'
-    if (topProductsLoading) return 'Loading Products...'
-    if (topCountiesLoading) return 'Loading Countries...'
-    // if (monthlyEarningLoading) return 'Loading Monthly Earnings...'
-
-    // 🔹 Error checks
-    if (topIngredientsError) return 'Error (Ingredients): ' + topIngredientsError.message
-    if (topProductsError) return 'Error (Products): ' + topProductsError.message
-    if (topCountiesError) return 'Error (Countries): ' + topCountiesError.message
+    // removed global early returns; each section will render its own loading/error UI
 
 
 
@@ -291,19 +277,25 @@ export default function DashboardGeneralContent() {
                             </div>
                         </div>
                         <div className="space-y-3">
-                            {top_Counties.map((country, index) => (
-                                <div key={index} className="flex items-center justify-between">
-                                    <span className="text-sm">{country?.country}</span>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-sm font-medium"> {country?.count > 100
-                                            ? (country.count / 1000).toFixed(1) + "k" // 1500 → 1.5k
-                                            : country?.count}</span>
-                                        <div className="w-16 h-2 bg-gray-200 rounded-full">
-                                            <div className="h-full bg-purple-500 rounded-full" style={{ width: `${country.percentage}%` }} />
+                            {topCountiesLoading ? (
+                                <div className="p-4 text-center text-gray-500">Loading countries…</div>
+                            ) : topCountiesError ? (
+                                <div className="p-4 text-center text-red-600">Failed to load countries</div>
+                            ) : (
+                                top_Counties?.map((country, index) => (
+                                    <div key={index} className="flex items-center justify-between">
+                                        <span className="text-sm">{country?.country}</span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium"> {country?.count > 100
+                                                ? (country.count / 1000).toFixed(1) + "k" // 1500 → 1.5k
+                                                : country?.count}</span>
+                                            <div className="w-16 h-2 bg-gray-200 rounded-full">
+                                                <div className="h-full bg-purple-500 rounded-full" style={{ width: `${country.percentage}%` }} />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>
@@ -341,24 +333,30 @@ export default function DashboardGeneralContent() {
                             </div>
                         </div>
                         <div className="space-y-3">
-                            {top_products.map((product, index) => (
-                                <div key={index} className="flex items-center justify-between">
-                                    <span className="text-sm flex-1">{product?.product}</span>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-sm font-medium">{product?.current_month}</span>
-                                        <div
-                                            className={`badge badge-sm ${product?.difference_percentage > 0
-                                                ? "badge-success"   // positive → green
-                                                : product?.difference_percentage < 0
-                                                    ? "badge-error"     // negative → red
-                                                    : "badge-neutral"   // 0 or "-" → neutral
-                                                }`}
-                                        >
-                                            {product?.difference_percentage}%
+                            {topProductsLoading ? (
+                                <div className="p-4 text-center text-gray-500">Loading products…</div>
+                            ) : topProductsError ? (
+                                <div className="p-4 text-center text-red-600">Failed to load products</div>
+                            ) : (
+                                top_products?.map((product, index) => (
+                                    <div key={index} className="flex items-center justify-between">
+                                        <span className="text-sm flex-1">{product?.product}</span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium">{product?.current_month}</span>
+                                            <div
+                                                className={`badge badge-sm ${product?.difference_percentage > 0
+                                                    ? 'badge-success'   // positive → green
+                                                    : product?.difference_percentage < 0
+                                                        ? 'badge-error'     // negative → red
+                                                        : 'badge-neutral'   // 0 or "-" → neutral
+                                                    }`}
+                                            >
+                                                {product?.difference_percentage}%
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
 
                     </div>
@@ -399,26 +397,30 @@ export default function DashboardGeneralContent() {
                             </div>
                         </div>
                         <div className="space-y-3 max-h-[270px] overflow-scroll">
-                            {top_Ingredients.map((ingredient, index) => (
-                                <div key={index} className="flex items-center justify-between">
-                                    <span className="text-sm flex-1">{ingredient?.ingredient}</span>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-sm font-medium">{ingredient?.current_month}</span>
-                                        <div
-                                            className={`badge badge-sm ${ingredient?.difference_percentage > 0
-                                                ? "badge-success"   // positive → green
-                                                : ingredient?.difference_percentage < 0
-                                                    ? "badge-error"     // negative → red
-                                                    : "badge-neutral"   // 0 → neutral
-                                                }`}
-                                        >
-                                            {ingredient?.difference_percentage}%
+                            {topIngredientsLoading ? (
+                                <div className="p-4 text-center text-gray-500">Loading ingredients…</div>
+                            ) : topIngredientsError ? (
+                                <div className="p-4 text-center text-red-600">Failed to load ingredients</div>
+                            ) : (
+                                top_Ingredients?.map((ingredient, index) => (
+                                    <div key={index} className="flex items-center justify-between">
+                                        <span className="text-sm flex-1">{ingredient?.ingredient}</span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium">{ingredient?.current_month}</span>
+                                            <div
+                                                className={`badge badge-sm ${ingredient?.difference_percentage > 0
+                                                    ? 'badge-success'   // positive → green
+                                                    : ingredient?.difference_percentage < 0
+                                                        ? 'badge-error'     // negative → red
+                                                        : 'badge-neutral'   // 0 → neutral
+                                                    }`}
+                                            >
+                                                {ingredient?.difference_percentage}%
+                                            </div>
                                         </div>
-
-
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
                         <div className="mt-4 text-right">
                             <button className="btn btn-link btn-sm text-gray-500">See more</button>

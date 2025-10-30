@@ -145,13 +145,13 @@ const AdminDashboard = () => {
                     />
                 </div>
                 <div className="flex items-center gap-3">
-                    <button
+                    {/* <button
                         onClick={downloadPDF}
                         className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition-colors"
                     >
                         Download PDF
                         <Download className="w-4 h-4" />
-                    </button>
+                    </button> */}
                 </div>
 
                 {/* Content Area */}

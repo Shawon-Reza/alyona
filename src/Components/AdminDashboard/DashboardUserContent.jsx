@@ -42,7 +42,6 @@ export default function DashboardUserContent() {
 
     const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
-    const [selectedYear, setSelectedYear] = useState(currentYear.toString())
     const [selectedYearUserAge, setSelectedYearUserAge] = useState(currentYear.toString())
     const [selectedYearSkinTypes, setSelectedYearSkinTypes] = useState(currentYear.toString())
 
@@ -63,9 +62,9 @@ export default function DashboardUserContent() {
     })
 
     const demographicsData = [
-        { name: "Female", value: demographics_Data?.male, color: "#db2777" }, // Pink
-        { name: "Male", value: demographics_Data?.female, color: "#2563eb" }, // Blue
-        { name: "No defined", value: demographics_Data?.other, color: "#e5e7eb" }, // Light gray
+        { name: 'Female', value: demographics_Data?.female || 0, color: '#db2777' }, // Pink
+        { name: 'Male', value: demographics_Data?.male || 0, color: '#2563eb' }, // Blue
+        { name: 'No defined', value: demographics_Data?.other || 0, color: '#e5e7eb' }, // Light gray
     ]
 
 
@@ -111,7 +110,6 @@ export default function DashboardUserContent() {
             return res.data
         }
     })
-console.log(screenConcern)
 
 
     const { isPending: waitListLoading, error: waitListError, data: waitList } = useQuery({
@@ -125,11 +123,7 @@ console.log(screenConcern)
 
 
 
-    if (isPending || TotalUSerAgeLoading || skinTypesLoading || screenConcernLoading || waitListLoading)
-        return "Loading..."
-
-    if (error || TotalUSerAgeError || skinTypesError || screenConcernError || waitListError)
-        return "Error loading data"
+    // Removed global early returns. Each section renders its own loading / error state below.
 
 
 
@@ -175,23 +169,28 @@ console.log(screenConcern)
                             </div>
                         </div>
 
-                        <ResponsiveContainer width="100%" height={200} className="md:h-[200px]">
-
-                            <BarChart data={ageData} margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="age" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                                <Tooltip />
-                                <Legend
-                                    verticalAlign="top"
-                                    align="right"
-                                    wrapperStyle={{ top: -10, right: 0, fontSize: "12px" }}
-                                    formatter={(value) => <span className="text-xs md:text-sm font-medium text-gray-600">{value}</span>}
-                                />
-                                <Bar dataKey="female" fill="#db2777" barSize={16} className="md:barSize-16" />
-                                <Bar dataKey="male" fill="#2563eb" barSize={16} className="md:barSize-16" />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        {TotalUSerAgeLoading ? (
+                            <div className="p-6 text-center">Loading age data…</div>
+                        ) : TotalUSerAgeError ? (
+                            <div className="p-6 text-center text-red-600">Failed to load age data</div>
+                        ) : (
+                            <ResponsiveContainer width="100%" height={200} className="md:h-[200px]">
+                                <BarChart data={ageData} margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                    <XAxis dataKey="age" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
+                                    <Tooltip />
+                                    <Legend
+                                        verticalAlign="top"
+                                        align="right"
+                                        wrapperStyle={{ top: -10, right: 0, fontSize: '12px' }}
+                                        formatter={(value) => <span className="text-xs md:text-sm font-medium text-gray-600">{value}</span>}
+                                    />
+                                    <Bar dataKey="female" fill="#db2777" barSize={16} className="md:barSize-16" />
+                                    <Bar dataKey="male" fill="#2563eb" barSize={16} className="md:barSize-16" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
                 </div>
 
@@ -220,30 +219,36 @@ console.log(screenConcern)
                                 </button>
                             </div>
                         </div>
-                        <ResponsiveContainer width="100%" height={200} className="md:h-[200px]">
-                            <BarChart data={skinTypesData} margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis
-                                    dataKey="type"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fontSize: 10 }}
-                                    textAnchor="end"
-                                    height={60}
-                                />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                                <Tooltip />
-                                <Legend
-                                    verticalAlign="top"
-                                    align="right"
-                                    wrapperStyle={{ top: -20, right: 0, fontSize: "10px" }}
-                                    formatter={(value) => (
-                                        <span className="text-xs md:text-sm font-medium text-gray-600">{value}</span>
-                                    )}
-                                />
-                                <Bar dataKey="count" fill="#db2777" barSize={16} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        {skinTypesLoading ? (
+                            <div className="p-6 text-center">Loading skin types…</div>
+                        ) : skinTypesError ? (
+                            <div className="p-6 text-center text-red-600">Failed to load skin types</div>
+                        ) : (
+                            <ResponsiveContainer width="100%" height={200} className="md:h-[200px]">
+                                <BarChart data={skinTypesData} margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                    <XAxis
+                                        dataKey="type"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fontSize: 10 }}
+                                        textAnchor="end"
+                                        height={60}
+                                    />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
+                                    <Tooltip />
+                                    <Legend
+                                        verticalAlign="top"
+                                        align="right"
+                                        wrapperStyle={{ top: -20, right: 0, fontSize: '10px' }}
+                                        formatter={(value) => (
+                                            <span className="text-xs md:text-sm font-medium text-gray-600">{value}</span>
+                                        )}
+                                    />
+                                    <Bar dataKey="count" fill="#db2777" barSize={16} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
 
 
                     </div>
@@ -256,25 +261,31 @@ console.log(screenConcern)
                 <div className="card bg-white/50 shadow-md border border-gray-200 w-full lg:w-1/3">
                     <div className="card-body p-3 md:p-4">
                         <h3 className="text-lg md:text-xl font-bold mb-4 text-center">Demographics</h3>
-                        <ResponsiveContainer width="100%" height={180} className="md:h-[200px]">
-                            <PieChart>
-                                <Pie
-                                    data={demographicsData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={40}
-                                    outerRadius={70}
-                                    fill="#8884d8"
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                >
-                                    {demographicsData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                            </PieChart>
-                        </ResponsiveContainer>
+                        {isPending ? (
+                            <div className="p-6 text-center">Loading demographics…</div>
+                        ) : error ? (
+                            <div className="p-6 text-center text-red-600">Failed to load demographics</div>
+                        ) : (
+                            <ResponsiveContainer width="100%" height={180} className="md:h-[200px]">
+                                <PieChart>
+                                    <Pie
+                                        data={demographicsData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={40}
+                                        outerRadius={70}
+                                        fill="#8884d8"
+                                        paddingAngle={5}
+                                        dataKey="value"
+                                    >
+                                        {demographicsData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        )}
                         <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mt-4">
                             {demographicsData.map((entry, index) => (
                                 <div key={index} className="flex items-center justify-center sm:justify-start gap-1">
@@ -323,24 +334,20 @@ console.log(screenConcern)
                             </div>
                         </div>
                         <div className="space-y-2 md:space-y-3">
-                            {screenConcern.map((concern, index) => (
-                                <div key={index} className="flex items-center justify-between py-1">
-                                    <span className="text-xs md:text-sm flex-1 truncate pr-2">{concern?.concern}</span>
-                                    <div className="flex items-center gap-2 flex-shrink-0">
-                                        <span className="text-xs md:text-sm font-medium">{concern?.current_month}</span>
-                                        {/* <div
-                                            className={`badge badge-sm text-xs ${concern.percentage.startsWith("+")
-                                                ? "badge-success"
-                                                : concern.percentage === "-"
-                                                    ? "badge-neutral"
-                                                    : "badge-error"
-                                                }`}
-                                        >
-                                            {concern.percentage}
-                                        </div> */}
+                            {screenConcernLoading ? (
+                                <div className="p-4 text-center">Loading concerns…</div>
+                            ) : screenConcernError ? (
+                                <div className="p-4 text-center text-red-600">Failed to load concerns</div>
+                            ) : (
+                                screenConcern?.map((concern, index) => (
+                                    <div key={index} className="flex items-center justify-between py-1">
+                                        <span className="text-xs md:text-sm flex-1 truncate pr-2">{concern?.concern}</span>
+                                        <div className="flex items-center gap-2 flex-shrink-0">
+                                            <span className="text-xs md:text-sm font-medium">{concern?.current_month}</span>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>
@@ -381,69 +388,81 @@ console.log(screenConcern)
 
                     {/* Desktop Table */}
                     <div className="hidden md:block overflow-x-auto">
-                        <table className="table w-full">
-                            <thead>
-                                <tr>
-                                    <th className="text-sm">Product</th>
+                        {waitListLoading ? (
+                            <div className="p-6 text-center">Loading waitlist…</div>
+                        ) : waitListError ? (
+                            <div className="p-6 text-center text-red-600">Failed to load waitlist</div>
+                        ) : (
+                            <table className="table w-full">
+                                <thead>
+                                    <tr>
+                                        <th className="text-sm">Product</th>
 
-                                    <th className="text-sm">User name</th>
-                                    <th className="text-right text-sm">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {waitList?.map((request, index) => (
-                                    <tr key={index}>
-                                        <td className="text-sm">{request?.name}</td>
-
-                                        <td>
-                                            <a href="#" className="link link-primary text-sm">
-                                                {request?.user_name}
-                                            </a>
-                                        </td>
-                                        <td className="text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <button className="btn btn-ghost btn-sm">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                                <button className="btn btn-ghost btn-sm">
-                                                    <Plus className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </td>
+                                        <th className="text-sm">User name</th>
+                                        <th className="text-right text-sm">Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {waitList?.map((request, index) => (
+                                        <tr key={index}>
+                                            <td className="text-sm">{request?.name}</td>
+
+                                            <td>
+                                                <a href="#" className="link link-primary text-sm">
+                                                    {request?.user_name}
+                                                </a>
+                                            </td>
+                                            <td className="text-right">
+                                                <div className="flex justify-end gap-2">
+                                                    <button className="btn btn-ghost btn-sm">
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                    <button className="btn btn-ghost btn-sm">
+                                                        <Plus className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
 
                     {/* Mobile Cards */}
                     <div className="md:hidden space-y-3">
-                        {waitList?.map((request, index) => (
-                            <div key={index} className="bg-white rounded-lg border border-gray-100 p-3">
-                                <div className="space-y-2">
-                                    <div className="flex justify-between items-start">
-                                        <div className="flex-1 min-w-0">
-                                            <div className="font-medium text-sm text-gray-900 truncate">{request.name}</div>
+                        {waitListLoading ? (
+                            <div className="p-4 text-center">Loading waitlist…</div>
+                        ) : waitListError ? (
+                            <div className="p-4 text-center text-red-600">Failed to load waitlist</div>
+                        ) : (
+                            waitList?.map((request, index) => (
+                                <div key={index} className="bg-white rounded-lg border border-gray-100 p-3">
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex-1 min-w-0">
+                                                <div className="font-medium text-sm text-gray-900 truncate">{request.name}</div>
 
-                                            <div className="text-xs text-gray-500">
-                                                User:{" "}
-                                                <a href="#" className="link link-primary">
-                                                    {request?.user_name}
-                                                </a>
+                                                <div className="text-xs text-gray-500">
+                                                    User:{' '}
+                                                    <a href="#" className="link link-primary">
+                                                        {request?.user_name}
+                                                    </a>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="flex gap-1 ml-2">
-                                            <button className="btn btn-ghost btn-xs p-1">
-                                                <Trash2 className="w-3 h-3" />
-                                            </button>
-                                            <button className="btn btn-ghost btn-xs p-1">
-                                                <Plus className="w-3 h-3" />
-                                            </button>
+                                            <div className="flex gap-1 ml-2">
+                                                <button className="btn btn-ghost btn-xs p-1">
+                                                    <Trash2 className="w-3 h-3" />
+                                                </button>
+                                                <button className="btn btn-ghost btn-xs p-1">
+                                                    <Plus className="w-3 h-3" />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </div>
             </div>
