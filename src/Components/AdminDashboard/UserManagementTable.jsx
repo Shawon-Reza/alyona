@@ -10,10 +10,10 @@ import { toast } from "react-toastify"
 
 
 // Available statuses for dropdown
-const statuses = ["Active", "Inactive", "Banned"]
+const statuses = ["Active", "Inactive"]
 
 // Subscription types
-const subscriptionTypes = [, "Free", "Premium monthly", "Premium Yearly", "Luxury monthly", "Luxury Yearly"]
+const subscriptionTypes = ["Free", "Premium monthly", "Premium Yearly", "Luxury monthly", "Luxury Yearly"]
 
 export default function UserManagementTable() {
     const [currentPage, setCurrentPage] = useState(1)
@@ -32,7 +32,6 @@ export default function UserManagementTable() {
 
     // [MOD] keep a local render array
     const [users, setUsers] = useState(data?.results || []) // [unchanged init]
-    console.log(users)
     const [editingMentor, setEditingMentor] = useState(null)
     const [editingStatus, setEditingStatus] = useState(null)
     const [showFilterPanel, setShowFilterPanel] = useState(false)
@@ -53,8 +52,8 @@ export default function UserManagementTable() {
         }
     })
 
-    console.log(mentorlist)
-    
+    // mentor list loaded
+
 
 
 
@@ -120,41 +119,33 @@ export default function UserManagementTable() {
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber)
 
-    // Update mentor (UI; plug API call here if needed)
+    // Update mentor (UI; plug API call here)
     const updateMentor = (userId, mentor) => {
-        console.log(`Mentor updated for user ${userId}:`, mentor)
-        const matchedMentor = mentorlist.find(m => m.full_name === mentor);
-        console.log(userId, matchedMentor?.id)
+        const matchedMentor = mentorlist?.find((m) => m.full_name === mentor)
         setUsers((prev) => prev.map((user) => (user.id === userId ? { ...user, mentor } : user)))
         setEditingMentor(null)
 
-        if (!userId) {
-            console.error("User ID is missing");
-            return;
+        if (!userId || !matchedMentor?.id) {
+            toast.error('Mentor assignment failed: missing user or mentor')
+            return
         }
 
-        if (!matchedMentor?.id) {
-            console.error("Mentor not found");
-            return;
-        }
-
-        axiosApi.post(`/admin_panel/api/v1/mentor-relation`, {
-            mentee: userId,
-            mentor: matchedMentor?.id
-        }).then((response) => {
-            toast. success('Mentor assign successfully. Now they can communicate in chat.');
-            console.log('Mentor relation updated successfully:', response.data);
-        }).catch((error) => {
-            console.error('Error updating mentor relation:', error);
-        });
-
-
-
+        axiosApi
+            .post(`/admin_panel/api/v1/mentor-relation`, {
+                mentee: userId,
+                mentor: matchedMentor.id,
+            })
+            .then(() => {
+                toast.success('Mentor assigned — they can now communicate in chat.')
+            })
+            .catch((error) => {
+                console.error('Error updating mentor relation:', error)
+                toast.error('Failed to assign mentor')
+            })
     }
 
     // Update status (UI; plug API call here if needed)
     const updateStatus = (userId, status) => {
-        console.log(`Status updated for user ${userId}:`, status)
         setUsers((prev) => prev.map((user) => (user.id === userId ? { ...user, status } : user)))
         setEditingStatus(null)
     }
@@ -178,6 +169,17 @@ export default function UserManagementTable() {
     const navigate = useNavigate()
     const start = ((currentPage - 1) * usersPerPage) + 1
     const end = Math.min(currentPage * usersPerPage, totalUsers || 0) // [MOD] safe end on last page
+
+
+    const handleChangeStatus = async (userId) => {
+        try {
+            await axiosApi.patch(`/admin_panel/api/v1/ban-user/${userId}`)
+            toast.success('User status changed successfully')
+        } catch (error) {
+            console.error('Error changing status:', error)
+            toast.error('Failed to change user status')
+        }
+    }
 
     return (
         <div className="">
@@ -269,7 +271,7 @@ export default function UserManagementTable() {
             >
                 {/* Table */}
                 <div className="overflow-x-auto">
-                    <table className="w-full border-collap">
+                    <table className="w-full border-collapse">
                         <thead>
                             <tr className="border-b-3 border-base-300">
                                 <th
@@ -360,7 +362,7 @@ export default function UserManagementTable() {
                                             </div>
                                         ) : (
                                             <div className="cursor-pointer" onClick={() => setEditingMentor(user.id)}>
-                                                { user?.mentor_profile ||'Not assigned'}
+                                                {user?.mentor_profile || 'Not assigned'}
                                             </div>
                                         )}
                                     </td>
@@ -372,7 +374,10 @@ export default function UserManagementTable() {
                                                 <select
                                                     className="p-1 border rounded-md "
                                                     value={user.status ?? "Inactive"}            // [MOD] controlled + safe default
-                                                    onChange={(e) => updateStatus(user.id, e.target.value)}
+                                                    onChange={(e) => {
+                                                        handleChangeStatus(user.id)
+                                                        updateStatus(user.id, e.target.value)
+                                                    }}
                                                     onBlur={() => setEditingStatus(null)}
                                                     autoFocus
                                                 >
