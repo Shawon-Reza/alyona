@@ -17,6 +17,7 @@ import { ChevronLeft, ChevronRight, Trash2, Plus } from "lucide-react"
 import axiosApi from "@/api/axiosApi"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom"
 
 
 const skinConcerns = [
@@ -40,6 +41,7 @@ export default function DashboardUserContent() {
     const today = new Date();
     const currentYear = today.getFullYear();
     const currentMonthNumber = (today.getMonth() + 1).toString().padStart(2, "0");
+    const navigate = useNavigate();
 
     const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
@@ -148,6 +150,10 @@ export default function DashboardUserContent() {
             toast.error("Failed to delete request")
         }
 
+    }
+
+    const handleAddToProducts = async (requestId) => {
+        navigate(`/admindashboard/products/addproduct`)
     }
 
 
@@ -443,7 +449,9 @@ export default function DashboardUserContent() {
                                                             }}
                                                             className="w-4 h-4" />
                                                     </button>
-                                                    <button className="btn btn-ghost btn-sm">
+                                                    <button
+                                                        onClick={() => handleAddToProducts(request.id)}
+                                                        className="btn btn-ghost btn-sm">
                                                         <Plus className="w-4 h-4" />
                                                     </button>
                                                 </div>
@@ -485,7 +493,9 @@ export default function DashboardUserContent() {
                                                         }}
                                                         className="w-3 h-3" />
                                                 </button>
-                                                <button className="btn btn-ghost btn-xs p-1">
+                                                <button
+                                                    onClick={() => handleAddToProducts(request.id)}
+                                                    className="btn btn-ghost btn-xs p-1">
                                                     <Plus className="w-3 h-3" />
                                                 </button>
                                             </div>

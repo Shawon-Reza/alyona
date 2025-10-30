@@ -5,12 +5,14 @@ import { X, Trash2, Plus, ChevronLeft, ChevronRight } from "lucide-react"
 import axiosApi from "@/api/axiosApi"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom"
 
 export default function NewProductRequestCard() {
     const today = new Date()
     const currentMonthNumber = (today.getMonth() + 1).toString().padStart(2, "0")
     const [selectedMonthWaitlist, setSelectedMonthWaitlist] = useState(currentMonthNumber)
     const [expanded, setExpanded] = useState(false)
+    const navigate = useNavigate()
 
     const { isPending: waitListLoading, error: waitListError, data: waitList } = useQuery({
         queryKey: ['waitList', selectedMonthWaitlist],
@@ -46,6 +48,11 @@ export default function NewProductRequestCard() {
 
     }
 
+    const handleAddToProducts = async (requestId) => {
+        console.log(requestId)
+        navigate(`/admindashboard/products/addproduct`)
+
+    }
 
     return (
         <div className="p-6">
@@ -113,7 +120,9 @@ export default function NewProductRequestCard() {
                                                         <button className="btn btn-ghost btn-sm" onClick={() => handleDeleteRequest(request.id)}>
                                                             <Trash2 className="w-4 h-4" />
                                                         </button>
-                                                        <button className="btn btn-ghost btn-sm">
+                                                        <button 
+                                                        onClick={() => handleAddToProducts(request.id)}
+                                                        className="btn btn-ghost btn-sm">
                                                             <Plus className="w-4 h-4" />
                                                         </button>
                                                     </div>
@@ -152,7 +161,7 @@ export default function NewProductRequestCard() {
                                                     <button className="btn btn-ghost btn-xs p-1" onClick={() => handleDeleteRequest(request.id)}>
                                                         <Trash2 className="w-3 h-3" />
                                                     </button>
-                                                    <button className="btn btn-ghost btn-xs p-1">
+                                                    <button className="btn btn-ghost btn-xs p-1" onClick={() => handleAddToProducts(request.id)}>
                                                         <Plus className="w-3 h-3" />
                                                     </button>
                                                 </div>
