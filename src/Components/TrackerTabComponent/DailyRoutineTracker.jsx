@@ -4,6 +4,7 @@ import productImage from '../../assets/ProductIMG.png';
 import { Sun, Moon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import axiosApi from "@/api/axiosApi";
+import { toast } from "react-toastify"
 import ProductFeedback from "./ProductFeedback";
 
 const routineMap = {
@@ -56,28 +57,96 @@ const routineMap = {
 const DailyRoutineTracker = () => {
 
     const { mode = "day" } = useParams(); // ✅ use from router
-    const { title, icon, products } = routineMap[mode] || routineMap.day;
+    const location = useLocation();
 
-    const [routineDone, setRoutineDone] = useState("yes");
-    const [selectedProducts, setSelectedProducts] = useState(
-        Object.fromEntries((routineMap[mode] || routineMap.day).products.map(p => [p.key, true]))
-    );
+    // Determine the category slug from the path (e.g. 'skincare', 'add-on-skincare')
+    const categorySlug = location.pathname.split("/")[2] || "skincare"
 
-    const toggleProduct = (key) => {
-        setSelectedProducts((prev) => ({
-            ...prev,
-            [key]: !prev[key],
-        }));
-    };
+    const defaultRoutine = routineMap[mode] || routineMap.day;
+    const { title, icon } = defaultRoutine;
+
+    const [routineDone, setRoutineDone] = useState(null);
+    // products that will be rendered (either from API or fallback)
+    const [localProducts, setLocalProducts] = useState(
+        defaultRoutine.products.map(p => ({
+            id: p.key,
+            name: p.name,
+            percent: p.percent,
+            type: p.type,
+            image: p.image,
+            daily: p.daily || 'Both',
+        }))
+    )
+
+    // helper: compute initial selection based on mode and product.daily
+    const computeInitialSel = (productsArr, currentMode) => Object.fromEntries(
+        productsArr.map(p => {
+            const daily = String(p.daily || 'Both').toUpperCase()
+            const selected = currentMode === 'day' ? (daily === 'AM' || daily === 'BOTH') : (daily === 'PM' || daily === 'BOTH')
+            return [String(p.id || p.key), selected]
+        })
+    )
+
+    // selection keyed by product id or fallback key — default selects day/night appropriate products
+    const [selectedProducts, setSelectedProducts] = useState(() => computeInitialSel(
+        defaultRoutine.products.map(p => ({ id: p.key, daily: p.daily || 'Both' })),
+        mode
+    ))
+    const [isSaving, setIsSaving] = useState(false)
+
+    const slugToCategory = {
+        'skincare': 'Skincare',
+        'add-on-skincare': 'Add on Skincare',
+        'body-care': 'Body care',
+        'hair-care': 'Hair care',
+        'perfume': 'Perfume'
+    }
+    const categoryName = slugToCategory[categorySlug] || slugToCategory['skincare']
+
+    const toggleProduct = (productKey) => {
+        setSelectedProducts((prev) => {
+            const next = { ...prev, [productKey]: !prev[productKey] }
+            // log currently selected product ids for debugging as requested
+            const selectedIds = Object.keys(next).filter(k => next[k])
+            console.log('Selected product ids:', selectedIds)
+            // Also log full product objects for selected ids
+            const selectedObjects = selectedIds.map(id => localProducts.find(p => String(p.id || p.key) === String(id))).filter(Boolean)
+            console.log('Selected product objects:', selectedObjects)
+            return next
+        })
+    }
+
+    const handleRoutineResponse = async (value) => {
+        // value is 'yes' or 'no'
+        setRoutineDone(value)
+        const selectedIds = Object.keys(selectedProducts).filter(k => selectedProducts[k]).map(id => {
+            const n = Number(id)
+            return Number.isNaN(n) ? id : n
+        })
+        const payload = {
+            category: categoryName,
+            mode: mode,
+            done: value === 'yes',
+            selected_products: selectedIds,
+        }
+        // setIsSaving(true)
+        // try {
+        //     await axiosApi.post('/products/api/v1/user-routine', payload)
+        //     toast.success('Routine saved')
+        // } catch (err) {
+        //     console.error('Failed to save routine', err)
+        //     toast.error('Failed to save routine')
+        // } finally {
+        //     setIsSaving(false)
+        // }
+        console.log(payload)
+    }
 
     useEffect(() => {
         console.log("Current mode:", mode);
     }, [mode]);
 
-    const location = useLocation();
-
-    console.log(location.pathname.split("/")[2])
-    console.log(location)
+    // useLocation is used above to derive categorySlug
 
 
     const { isPending, error, data } = useQuery({
@@ -87,45 +156,41 @@ const DailyRoutineTracker = () => {
             return res.data;
         }
     })
-    console.log("Trackers All Data: ", data)
 
-    // if (
-    //     data && location.pathname.split("/")[2] === "daily-skincare"
-    // ) {
+    console.log(data)
 
-    // }
+    // When API data is available, pick the category that matches the current route
+    useEffect(() => {
+        if (!data || !Array.isArray(data)) return
+        // Map route slugs to API category names
+        const slugToCategory = {
+            'skincare': 'Skincare',
+            'add-on-skincare': 'Add on Skincare',
+            'body-care': 'Body care',
+            'hair-care': 'Hair care',
+            'perfume': 'Perfume'
+        }
+        const categoryName = slugToCategory[categorySlug] || slugToCategory['skincare']
+        const categoryObj = data.find(c => String(c.category).toLowerCase() === String(categoryName).toLowerCase())
+        if (categoryObj && Array.isArray(categoryObj.products)) {
+            // map API product shape into UI-friendly shape (include `daily` so we can filter by mode)
+            const mapped = categoryObj.products.map(p => ({
+                id: p.id,
+                name: p.productName || p.name,
+                percent: p.compatibility_score ? `${p.compatibility_score}%` : p.percent || '',
+                type: p.type || categoryObj.category,
+                image: p.image,
+                daily: p.daily || 'Both',
+            }))
+            setLocalProducts(mapped)
+            // initialize selection: select products that match the current mode (day/night)
+            const initialSel = computeInitialSel(mapped, mode)
+            setSelectedProducts(initialSel)
+        }
+    }, [data, categorySlug])
 
-    // if (data && location.pathname.split("/")[2] === "daily-skincare") {
-    //     const amData = data.filter(item => item.daily === "AM" || item.daily === "Both");
-    //     const pmData = data.filter(item => item.daily === "PM" || item.daily === "Both");
-
-    //     const dailyData = {
-    //         AM: amData,
-    //         PM: pmData,
-    //     };
-
-    //     console.log(dailyData);
-    // }
-    if (data && location.pathname.split("/")[2] === "daily-skincare") {
-        // Step 1: Only skincare products
-        const skincareProducts = data.filter(item => item.category === "Skincare");
-
-        // Step 2: Split by daily
-        const amData = skincareProducts.filter(
-            item => item.daily === "AM" || item.daily === "Both"
-        );
-        const pmData = skincareProducts.filter(
-            item => item.daily === "PM" || item.daily === "Both"
-        );
-
-        // Step 3: Create structured object
-        const skincareDaily = {
-            AM: amData,
-            PM: pmData,
-        };
-
-        console.log(skincareDaily);
-    }
+   
+    // legacy per-route logic removed — the effect above maps categories to localProducts
 
 
 
@@ -176,8 +241,9 @@ const DailyRoutineTracker = () => {
                         return (
                             <button
                                 key={value}
-                                onClick={() => setRoutineDone(value)}
-                                className={`px-6 w-full py-2 rounded-lg flex items-center justify-between border border-base-300 ${bgClass} cursor-pointer hover:scale-103 transition`}
+                                onClick={() => handleRoutineResponse(value)}
+                                disabled={isSaving}
+                                className={`px-6 w-full py-2 rounded-lg flex items-center justify-between border border-base-300 ${bgClass} cursor-pointer hover:scale-103 transition ${isSaving ? 'opacity-60 pointer-events-none' : ''}`}
                             >
                                 {value.charAt(0).toUpperCase() + value.slice(1)}
                                 <span className={`ml-3 w-7 h-7 rounded-lg flex items-center justify-center ${tickBgClass} `}>
@@ -194,15 +260,21 @@ const DailyRoutineTracker = () => {
             <div>
                 <p className="text-[28px] font-semibold mb-4">Select used products</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {products.map((product) => (
-                        <div key={product.key}>
-                            <p className="font-medium mb-2 text-xl">{product.step}</p>
+                    {(() => {
+                        const filteredProducts = localProducts.filter(p => {
+                            const daily = String((p.daily || 'Both')).toUpperCase()
+                            if (mode === 'day') return daily === 'AM' || daily === 'BOTH'
+                            return daily === 'PM' || daily === 'BOTH'
+                        })
+                        return filteredProducts.map((product) => (
+                        <div key={product.id || product.key}>
+                            <p className="font-medium mb-2 text-xl">{product.name}</p>
                             <div
                                 className={`relative flex items-center gap-4 rounded-xl p-2 border border-base-300 bg-white cursor-pointer transition shadow-sm hover:scale-102`}
-                                onClick={() => toggleProduct(product.key)}
+                                onClick={() => toggleProduct(String(product.id || product.key))}
                             >
                                 <div
-                                    className={`absolute top-2 right-2 w-7 h-7 rounded-lg flex items-center justify-center text-xs z-10 ${selectedProducts[product.key]
+                                    className={`absolute top-2 right-2 w-7 h-7 rounded-lg flex items-center justify-center text-xs z-10 ${selectedProducts[String(product.id || product.key)]
                                         ? "bg-[#B1805A] text-white"
                                         : "border border-[#B1805A] text-[#B1805A]"
                                         }`}
@@ -224,7 +296,7 @@ const DailyRoutineTracker = () => {
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    ))})()}
                 </div>
             </div>
 

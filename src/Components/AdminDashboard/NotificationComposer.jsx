@@ -184,7 +184,7 @@ const NotificationComposer = () => {
     // admin searches handled above via adminSearch query
 
     return (
-        <div className="min-h-screen mt-10 ">
+        <div className="max-h-screen ">
             <div className="">
                 {/* Breadcrumb */}
                 <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">

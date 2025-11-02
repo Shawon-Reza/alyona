@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
 
 const tabs = [
-    { label: 'Daily Skincare', to: 'daily-skincare' },
-    { label: 'Add on Skincare', to: 'addon-skincare' },
+    { label: 'Daily Skincare', to: 'skincare' },
+    { label: 'Add on Skincare', to: 'add-on-skincare' },
     { label: 'Body Care', to: 'body-care' },
     { label: 'Hair Care', to: 'hair-care' },
     { label: 'Perfume', to: 'perfume' },

@@ -53,9 +53,9 @@ export default function MentorManagementTable() {
         refetchOnWindowFocus: false,
     })
 
-    const mentorsPerPage = 20
-    const totalMentors = mentorList?.length
-    const totalPages = Math.ceil((mentorList?.length) / mentorsPerPage)
+    const mentorsPerPage = 11
+    const totalMentors = mentorList?.length || 0
+    const totalPages = Math.max(1, Math.ceil(totalMentors / mentorsPerPage))
 
     // Update mentors when data is fetched
     useEffect(() => {
@@ -365,12 +365,12 @@ export default function MentorManagementTable() {
                     <tbody>
                         {currentMentors.map((mentor) => (
                             <tr key={mentor.id} className="border-b border-base-300 hover:bg-gray-50">
-                                <td className="sm:py-3 px-4">{mentor.name}</td>
-                                <td className="sm:py-3 px-4">{mentor.email}</td>
-                                <td className="sm:py-3 px-4">{mentor.users}</td>
-                                <td className="sm:py-3 px-4">{mentor.region}</td>
-                                <td className="sm:py-3 px-4">{mentor.mentor}</td>
-                                <td className="sm:py-3 px-4">
+                                <td className="sm:py-4 px-4">{mentor.name}</td>
+                                <td className="sm:py-4 px-4">{mentor.email}</td>
+                                <td className="sm:py-4 px-4">{mentor.users}</td>
+                                <td className="sm:py-4 px-4">{mentor.region}</td>
+                                <td className="sm:py-4 px-4">{mentor.mentor}</td>
+                                <td className="sm:py-4 px-4">
                                     {editingStatus === mentor.id ? (
                                         <div className="relative">
                                             <select

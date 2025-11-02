@@ -36,7 +36,7 @@ const TrackerLayout = () => {
         setIsGoalPopupVisible(false);
     };
 
-// console.log(trackerSidebarData?.tracker_records)
+    // console.log(trackerSidebarData?.tracker_records)
     return (
         <div className="relative min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF]">
             {/* Navbar */}
@@ -181,7 +181,7 @@ const TrackerLayout = () => {
                 </div>
 
                 {/* Right Content */}
-                <div className="w-full lg:flex-1 p-6 bg-white rounded-2xl shadow-xl mb-15">
+                <div className="w-full lg:flex-1 p-6 bg-white rounded-2xl shadow-xl mb-15 z-10">
                     <TrackerTabs />
                     <DayNightTabs />
                     <Outlet />
