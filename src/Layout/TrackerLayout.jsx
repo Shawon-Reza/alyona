@@ -12,6 +12,8 @@ import GoalSettingComponent from "@/Components/TrackerTabComponent/GoalSettingCo
 import { IoCloseCircleOutline } from "react-icons/io5";
 import GoalHistory from "@/Components/TrackerTabComponent/GoalHistory";
 import useTrackerSidebar from "@/hooks/useTrackerSidebar";
+import axiosApi from "@/api/axiosApi";
+import { useQuery } from "@tanstack/react-query";
 
 const TrackerLayout = () => {
     const [isGoalPopupVisible, setIsGoalPopupVisible] = useState(false);
@@ -36,6 +38,21 @@ const TrackerLayout = () => {
         setIsGoalPopupVisible(false);
     };
 
+    // Data fetching for tracker layout sidebar/Goal tracking
+    const { isPending, error, data } = useQuery({
+        queryKey: ['goalData'],
+        queryFn: async () => {
+            const res = await axiosApi.get('/products/api/v1/tracker')
+            return res.data
+        },
+    })
+    console.log("sidebar goal data:", data)
+
+    if (isPending) return 'Loading...'
+
+    if (error) return 'An error has occurred: ' + error.message
+
+
     // console.log(trackerSidebarData?.tracker_records)
     return (
         <div className="relative min-h-screen bg-gradient-to-b from-[#FAFAFA] via-[#FFFFFF] to-[#F5EADF]">
@@ -52,7 +69,7 @@ const TrackerLayout = () => {
             {/* Main Layout */}
             <div className="flex flex-col-reverse lg:flex-row px-4 lg:px-10 mt-6 lg:mt-10 gap-6 lg:gap-8">
 
-                {/* Sidebar */}
+                {/* Sidebar ...tracker page.......................*/}
                 <div className="relative w-full lg:w-1/4 min-w-[320px] space-y-6 mb-2 px-1">
                     <PopUpCalendarOnClick calenderData={trackerSidebarData?.tracker_records} />
 
@@ -85,18 +102,18 @@ const TrackerLayout = () => {
 
                     {/* Skin Info & Goal */}
                     <div className="space-y-4">
-                        <div className="bg-white border border-base-300 shadow-md p-4 rounded-xl">
+                        {/* <div className="bg-white border border-base-300 shadow-md p-4 rounded-xl">
                             <p className="text-[18px] font-bold">Skin type: Normal</p>
-                        </div>
+                        </div> */}
 
                         <div
                             onClick={openGoalPopup}
                             className="flex items-center justify-between bg-gradient-to-r from-[#7271E3] to-[#FAB2A5] p-4 rounded-xl text-[#181818] shadow-md border border-base-300 cursor-pointer">
                             <div>
-                                <p className="text-sm font-bold">No goal defined</p>
+                                <p className="text-sm font-bold">Define your goals</p>
                                 <p className="text-sm">Define a goal for your skincare</p>
                             </div>
-                            <PiGreaterThanBold size={22} />
+                            <PiGreaterThanBold size={18} />
                         </div>
                     </div>
 
@@ -170,7 +187,8 @@ const TrackerLayout = () => {
 
                     {/* Goal History Popup */}
                     <div className={`max-h-screen rounded-2xl absolute top-0 bottom-0 lg:left-0 right-0 transition-all duration-500 ease-in-out ${isGoalHistoryPopup ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-5 pointer-events-none'}`}>
-                        <GoalHistory />
+                        {/* Pass data to GoalHistory */}
+                        <GoalHistory data={data?.goals} />
                         <div
                             className="absolute top-7 right-4 text-gray-500 cursor-pointer"
                             onClick={() => setIsGoalHistoryPopup(false)}

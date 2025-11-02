@@ -1,48 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axiosApi from '@/api/axiosApi'
+import { toast } from 'react-toastify'
 
-const GoalHistory = () => {
-  // Sample goal history data - in a real app, this would come from an API
-  const goalHistory = [
-    {
-      id: 1,
-      title: "Use moisturizer for 1 month",
-      startDate: "06/05/25",
-      endDate: "06/06/25",
-      status: "in-progress",
-      statusText: "In progress"
-    },
-    {
-      id: 2,
-      title: "Add toner to my routine",
-      startDate: "02/04/25",
-      endDate: "02/05/25",
-      status: "achieved",
-      statusText: "Achieved"
-    },
-    {
-      id: 3,
-      title: "Reduce acne breakouts",
-      startDate: "01/01/25",
-      endDate: "01/03/25",
-      status: "achieved",
-      statusText: "Achieved"
-    },
-    {
-      id: 4,
-      title: "Improve skin hydration",
-      startDate: "12/01/24",
-      endDate: "12/31/24",
-      status: "achieved",
-      statusText: "Achieved"
-    },
-    
-  ];
+const GoalHistory = ({ data }) => {
+  // Use data passed from parent (expected to be an array). No local dummy data.
+  const goalHistory = Array.isArray(data) ? data : [];
 
-  // Function to handle clicking on a goal history item
+  // Track which goal is expanded for answering (by id)
+  const [activeGoalId, setActiveGoalId] = useState(null)
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Function to handle clicking on a goal history item (toggle inline answer UI)
   const handleGoalClick = (goal) => {
-    console.log('Goal history item clicked:', goal);
-    // In a real app, this might open a detailed view or edit modal
+    setActiveGoalId(prev => (prev === goal.id ? null : goal.id))
   };
+
+  const closeInline = () => setActiveGoalId(null)
+
+  const handleGoalAnswer = async (answerBool) => {
+    const goal = goalHistory.find(g => g.id === activeGoalId)
+    if (!goal) return
+    setIsSaving(true)
+    try {
+      // Post the user's answer for this goal. Adjust endpoint/payload as backend expects.
+      // await axiosApi.post('/products/api/v1/goal-response', {
+      //   goal_id: goal.id,
+      //   answer: answerBool,
+      // })
+      console.log(goal.id, answerBool)
+      toast.success('Response saved')
+    } catch (err) {
+      console.error('Failed to save goal response', err)
+      toast.error('Failed to save response')
+    } finally {
+      setIsSaving(false)
+      closeInline()
+    }
+  }
 
   // Function to get status badge color
   const getStatusBadgeClass = (status) => {
@@ -61,45 +55,66 @@ const GoalHistory = () => {
   return (
     <div className="max-h-[calc(100vh-35px)] overflow-auto max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Goal History</h1>
-      
+
       <div className="space-y-4">
-        {goalHistory.map((goal) => (
-          <div
-            key={goal.id}
-            onClick={() => handleGoalClick(goal)}
-            className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors duration-200"
-          >
-            {/* Goal Title */}
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              {goal.title}
-            </h3>
-            
-            {/* Date Range */}
-            <p className="text-sm text-gray-600 mb-3">
-              From: {goal.startDate} to {goal.endDate}
-            </p>
-            
-            {/* Status Badge */}
-            <div className="flex justify-between items-center">
-              <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadgeClass(goal.status)}`}
-              >
-                {goal.statusText}
-              </span>
-              
-              {/* Additional actions could go here */}
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log('More options clicked for goal:', goal.id);
-                }}
-                className="text-gray-400 hover:text-gray-600 text-lg"
-              >
-                •••
-              </button>
-            </div>
+        {goalHistory.length === 0 ? (
+          <div className="text-center py-8">
+            <div className="text-gray-400 text-6xl mb-4">📝</div>
+            <h3 className="text-lg font-medium text-gray-900 mb-1">No goals yet</h3>
+            <p className="text-gray-500">Start by creating your first skincare goal!</p>
           </div>
-        ))}
+        ) : (
+          goalHistory.map((goal) => {
+            // Normalize fields from parent data shape
+            const title = goal.custom_goal || (Array.isArray(goal.goals) ? goal.goals[0] : null) || 'Untitled goal'
+            const startDate = goal.created_at ? new Date(goal.created_at).toLocaleDateString() : (goal.startDate || '')
+            const endDate = goal.updated_at ? new Date(goal.updated_at).toLocaleDateString() : (goal.endDate || '')
+            const status = goal.is_complete ? 'achieved' : (goal.is_active ? 'in-progress' : 'failed')
+            const statusText = goal.is_complete ? 'Achieved' : (goal.is_active ? 'In progress' : 'Failed')
+
+            return (
+              <div
+                key={goal.id}
+                onClick={() => handleGoalClick(goal)}
+                className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors duration-200"
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
+                <p className="text-sm text-gray-600 mb-3">From: {startDate} {endDate ? `to ${endDate}` : ''}</p>
+
+                <div className="flex justify-between items-center">
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadgeClass(status)}`}>
+                    {statusText}
+                  </span>
+
+                 
+                </div>
+
+                {/* Inline answer section shown when this goal is active */}
+                {activeGoalId === goal.id && (
+                  <div className="mt-4 border-t pt-4 flex flex-col gap-3">
+                    <p className="text-sm text-gray-600">Did you complete this goal?</p>
+                    <div className="flex gap-3 justify-end">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleGoalAnswer(false) }}
+                        disabled={isSaving}
+                        className="px-4 py-2 rounded bg-gray-100"
+                      >
+                        No
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleGoalAnswer(true) }}
+                        disabled={isSaving}
+                        className="px-4 py-2 rounded bg-amber-500 text-white"
+                      >
+                        Yes
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )
+          })
+        )}
       </div>
 
       {/* Empty state - uncomment if needed */}
@@ -117,9 +132,11 @@ const GoalHistory = () => {
       <div className="mt-6 p-3 bg-gray-100 rounded-md text-xs">
         <p className="font-semibold mb-2">Goal History Debug Info:</p>
         <p>Total Goals: {goalHistory.length}</p>
-        <p>In Progress: {goalHistory.filter(g => g.status === 'in-progress').length}</p>
-        <p>Achieved: {goalHistory.filter(g => g.status === 'achieved').length}</p>
+        <p>In Progress: {goalHistory.filter(g => !g.is_complete && g.is_active).length}</p>
+        <p>Achieved: {goalHistory.filter(g => g.is_complete).length}</p>
       </div>
+
+      {/* Modal removed — using inline answer section per-goal instead */}
     </div>
   );
 };
