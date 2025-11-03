@@ -358,7 +358,7 @@ const Dashboard = () => {
                                 </li>
                                 <li className="border-t border-gray-300">
                                     <NavLink
-                                        to="/skin-type-test"
+                                        to="/chat/ai-chat"
                                         onClick={handleSidebarItemClick}
                                         className={({ isActive }) =>
                                             `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`

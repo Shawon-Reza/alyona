@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axiosApi from '@/api/axiosApi'
+import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
+import { AiOutlineDelete } from 'react-icons/ai';
 
 const GoalHistory = ({ data }) => {
   // Use data passed from parent (expected to be an array). No local dummy data.
@@ -52,6 +54,27 @@ const GoalHistory = ({ data }) => {
     }
   };
 
+  // Handler for delete click (stops propagation so it doesn't toggle the card)
+  const queryClient = useQueryClient()
+  const handleDeleteClick = (e, id) => {
+    e.stopPropagation()
+    console.log('Delete goal id:', id)
+    // Call delete API and invalidate goalData on success
+    axiosApi.delete(`/products/api/v1/goals/${id}`)
+      .then((res) => {
+        if (res && res.status >= 200 && res.status < 300) {
+          toast.success('Goal deleted')
+          queryClient.invalidateQueries(['goalData'])
+        } else {
+          toast.error('Failed to delete goal')
+        }
+      })
+      .catch((err) => {
+        console.error('Delete failed', err)
+        toast.error('Failed to delete goal')
+      })
+  }
+
   return (
     <div className="max-h-[calc(100vh-35px)] overflow-auto max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Goal History</h1>
@@ -86,7 +109,12 @@ const GoalHistory = ({ data }) => {
                     {statusText}
                   </span>
 
-                 
+                  <AiOutlineDelete
+                    size={18}
+                    onClick={(e) => handleDeleteClick(e, goal.id)}
+                    className='hover:scale-110 transform transition-transform duration-700 ease-in-out cursor-pointer'
+                    title='Delete goal'
+                  />
                 </div>
 
                 {/* Inline answer section shown when this goal is active */}

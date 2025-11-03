@@ -159,7 +159,7 @@ const TrackerLayout = () => {
                     </div>
 
                     {/* Routine Survey */}
-                    <div className="bg-white/50 rounded-2xl p-4 shadow-sm flex items-start justify-between hover:shadow-md text-[18px] border border-base-300">
+                    {/* <div className="bg-white/50 rounded-2xl p-4 shadow-sm flex items-start justify-between hover:shadow-md text-[18px] border border-base-300">
                         <div>
                             <div className="text-[#a688f7] flex items-center gap-2">
                                 <Sparkle size={16} /> Routine
@@ -172,11 +172,11 @@ const TrackerLayout = () => {
                         <div className="text-[#a688f7]">
                             <ChevronRight size={16} />
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Goal Popup */}
                     <div className={`absolute top-0 bottom-0 lg:left-0 right-0 transition-all duration-500 ease-in-out ${isGoalPopupVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-5 pointer-events-none'}`}>
-                        <GoalSettingComponent />
+                        <GoalSettingComponent onSaved={() => setIsGoalPopupVisible(false)} />
                         <div
                             className="absolute top-7 right-4 2xl:right-12 text-gray-500 cursor-pointer"
                             onClick={() => setIsGoalPopupVisible(false)}
@@ -199,7 +199,7 @@ const TrackerLayout = () => {
                 </div>
 
                 {/* Right Content */}
-                <div className="w-full lg:flex-1 p-6 bg-white rounded-2xl shadow-xl mb-15 z-10">
+                <div className="w-full lg:flex-1 p-6 bg-white rounded-2xl shadow-xl mb-15 z-10 min-h-[calc(100vh-200px)]">
                     <TrackerTabs />
                     <DayNightTabs />
                     <Outlet />

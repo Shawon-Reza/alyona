@@ -1,8 +1,11 @@
+import axiosApi from '@/api/axiosApi';
 import React, { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { FaChevronDown, FaCheck, FaGreaterThan } from 'react-icons/fa';
 import { PiGreaterThan } from 'react-icons/pi';
+import { toast } from 'react-toastify';
 
-const GoalSettingComponent = () => {
+const GoalSettingComponent = ({ onSaved }) => {
     // State for predefined goals section
     const [predefinedDuration, setPredefinedDuration] = useState('30 days');
     const [selectedGoals, setSelectedGoals] = useState([]);
@@ -28,11 +31,14 @@ const GoalSettingComponent = () => {
 
     // Handle predefined goal selection
     const handleGoalSelection = (goal) => {
-        console.log('Toggling goal:', goal);
+        console.log('Selecting goal:', goal);
+        // Only allow a single selected goal at a time. Clicking the same goal toggles it off.
         if (selectedGoals.includes(goal)) {
-            setSelectedGoals(selectedGoals.filter(item => item !== goal));
+            setSelectedGoals([])
         } else {
-            setSelectedGoals([...selectedGoals, goal]);
+            setSelectedGoals([goal])
+            // Ensure personalized mode is off when choosing a predefined goal
+            setPersonalizedGoal(false)
         }
     };
 
@@ -62,53 +68,53 @@ const GoalSettingComponent = () => {
     };
 
     // Save function - would call API in real implementation
+    const queryClient = useQueryClient()
+    const [isSaving, setIsSaving] = useState(false)
     const handleSave = async () => {
-        console.log('=== SAVE BUTTON CLICKED ===');
+            console.log('=== SAVE BUTTON CLICKED ===');
+            // Prevent duplicate submissions
+            if (isSaving) return
+            setIsSaving(true)
 
-        // Prepare data for API call
-        const apiData = {
-            predefinedGoals: {
-                duration: predefinedDuration,
-                selectedGoals: selectedGoals
-            },
-            customGoal: {
-                duration: customDuration,
-                goal: customGoal
-            },
-            timestamp: new Date().toISOString()
-        };
+            // Map duration option to a numeric number of days expected by the API.
+            // This is explicit and avoids confusion between codes and days.
+            const mapDurationToDays = (value) => {
+                switch (value) {
+                    case '15 days': return 15
+                    case '30 days': return 30
+                    case '1 month': return 30
+                    case '3 months': return 90
+                    case '6 months': return 180
+                    case 'A year': return 365
+                    default: return 0
+                }
+            }
 
-        console.log('Data to be sent to API:', apiData);
+            // Build the payload according to the API contract you provided:
+            // { duration: number, goals: string[], custom_goal: string, updated_at: string }
+            const payload = {
+                duration: PersonalizedGoal ? mapDurationToDays(customDuration) : mapDurationToDays(predefinedDuration),
+                goals: PersonalizedGoal ? [] : selectedGoals,
+                custom_goal: customGoal || '',
+                updated_at: new Date().toISOString().split('T')[0],
+            }
 
-        try {
-            // Simulate API call
-            console.log('Calling API...');
+            console.log('Payload to be sent to API:', payload)
 
-            // In a real implementation, this would be:
-            // const response = await fetch('/api/goals', {
-            //   method: 'POST',
-            //   headers: {
-            //     'Content-Type': 'application/json',
-            //   },
-            //   body: JSON.stringify(apiData)
-            // });
-
-            // Simulate API response
-            const mockResponse = {
-                status: 'success',
-                message: 'Goals saved successfully',
-                data: apiData
-            };
-
-            console.log('API Response:', mockResponse);
-
-            // Show success message
-            alert('Goals saved successfully! Check console for details.');
-
-        } catch (error) {
-            console.error('Error saving goals:', error);
-            alert('Error saving goals. Please try again.');
-        }
+            try {
+                const res = await axiosApi.post('/products/api/v1/goals', payload)
+                console.log('API Response:', res?.data)
+                // Invalidate tracker/goalData so GoalHistory and sidebar refetch
+                queryClient.invalidateQueries(['goalData'])
+                toast.success('Goals saved successfully!')
+                // Call parent callback to close the popup if provided
+                if (typeof onSaved === 'function') onSaved()
+            } catch (error) {
+                console.error('Error saving goals:', error)
+                toast.error('Error saving goals. Please try again.')
+            } finally {
+                setIsSaving(false)
+            }
     };
 
     // Dropdown component
@@ -194,13 +200,13 @@ const GoalSettingComponent = () => {
                     Write your own goal
                 </h2>
 
-                {/* <div className="mb-4">
+                <div className="mb-4">
                     <DurationDropdown
                         value={customDuration}
                         onChange={handleCustomDurationChange}
                         label="Duration of your challenge"
                     />
-                </div> */}
+                </div>
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">

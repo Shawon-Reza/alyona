@@ -275,7 +275,7 @@ export default function MainDashboard() {
                     </div>
 
                     {/* Product Finder */}
-                    <div className="bg-[#07004D] rounded-2xl px-6 py-3 flex items-center justify-between shadow-md my-8">
+                    {/* <div className="bg-[#07004D] rounded-2xl px-6 py-3 flex items-center justify-between shadow-md my-8">
                         <div>
                             <p className="text-white font-semibold text-base flex items-center gap-2">
                                 <span className="text-xl">🧬</span> Find a product
@@ -291,7 +291,7 @@ export default function MainDashboard() {
                                 <IoIosSearch className="font-extrabold text-2xl" />
                             </button>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Recommendations */}
                     <RecomendationsForUser data={dashboardData?.extra_quiz_result} />

@@ -215,7 +215,7 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Navigate to="daily-skincare/day" replace />,
+                element: <Navigate to="skincare/day" replace />,
             },
             {
                 path: "skincare",

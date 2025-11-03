@@ -85,20 +85,6 @@ const ChatPage = () => {
                                 </div>
                             </div>
 
-                            {/* Face Scan Button */}
-                            <button
-                                onClick={() => {
-                                    navigate('/chat/face-scan');
-                                    setShowOptions((prev) => !prev)
-                                }}
-                                className="flex items-center justify-between bg-[#f7f9ff] px-4 py-3 rounded-xl shadow-sm hover:bg-[#eef3fd] cursor-pointer"
-                            >
-                                <div className="flex items-center gap-2 text-sm text-[#4F46E5] font-medium">
-                                    <ScanLine size={16} />
-                                    <span>Face Scan</span>
-                                </div>
-                                <span className="text-2xl text-blue-600">›</span>
-                            </button>
                             
                             {/* Ai Chat */}
                             <button
