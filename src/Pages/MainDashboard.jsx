@@ -315,7 +315,7 @@ export default function MainDashboard() {
                         </div>
                     </div>
 
-                    <PersonalizedSuggestions data={dashboardData?.new_product} onShowQuiz={() => setShowQuiz(true)} />
+                    <PersonalizedSuggestions data={[dashboardData?.new_product, dashboardData?.weekly_streak]} onShowQuiz={() => setShowQuiz(true)} />
                     <ProductRecommendations data={dashboardData?.top_recommended_products} />
                     <MyBadges data={dashboardData?.user_badges} />
                 </div>

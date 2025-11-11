@@ -147,7 +147,7 @@ const Navbar = () => {
 
 
     return (
-        <div className="w-full bg-white shadow-md rounded-xl px-4 sm:px-8 flex justify-between items-center h-[70px] relative">
+        <div className="w-full bg-white shadow-md rounded-xl px-4 sm:px-8 flex justify-between items-center h-[70px] relative z-90">
             {/* Logo */}
             <div
                 onClick={() => navigate('/maindashboard')}
@@ -191,7 +191,7 @@ const Navbar = () => {
                         className="rounded-full w-10 h-10 overflow-hidden cursor-pointer"
                         onClick={toggleProfileMenu}
                     >
-                        <img src={`http://10.10.13.59:8005${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
+                        <img src={`http://10.10.13.80:8005${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
                     </div>
 
                     {/* Profile Menu Popup */}

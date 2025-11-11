@@ -14,6 +14,7 @@ import GoalHistory from "@/Components/TrackerTabComponent/GoalHistory";
 import useTrackerSidebar from "@/hooks/useTrackerSidebar";
 import axiosApi from "@/api/axiosApi";
 import { useQuery } from "@tanstack/react-query";
+import { DidYouDoYourRoutine } from "@/Components/DidYouDoYourRoutine";
 
 const TrackerLayout = () => {
     const [isGoalPopupVisible, setIsGoalPopupVisible] = useState(false);
@@ -74,30 +75,10 @@ const TrackerLayout = () => {
                     <PopUpCalendarOnClick calenderData={trackerSidebarData?.tracker_records} />
 
                     {/* Routine Prompt */}
-                    <div className="bg-white/50 border border-base-300 rounded-md p-4 shadow-lg">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-sm font-semibold text-[#7271E3] flex items-center gap-1">
-                                    <span>✨</span> Mi Daily Routine
-                                </p>
-                                <p className="text-sm font-semibold text-gray-800 mt-1">
-                                    Did you do your morning routine?
-                                </p>
-                                <p className="text-sm text-gray-500 mt-1">
-                                    Start now and don’t lose your streak
-                                </p>
-                            </div>
-                            <span className="text-lg text-gray-400 cursor-pointer">&#8250;</span>
-                        </div>
+                    <div className="border border-base-300 rounded-md p-4 shadow-lg">
 
-                        <div className="flex gap-3 mt-4">
-                            {[...Array(2)].map((_, i) => (
-                                <div key={i} className="h-1 w-10 rounded-ll bg-violet-500" />
-                            ))}
-                            {[...Array(5)].map((_, i) => (
-                                <div key={i} className="h-1 w-10 rounded-full bg-violet-200" />
-                            ))}
-                        </div>
+                        <DidYouDoYourRoutine data={trackerSidebarData?.weekly_result}></DidYouDoYourRoutine>
+
                     </div>
 
                     {/* Skin Info & Goal */}

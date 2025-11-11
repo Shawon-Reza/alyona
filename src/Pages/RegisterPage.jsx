@@ -19,20 +19,28 @@ const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [accepted, setAccepted] = useState(false);
     const navigate = useNavigate();
+    // OTP / post-registration state
+    const [registered, setRegistered] = useState(false);
+    const [registrationData, setRegistrationData] = useState(null);
+    const [otp, setOtp] = useState('');
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [verificationError, setVerificationError] = useState('');
 
+    console.log(otp)
     const handleRegistration = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
         console.log(data);
 
-
-        // Registration Post Requiest 
-        axios.post('http://10.10.13.59:8000/accounts/api/v1/register', data)
+        // Registration Post Request
+        // On success we'll show an OTP input instead of navigating away immediately.
+        axios.post('http://10.10.13.80:8005/accounts/api/v1/register', data)
             .then(res => {
                 console.log('Registered:', res.data);
-                alert("Registration Succesfull")
-                setTimeout(() => navigate('/SimpleRegisterPage'), 1000);
+                // store registration data so we can resend or verify OTP
+                setRegistrationData({ ...data, ...res.data });
+                setRegistered(true);
             })
             .catch(err => {
                 if (err.response) {
@@ -47,6 +55,37 @@ const RegisterPage = () => {
 
 
 
+    };
+
+    const handleVerifyOtp = async (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        setVerificationError('');
+        setIsVerifying(true);
+        try {
+            // Assumption: backend exposes a verify endpoint at /accounts/api/v1/verify-otp
+            const payload = { otp, email: registrationData?.email || registrationData?.username };
+            const res = await axios.patch('http://10.10.13.80:8005/accounts/api/v1/verify-otp', payload);
+            console.log('OTP verified:', res.data);
+            // proceed to next step after verification
+            navigate('/SimpleRegisterPage');
+        } catch (err) {
+            console.error('OTP verification failed', err.response || err.message);
+            setVerificationError(err.response?.data?.detail || 'OTP verification failed. Please try again.');
+        } finally {
+            setIsVerifying(false);
+        }
+    };
+
+    const handleResendOtp = async (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        try {
+            // Assumption: backend exposes a resend endpoint at /accounts/api/v1/resend-otp
+            await axios.post('http://10.10.13.80:8005/accounts/api/v1/resend-otp', { email: registrationData?.email || registrationData?.username });
+            alert('OTP resent. Please check your email.');
+        } catch (err) {
+            console.error('Resend OTP failed', err.response || err.message);
+            alert('Failed to resend OTP. Please try again later.');
+        }
     };
 
     const slides = [
@@ -107,7 +146,7 @@ const RegisterPage = () => {
                     <img src={LoginPageOverLap} alt="Overlap" />
                 </div>
 
-                {/* Form content */}
+                {/* Form content or OTP verification */}
                 <div className="w-full max-w-md space-y-6 z-10">
 
 
@@ -162,8 +201,9 @@ const RegisterPage = () => {
                         <span className="text-gray-500 text-sm">Or</span>
                     </div>
 
-                    {/* Form */}
-                    <form onSubmit={handleRegistration} className="space-y-4">
+                    {/* If registered, show OTP input; otherwise show registration form */}
+                    {!registered ? (
+                        <form onSubmit={handleRegistration} className="space-y-4">
                         <input
                             required
                             type="text"
@@ -235,6 +275,41 @@ const RegisterPage = () => {
                             Continue
                         </button>
                     </form>
+                    ) : (
+                        <div className="space-y-4 bg-white p-6 rounded-md shadow-sm">
+                            <h3 className="text-lg font-semibold">Verify OTP</h3>
+                            <p className="text-sm text-gray-600">We sent an OTP to <span className="font-medium">{registrationData?.email || registrationData?.username}</span>. Enter it below to complete registration.</p>
+
+                            <div>
+                                <input
+                                    type="text"
+                                    name="otp"
+                                    value={otp}
+                                    onChange={(e) => setOtp(e.target.value)}
+                                    placeholder="Enter OTP"
+                                    className="w-full px-4 py-2 rounded-md bg-white border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                                />
+                            </div>
+
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={handleVerifyOtp}
+                                    className={`flex-1 py-2 rounded-md text-white ${isVerifying ? 'bg-gray-400' : 'bg-[#0c0a3e] hover:bg-[#191670]'}`}
+                                    disabled={isVerifying || !otp}
+                                >
+                                    {isVerifying ? 'Verifying...' : 'Verify OTP'}
+                                </button>
+                                <button
+                                    onClick={handleResendOtp}
+                                    className="py-2 px-3 rounded-md bg-white border border-base-200"
+                                >
+                                    Resend
+                                </button>
+                            </div>
+
+                            {verificationError && <p className="text-sm text-red-500">{verificationError}</p>}
+                        </div>
+                    )}
                 </div>
             </div>
         </motion.div>

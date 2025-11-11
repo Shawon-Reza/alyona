@@ -47,7 +47,7 @@ const QuizGreetings = () => {
             return;
         }
 
-        axios.post('http://10.10.13.59:8000/accounts/api/v1/quiz', finalQuizeData, {
+        axios.post('http://10.10.13.80:8005/accounts/api/v1/quiz', finalQuizeData, {
             headers: {
                 Authorization: `Bearer ${token.access}`,
             }

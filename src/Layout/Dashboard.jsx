@@ -206,7 +206,7 @@ const Dashboard = () => {
                                 className="rounded-full w-10 h-10 overflow-hidden cursor-pointer"
                                 onClick={toggleProfileMenu}
                             >
-                                <img src={`http://10.10.13.59:8005${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
+                                <img src={`http://10.10.13.80:8005${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
                             </div>
 
                             {/* Profile Menu Popup */}

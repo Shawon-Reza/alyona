@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom"; // ✅ Make sure this is imported
 import productImage from '../../assets/ProductIMG.png';
 import { Sun, Moon } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosApi from "@/api/axiosApi";
 import { toast } from "react-toastify"
 import ProductFeedback from "./ProductFeedback";
@@ -116,6 +116,7 @@ const DailyRoutineTracker = () => {
         })
     }
 
+    const queryClient = useQueryClient()
     const handleRoutineResponse = async (value) => {
         // value is 'yes' or 'no'
         setRoutineDone(value)
@@ -123,23 +124,32 @@ const DailyRoutineTracker = () => {
             const n = Number(id)
             return Number.isNaN(n) ? id : n
         })
+
         const payload = {
-            category: categoryName,
-            mode: mode,
-            done: value === 'yes',
-            selected_products: selectedIds,
+            product_ids: selectedIds,
         }
-        // setIsSaving(true)
-        // try {
-        //     await axiosApi.post('/products/api/v1/user-routine', payload)
-        //     toast.success('Routine saved')
-        // } catch (err) {
-        //     console.error('Failed to save routine', err)
-        //     toast.error('Failed to save routine')
-        // } finally {
-        //     setIsSaving(false)
-        // }
-        console.log(payload)
+
+        setIsSaving(true)
+        try {
+            if (value === 'yes') {
+                // Create/record the tracked products
+                await axiosApi.post('/products/api/v1/product-tracker/', payload)
+                toast.success('Routine saved')
+                console.log("payload",payload)
+            } else {
+                // Remove tracked products
+                // Axios delete with body requires passing { data: payload }
+                await axiosApi.delete('/products/api/v1/product-tracker/', { data: payload })
+                toast.success('Routine cleared')
+            }
+            // Refresh trackers data so UI updates
+            queryClient.invalidateQueries(['trackersAllData'])
+        } catch (err) {
+            console.error('Failed to save/clear routine', err)
+            toast.error('Failed to update routine')
+        } finally {
+            setIsSaving(false)
+        }
     }
 
     useEffect(() => {
