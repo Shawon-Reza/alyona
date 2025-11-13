@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 
 const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotifications }) => {
     const [activeTab, setActiveTab] = useState('all');
-
+console.log(notifications)
 
     const handleClickOnNotification = (id) => {
         console.log("Cliked notification:", id)

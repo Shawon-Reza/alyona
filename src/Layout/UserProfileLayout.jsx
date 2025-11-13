@@ -1,27 +1,45 @@
 "use client"
-import { NavLink, Outlet, useLocation } from "react-router-dom"
+import { NavLink, Outlet, useLocation, useNavigate, useParams } from "react-router-dom"
 import { ChevronRight, ChevronLeft } from 'lucide-react'
 import userprofile from '../assets/userprofile.png'
+import { use } from "react"
+import { useQuery } from "@tanstack/react-query"
+import axiosApi from "@/api/axiosApi"
 
-const userData = {
-    name: "Janet Arias",
-    avatar: "/placeholder.svg?height=60&width=60",
-    status: "Active",
-}
 
 export default function UserProfileLayout() {
     const location = useLocation();
+    const navigate = useNavigate();
     console.log(location)
+    const { id } = useParams();
 
 
+
+
+
+    const { isPending, error, data } = useQuery({
+        queryKey: ['userInfo', id],
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/minimal-user-info/${id}`);
+            return res.data;
+        },
+    })
+    console.log(data)
+    if (isPending) return 'Loading...'
+
+    if (error) return 'An error has occurred: ' + error.message
 
     return (
         <div className="min-h-screen " >
             {/* Breadcrumb */}
             <div className="flex items-center text-xs md:text-sm text-gray-600 mb-4 md:mb-6 px-4 md:px-0 mt-4">
-                <span className="cursor-pointer hover:text-gray-900 truncate">Users List</span>
+                <span
+                onClick={()=>{
+                    navigate(-1)
+                }}
+                className="cursor-pointer hover:text-gray-900 truncate">Users List</span>
                 <ChevronRight className="w-3 h-3 md:w-4 md:h-4 mx-1 md:mx-2 flex-shrink-0" />
-                <span className="text-gray-900 truncate">Janet A.</span>
+                <span className="text-gray-900 truncate">{data?.full_name || 'Unnamed User'}</span>
             </div>
 
 
@@ -45,18 +63,19 @@ export default function UserProfileLayout() {
                             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                                 <div className="flex items-center mb-3 md:mb-0">
                                     <img
-                                        src={userprofile || "/placeholder.svg"}
-                                        alt={userData.name}
+                                        src={`http://10.10.13.80:8005${data?.image_url || "user.svg"}`}
+                                        alt={data?.full_name || "User Avatar"}
+
                                         className="w-12 h-12 md:w-16 md:h-16 rounded-lg md:rounded-xl object-cover mr-3 md:mr-4 flex-shrink-0"
                                     />
                                     <div className="min-w-0 flex-1">
                                         <h1 className="text-lg md:text-2xl font-semibold text-gray-900 truncate">
-                                            {userData.name}
+                                            {data?.full_name || 'Unnamed User'}
                                         </h1>
                                         {/* Mobile: Show status below name */}
                                         <div className="md:hidden mt-1">
                                             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                {userData.status}
+                                                {data?.is_active ? 'Active' : 'Inactive'}
                                             </span>
                                         </div>
                                     </div>
@@ -64,7 +83,7 @@ export default function UserProfileLayout() {
                                 {/* Desktop: Show status on the right */}
                                 <div className="hidden md:flex items-center">
                                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                        {userData.status}
+                                        {data?.is_active ? 'Active' : 'Inactive'}
                                         <ChevronRight className="w-4 h-4 ml-1" />
                                     </span>
                                 </div>

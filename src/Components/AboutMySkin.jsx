@@ -35,6 +35,7 @@ const RadialProgress = ({ value, label }) => {
 
 export default function AboutMySkin({ data }) {
 
+
     const skinStats = [
         { label: "Low moisture", value: parseFloat((data?.avg_hydration_level || 0).toFixed(1)) },
         { label: "Aging", value: parseFloat((data?.avg_aging_index || 0).toFixed(1)) },

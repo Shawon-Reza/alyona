@@ -51,7 +51,8 @@ const CircularProgressChart = ({ label, percentage }) => {
   );
 };
 
-const DataSetSummary = () => {
+const DataSetSummary = ({data}) => {
+  console.log(data)
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border-base-100 text-gray-800 w-full mx-auto">
       <h2 className="text-base font-bold mb-6">Data set 3 name</h2>

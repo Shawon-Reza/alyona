@@ -75,7 +75,7 @@ const TrackerLayout = () => {
                     <PopUpCalendarOnClick calenderData={trackerSidebarData?.tracker_records} />
 
                     {/* Routine Prompt */}
-                    <div className="border border-base-300 rounded-md p-4 shadow-lg">
+                    <div className="rounded-md p-4 shadow-lg">
 
                         <DidYouDoYourRoutine data={trackerSidebarData?.weekly_result}></DidYouDoYourRoutine>
 

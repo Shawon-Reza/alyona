@@ -94,7 +94,12 @@ export default function AdminDashboardSidebar({ handleSidebarItemClick, toggleVi
                     </NavLink>
 
                     {/* Log out */}
-                    <button className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-orange-100 hover:text-gray-800 transition-colors w-full text-left">
+                    <button
+                        onClick={() => {
+                            localStorage.removeItem("adtoken");
+                            window.location.reload();
+                        }}
+                        className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-orange-100 hover:text-gray-800 transition-colors w-full text-left ">
                         <LogOut className="w-5 h-5" />
                         <span>Log out</span>
                     </button>

@@ -1,136 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Search, ChevronDown, ChevronUp, Eye, Edit, Bell, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import axiosApi from '@/api/axiosApi';
 
 const MentorUsersTable = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
     const [filterOpen, setFilterOpen] = useState(false);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
-    
-    const userData = [
-        {
-            id: 1,
-            name: 'Carlos Ramirez',
-            isNew: true,
-            lastContact: null,
-            nextMeeting: null,
-            lastReport: null,
-            status: 'Active'
+
+    const { data: users = [], isLoading, error } = useQuery({
+        queryKey: ['assigned-users'],
+        queryFn: async () => {
+            const res = await axiosApi.get('/mentor/api/v1/assigned-users');
+            return res.data ;
         },
-        {
-            id: 2,
-            name: 'Emma Thompson',
-            lastContact: '05-10-2025 11:15',
-            nextMeeting: { date: '06-10-2025 11:15', isTomorrow: true },
-            lastReport: '2025-08-03',
-            status: 'Active'
-        },
-        {
-            id: 3,
-            name: 'Liam Smith',
-            lastContact: '06-05-2025 16:45',
-            nextMeeting: '06-15-2025 16:45',
-            lastReport: '2025-08-04',
-            status: 'Active'
-        },
-        {
-            id: 4,
-            name: 'Sophia Brown',
-            lastContact: '03-25-2025 09:30',
-            nextMeeting: '06-15-2025 09:30',
-            lastReport: '2025-08-05',
-            status: 'Active'
-        },
-        {
-            id: 5,
-            name: 'Noah Davis',
-            lastContact: '04-15-2025 12:00',
-            nextMeeting: '06-15-2025 12:00',
-            lastReport: '2025-08-06',
-            status: 'Active'
-        },
-        {
-            id: 6,
-            name: 'Olivia Wilson',
-            lastContact: '05-20-2025 14:15',
-            nextMeeting: null,
-            lastReport: '2025-08-07',
-            status: 'Active'
-        },
-        {
-            id: 7,
-            name: 'James Taylor',
-            lastContact: '06-30-2025 12:00',
-            nextMeeting: null,
-            lastReport: '2025-08-08',
-            status: 'Active'
-        },
-        {
-            id: 8,
-            name: 'Isabella Martinez',
-            lastContact: '03-30-2025 08:30',
-            nextMeeting: null,
-            lastReport: '2025-08-09',
-            status: 'Active'
-        },
-        {
-            id: 9,
-            name: 'Mason Anderson',
-            lastContact: '04-10-2025 15:00',
-            nextMeeting: null,
-            lastReport: '2025-08-10',
-            status: 'Active'
-        },
-        {
-            id: 10,
-            name: 'Ava Thomas',
-            lastContact: '05-14-2025 10:15',
-            nextMeeting: null,
-            lastReport: '2025-08-11',
-            status: 'Active'
-        },
-        {
-            id: 11,
-            name: 'Ethan Jackson',
-            lastContact: '06-22-2025 13:45',
-            nextMeeting: null,
-            lastReport: '2025-08-12',
-            status: 'Active'
-        },
-        {
-            id: 12,
-            name: 'Mia White',
-            lastContact: '03-18-2025 17:30',
-            nextMeeting: null,
-            lastReport: '2025-08-13',
-            status: 'Active'
-        },
-        {
-            id: 13,
-            name: 'Lucas Harris',
-            lastContact: '04-12-2025 19:00',
-            nextMeeting: null,
-            lastReport: '2025-08-14',
-            status: 'Active'
-        },
-        {
-            id: 14,
-            name: 'Charlotte Clark',
-            lastContact: '05-01-2025 07:45',
-            nextMeeting: null,
-            lastReport: '2025-08-15',
-            status: 'Not subscribed'
-        },
-        {
-            id: 15,
-            name: 'Henry Lewis',
-            lastContact: '06-28-2025 16:00',
-            nextMeeting: null,
-            lastReport: '2025-08-16',
-            status: 'Active'
-        }
-    ];
+    });
+    console.log(users)
+
+    const visibleData = useMemo(() => {
+        const q = (searchTerm || '').trim().toLowerCase();
+        const filtered = users.filter(user => (user.full_name || '').toLowerCase().includes(q));
+
+        if (!sortConfig.key) return filtered;
+
+        const key = sortConfig.key;
+        const dir = sortConfig.direction === 'asc' ? 1 : -1;
+
+        const getVal = (u) => {
+            // handle nested next_meeting object
+            if (key === 'next_meeting') {
+                const nm = u.next_meeting;
+                if (!nm) return '';
+                return typeof nm === 'object' ? (nm.date || '') : nm;
+            }
+            if (key === 'status') {
+                return u.status ? 'Active' : 'Inactive';
+            }
+            return (u[key] ?? '')
+        };
+
+        return [...filtered].sort((a, b) => {
+            const va = getVal(a);
+            const vb = getVal(b);
+            // normalize
+            const sa = String(va).toLowerCase();
+            const sb = String(vb).toLowerCase();
+            if (sa < sb) return -1 * dir;
+            if (sa > sb) return 1 * dir;
+            return 0;
+        });
+    }, [users, searchTerm, sortConfig]);
+
+    const navigate = useNavigate();
+
+    if (isLoading) return <p>Loading...</p>;
+    if (error) return <p className="text-red-500">Error: {error.message}</p>;
 
     const handleSort = (key) => {
         let direction = 'asc';
@@ -147,15 +73,9 @@ const MentorUsersTable = () => {
         return <ChevronUp size={14} className="opacity-50" />;
     };
 
-    const filteredData = userData.filter(user =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     const handleAction = (action, user) => {
-        console.log(`${action} action for user:`, user.name);
+        console.log(`${action} action for user:`, user.full_name);
     };
-
-    const navigate = useNavigate();
 
     return (
         <div className=" pr-0 md:pr-6">
@@ -166,7 +86,7 @@ const MentorUsersTable = () => {
                     <div className="md:hidden">
                         {isSearchVisible ? (
                             <div className="flex items-center gap-3 py-4">
-                                <button 
+                                <button
                                     onClick={() => setIsSearchVisible(false)}
                                     className="p-1"
                                 >
@@ -188,7 +108,7 @@ const MentorUsersTable = () => {
                             <div className="flex items-center justify-between py-4">
                                 <h1 className="text-xl font-semibold text-gray-800">Users</h1>
                                 <div className="flex items-center gap-2">
-                                    <button 
+                                    <button
                                         onClick={() => setIsSearchVisible(true)}
                                         className="p-2 hover:bg-gray-100 rounded-lg"
                                     >
@@ -260,39 +180,39 @@ const MentorUsersTable = () => {
                                     <tr className="border-b-3 border-gray-200">
                                         <th
                                             className="cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
-                                            onClick={() => handleSort('name')}
+                                            onClick={() => handleSort('full_name')}
                                         >
                                             <div className="flex items-center gap-2">
                                                 Users
-                                                {getSortIcon('name')}
+                                                {getSortIcon('full_name')}
                                             </div>
                                         </th>
                                         {/* Desktop only columns */}
                                         <th
                                             className="hidden md:table-cell cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
-                                            onClick={() => handleSort('lastContact')}
+                                            onClick={() => handleSort('last_contacted')}
                                         >
                                             <div className="flex items-center gap-2">
                                                 Last contact
-                                                {getSortIcon('lastContact')}
+                                                {getSortIcon('last_contacted')}
                                             </div>
                                         </th>
                                         <th
                                             className="hidden md:table-cell cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
-                                            onClick={() => handleSort('nextMeeting')}
+                                            onClick={() => handleSort('next_meeting')}
                                         >
                                             <div className="flex items-center gap-2">
                                                 Next meeting
-                                                {getSortIcon('nextMeeting')}
+                                                {getSortIcon('next_meeting')}
                                             </div>
                                         </th>
                                         <th
                                             className="hidden md:table-cell cursor-pointer hover:bg-gray-50 text-left font-medium text-gray-700"
-                                            onClick={() => handleSort('lastReport')}
+                                            onClick={() => handleSort('last_report')}
                                         >
                                             <div className="flex items-center gap-2">
                                                 Last Report
-                                                {getSortIcon('lastReport')}
+                                                {getSortIcon('last_report')}
                                             </div>
                                         </th>
                                         <th
@@ -312,7 +232,7 @@ const MentorUsersTable = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredData.map((user) => (
+                                    {visibleData.map((user) => (
                                         <tr key={user.id} className="hover:bg-gray-50">
                                             <td
                                                 onClick={() => {
@@ -322,8 +242,8 @@ const MentorUsersTable = () => {
                                             >
                                                 <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="font-medium">{user.name}</span>
-                                                        {user.isNew && (
+                                                        <span className="font-medium">{user.full_name}</span>
+                                                        {(user.last_contacted === null || user.last_contacted === undefined) && (
                                                             <span className="badge badge-sm bg-amber-100 text-amber-800 border-amber-200">
                                                                 New
                                                             </span>
@@ -331,24 +251,24 @@ const MentorUsersTable = () => {
                                                     </div>
                                                     {/* Mobile: Show status below name */}
                                                     <div className="md:hidden">
-                                                        <span className={`badge badge-sm ${user.status === 'Active'
+                                                        <span className={`badge badge-sm ${user.status
                                                             ? 'bg-green-100 text-green-800 border-green-200'
                                                             : 'bg-gray-100 text-gray-600 border-gray-200'
                                                             }`}>
-                                                            {user.status}
+                                                            {user.status ? 'Active' : 'Not subscribed'}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </td>
                                             {/* Desktop only columns */}
                                             <td className="hidden md:table-cell text-gray-600">
-                                                {user.lastContact || '-'}
+                                                {user.last_contacted || '-'}
                                             </td>
                                             <td className="hidden md:table-cell text-gray-600">
-                                                {user.nextMeeting ? (
+                                                {user.next_meeting ? (
                                                     <div className="flex items-center gap-2">
-                                                        {typeof user.nextMeeting === 'object' ? user.nextMeeting.date : user.nextMeeting}
-                                                        {typeof user.nextMeeting === 'object' && user.nextMeeting.isTomorrow && (
+                                                        {typeof user.next_meeting === 'object' ? user.next_meeting.date : user.next_meeting}
+                                                        {typeof user.next_meeting === 'object' && user.next_meeting.isTomorrow && (
                                                             <span className="badge badge-sm bg-amber-600 text-white">
                                                                 Tomorrow
                                                             </span>
@@ -357,14 +277,14 @@ const MentorUsersTable = () => {
                                                 ) : '-'}
                                             </td>
                                             <td className="hidden md:table-cell text-gray-600">
-                                                {user.lastReport || '-'}
+                                                {user.last_report || '-'}
                                             </td>
                                             <td className="hidden md:table-cell">
-                                                <span className={`badge badge-sm ${user.status === 'Active'
+                                                <span className={`badge badge-sm ${user.status
                                                     ? 'bg-green-100 text-green-800 border-green-200'
                                                     : 'bg-gray-100 text-gray-600 border-gray-200'
                                                     }`}>
-                                                    {user.status}
+                                                    {user.status ? 'Active' : 'Not subscribed'}
                                                 </span>
                                             </td>
                                             <td>
@@ -401,7 +321,7 @@ const MentorUsersTable = () => {
                 </div>
 
                 {/* Empty State */}
-                {filteredData.length === 0 && (
+                {visibleData.length === 0 && (
                     <div className="text-center py-8 md:py-12">
                         <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-gray-100 rounded-full mb-3 md:mb-4">
                             <Search size={20} className="text-gray-400 md:w-6 md:h-6" />
@@ -410,7 +330,7 @@ const MentorUsersTable = () => {
                             {searchTerm ? 'No users found matching your search' : 'No users found'}
                         </p>
                         {searchTerm && (
-                            <button 
+                            <button
                                 onClick={() => setSearchTerm('')}
                                 className="mt-2 md:mt-3 text-blue-600 text-sm hover:text-blue-700"
                             >

@@ -115,7 +115,7 @@ const RegisterPage = () => {
             exit="exit"
             className="h-screen flex flex-col md:flex-row font-sans bg-white overflow-hidden">
             {/* Left Side Swiper */}
-            <div className="md:w-1/2 hidden sm:block h-full min-h-screen relative">
+            <div className="sm:w-1/2 hidden sm:block h-full min-h-screen relative">
                 <Swiper
                     pagination={{ clickable: true }}
                     modules={[Pagination, Autoplay]}
@@ -140,14 +140,14 @@ const RegisterPage = () => {
             </div>
 
             {/* Right Side Form */}
-            <div className="md:w-1/2 w-full relative bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] flex flex-col justify-center items-center px-6 py-10 min-h-screen">
+            <div className="sm:w-1/2 z-100 w-full relative bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] flex flex-col justify-center items-center px-6 py-10 min-h-screen">
                 {/* Overlap image */}
                 <div className="absolute bottom-0 right-0 opacity-30 pointer-events-none">
                     <img src={LoginPageOverLap} alt="Overlap" />
                 </div>
 
                 {/* Form content or OTP verification */}
-                <div className="w-full max-w-md space-y-6 z-10">
+                <div className="w-full max-w-xl space-y-6 z-10">
 
 
                     <div className="text-left space-y-1">

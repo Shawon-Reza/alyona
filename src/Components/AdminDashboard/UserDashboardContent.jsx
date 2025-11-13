@@ -6,10 +6,32 @@ import GoalProgress from '../GoalProgress'
 import SkinAnalysisPageIMG from '../../assets/SkinAnalysisPageIMG.png'
 import { FaSmile, FaTshirt, FaGem } from 'react-icons/fa'; // For Font Awesome Icons
 import { MdHome, MdStar } from 'react-icons/md';
+import { useParams } from 'react-router-dom'
+import axiosApi from '@/api/axiosApi'
+import { useQuery } from '@tanstack/react-query'
 
 const UserDashboardContent = () => {
     const efficiency = 78; // for skincare efficiency
     const proficiency = 50; // for skincare proficiency
+    const { id } = useParams()
+
+    console.log(id)
+
+    const { isPending, error, data } = useQuery({
+        queryKey: ['dashboardData', id],
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/user-dashboard/${id}`)
+            return res.data
+        }
+    })
+
+    if (isPending) return 'Loading...'
+
+    if (error) return 'An error has occurred: ' + error.message
+    console.log(data)
+
+
+
 
     return (
         <div>
@@ -22,11 +44,13 @@ const UserDashboardContent = () => {
                     </div>
 
                     {/* Skin Type Title */}
-                    <h3 className="font-semibold text-xl text-center mb-4">Normal Type</h3>
+                    <h3 className="font-semibold text-xl text-center mb-4">{data?.quiz_result?.skin_type || 'Unknown Skin Type'}</h3>
 
                     {/* Skin Type Description */}
                     <p className="text-md text-gray-700">
-                        Congratulations! You are a happy owner of a normal skin type. Even if you might have some skin concerns like wrinkles or dark circles. Your skin is perfect! Your skincare routine should be focused on maintaining your skin beauty and tackling your specific concerns that is quite doable with the right ingredients. Protect the microbiome (natural skin’s barrier) as it does a great job in keeping your skin well-balanced. Right diet and lifestyle will support your skin natural beauty, correct skincare routine will prolong your youth and fortify your skin even more.
+                        {
+                            data?.quiz_result?.description || 'No description available.'
+                        }
                     </p>
                 </div>
 
@@ -35,10 +59,10 @@ const UserDashboardContent = () => {
                     {/* About My Skin + Goal Progress */}
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
                         {/* About My Skin */}
-                        <AboutMySkin />
+                        <AboutMySkin data={data?.dashboard_average} />
 
                         {/* Goal Progress */}
-                        <GoalProgress />
+                        <GoalProgress /> 
                     </div>
 
                     {/* Routine & Data Set */}
@@ -47,7 +71,7 @@ const UserDashboardContent = () => {
                         <RoutineCompletion />
 
                         {/* Data Set */}
-                        <DataSetSummary />
+                        <DataSetSummary  data={data?.dashboard_average} />
                     </div>
                 </div>
             </div>
@@ -89,38 +113,30 @@ const UserDashboardContent = () => {
                     </div>
                 </div>
 
-                {/* Achievements Section */}
+                {/* Achievements Section (recent badges from API) */}
                 <div className="">
-                    {/* Achievements Section */}
-                    <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {/* Level 3 Badge */}
-                        <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-2">
-                            <FaSmile className="text-blue-500 w-6 h-6" />
-                            <span className="text-gray-700 text-sm">Level 3</span>
-                        </div>
-
-                        {/* 3 Days Streak Badge */}
-                        <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-2">
-                            <FaTshirt className="text-blue-400 w-6 h-6" />
-                            <span className="text-gray-700 text-sm">3 days streak</span>
-                        </div>
-
-                        {/* My First Review Badge */}
-                        <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-2">
-                            <MdStar className="text-teal-500 w-6 h-6" />
-                            <span className="text-gray-700 text-sm">My first review</span>
-                        </div>
-
-                        {/* You’ve Tried 3 Cleansers Badge */}
-                        <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-2">
-                            <FaGem className="text-orange-400 w-6 h-6" />
-                            <span className="text-gray-700 text-sm">You’ve tried 3 cleansers</span>
-                        </div>
-
-                        {/* My First Product Badge */}
-                        <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-2">
-                            <MdHome className="text-purple-500 w-6 h-6" />
-                            <span className="text-gray-700 text-sm">My first product</span>
+                    <div className="mt-8">
+                        <h3 className="text-lg font-semibold mb-4">Achievements</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {data?.recent_badges && data.recent_badges.length > 0 ? (
+                                data.recent_badges.map((b, idx) => (
+                                    <div key={idx} className="bg-white p-4 rounded-lg shadow-md flex items-start gap-3">
+                                        <div className="text-2xl leading-none">{b.icon || '🏅'}</div>
+                                        <div className="flex-1">
+                                            <div className="flex items-center justify-between">
+                                                <div className="text-gray-800 font-medium">{b.name}</div>
+                                                {typeof b.number_of_days === 'number' && (
+                                                    <div className="text-xs bg-gray-100 px-2 py-1 rounded-md text-gray-600">{b.number_of_days}d</div>
+                                                )}
+                                            </div>
+                                            <div className="text-sm text-gray-500">{b.reason}</div>
+                                            {b.earned_at && <div className="text-xs text-gray-400 mt-1">{new Date(b.earned_at).toLocaleDateString()}</div>}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-gray-500">No recent badges</div>
+                            )}
                         </div>
                     </div>
                 </div>

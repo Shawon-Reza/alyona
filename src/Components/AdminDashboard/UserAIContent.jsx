@@ -2,45 +2,61 @@
 
 import { useState } from "react"
 import { ChevronLeft, ChevronRight, Download } from "lucide-react"
-
-const aiData = {
-    frequentlyAskedQuestions: [
-        "What skincare ingredients work best to prevent aging and wrinkles?",
-        "How should I match hair color to someone's skin tone?",
-        "What's the difference between physical and chemical sunscreen?",
-        "What's the best way to clean makeup brushes?",
-        "How do I choose the right foundation shade?",
-    ],
-    lastTopics: [
-        {
-            title:
-                "Discover the top skincare ingredients that can help you maintain youthful skin and reduce the appearance of wrinkles.",
-            content: "Ingredients like retinol, hyaluronic acid, and peptides are essential in your anti-aging arsenal.",
-        },
-        {
-            title: "When selecting a hair color, consider the undertones of the skin.",
-            content:
-                "Warm skin tones pair beautifully with golden blondes and rich browns, while cool tones shine with ash blondes and deep blacks.",
-        },
-        {
-            title:
-                "Physical sunscreens create a barrier on the skin to reflect UV rays, while chemical sunscreens absorb UV radiation and convert it into heat.",
-            content: "Understanding the differences can help you choose the best protection for your skin.",
-        },
-        {
-            title: "To keep your makeup brushes in top condition, clean them regularly with a gentle soap or brush cleaner.",
-            content: "Rinse thoroughly and lay them flat to dry to maintain their shape and longevity.",
-        },
-        {
-            title: "Choosing the right foundation shade involves matching it to your skin's undertone.",
-            content:
-                "Test shades on your jawline in natural light to find the perfect match that blends seamlessly with your complexion.",
-        },
-    ],
-}
+import { useParams } from "react-router-dom"
+import { useQuery } from '@tanstack/react-query'
+import axiosApi from '@/api/axiosApi'
 
 export default function UserAIContent() {
-    const [selectedMonth, setSelectedMonth] = useState("JUN")
+    // Months list: value should be 1..12 for backend compatibility
+    const MONTHS = [
+        { label: 'JAN', value: 1 },
+        { label: 'FEB', value: 2 },
+        { label: 'MAR', value: 3 },
+        { label: 'APR', value: 4 },
+        { label: 'MAY', value: 5 },
+        { label: 'JUN', value: 6 },
+        { label: 'JUL', value: 7 },
+        { label: 'AUG', value: 8 },
+        { label: 'SEP', value: 9 },
+        { label: 'OCT', value: 10 },
+        { label: 'NOV', value: 11 },
+        { label: 'DEC', value: 12 },
+    ]
+
+    const [selectedFaqMonth, setSelectedFaqMonth] = useState(() => new Date().getMonth() + 1)
+    const [selectedTopicMonth, setSelectedTopicMonth] = useState(() => new Date().getMonth() + 1)
+    const { id } = useParams()
+    const userId = id || 'me'
+
+    // FAQs
+    const { data: faqsRaw, isLoading: faqsLoading, isError: faqsError, error: faqsErr } = useQuery({
+        queryKey: ['faqs', userId, selectedFaqMonth],
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/frequently-asked-questions/${userId}/${selectedFaqMonth}`)
+            // backend may return { data: [...] } or directly an array
+            return res.data?.data ?? res.data ?? []
+        },
+        keepPreviousData: true,
+    })
+
+    // normalize faqs to an array of { question, count, similar_questions }
+    const faqs = Array.isArray(faqsRaw) ? faqsRaw : []
+    // track expanded FAQ rows
+    const [expandedFaqs, setExpandedFaqs] = useState({})
+    const toggleFaqExpanded = (idx) => setExpandedFaqs(s => ({ ...s, [idx]: !s[idx] }))
+
+    // Last topics
+    const { data: lastTopicsRaw, isLoading: topicsLoading, isError: topicsError, error: topicsErr } = useQuery({
+        queryKey: ['lastTopics', userId, selectedTopicMonth],
+        queryFn: async () => {
+            const res = await axiosApi.get(`/admin_panel/api/v1/last-topic-asked/${userId}/${selectedTopicMonth}`)
+            // backend returns { last_topics: [...] } or an array
+            return res.data?.last_topics ?? res.data ?? []
+        },
+        keepPreviousData: true,
+    })
+
+    const lastTopics = Array.isArray(lastTopicsRaw) ? lastTopicsRaw : []
 
     const handleDownloadConversations = () => {
         console.log("Download conversations clicked")
@@ -54,33 +70,82 @@ export default function UserAIContent() {
             </div>
 
             {/* Frequently Asked Questions */}
-            <div className="mb-4">
+            <div className="mb-4 overflow-y-auto shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-[#5B5B5B]">Frequently asked questions</h2>
+                    <h2 className=" text-lg font-semibold text-[#5B5B5B] px-2">Frequently asked questions</h2>
                     <div className="flex items-center gap-2">
-                        <button className="p-1 hover:bg-gray-100 rounded">
+                        <button
+                            className="p-1 hover:bg-gray-100 rounded"
+                            onClick={() => setSelectedFaqMonth((m) => (m === 1 ? 12 : m - 1))}
+                            aria-label="previous month"
+                        >
                             <ChevronLeft className="w-4 h-4" />
                         </button>
                         <select
-                            value={selectedMonth}
-                            onChange={(e) => setSelectedMonth(e.target.value)}
+                            value={selectedFaqMonth}
+                            onChange={(e) => setSelectedFaqMonth(Number(e.target.value))}
                             className="text-sm border border-base-300 rounded px-2 py-1"
                         >
-                            <option value="JUN">JUN</option>
-                            <option value="MAY">MAY</option>
-                            <option value="APR">APR</option>
+                            {MONTHS.map((mo) => (
+                                <option key={mo.value} value={mo.value}>{mo.label}</option>
+                            ))}
                         </select>
-                        <button className="p-1 hover:bg-gray-100 rounded">
+                        <button
+                            className="p-1 hover:bg-gray-100 rounded"
+                            onClick={() => setSelectedFaqMonth((m) => (m === 12 ? 1 : m + 1))}
+                            aria-label="next month"
+                        >
                             <ChevronRight className="w-4 h-4" />
                         </button>
                     </div>
                 </div>
-                <div className="space-y-2 bg-white shadow-xl px-4 rounded-xl">
-                    {aiData.frequentlyAskedQuestions.map((question, index) => (
-                        <div key={index} className="py-2 text-gray-700 border-b border-base-300 ">
-                            {question}
-                        </div>
-                    ))}
+                <div className=" bg-white shadow-2xl px-4  rounded-xl">
+                    {faqsLoading ? (
+                        <div className="py-2 text-gray-500">Loading FAQs...</div>
+                    ) : faqsError ? (
+                        <div className="py-2 text-red-500">Error loading FAQs: {String(faqsErr)}</div>
+                    ) : Array.isArray(faqs) && faqs.length > 0 ? (
+                        // show only the latest 5 FAQs
+                        faqs.slice(0, 5).map((q, index) => {
+                            const questionText = typeof q === 'string' ? q : q.question || q.title || ''
+                            const similar = Array.isArray(q.similar_questions) ? q.similar_questions : []
+                            const count = q.count ?? (q.total ?? 0)
+                            const expanded = Boolean(expandedFaqs[index])
+                            return (
+                                <div key={index} className="py-2 text-gray-700 border-b border-base-300 ">
+                                    <div className="flex items-center justify-between">
+                                        <div className="font-medium text-gray-800">{questionText}</div>
+                                        <div className="ml-4 text-sm text-gray-500">{count} times</div>
+                                    </div>
+                                    {similar.length > 0 && (
+                                        <div className="mt-2 text-sm text-gray-600">
+                                            {expanded ? (
+                                                <>
+                                                    {similar.map((s, i) => (
+                                                        <div key={i} className="py-0.5">{s}</div>
+                                                    ))}
+                                                </>
+                                            ) : (
+                                                <div>
+                                                    {similar.slice(0, 5).join(', ')}{similar.length > 5 ? '...' : ''}
+                                                </div>
+                                            )}
+                                            {similar.length > 5 && (
+                                                <button
+                                                    className="text-xs text-blue-600 ml-1"
+                                                    onClick={() => toggleFaqExpanded(index)}
+                                                >
+                                                    {expanded ? 'Show less' : 'Show more'}
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            )
+                        })
+                    ) : (
+                        <div className="py-2 text-gray-500">No frequently asked questions for this month.</div>
+                    )}
                 </div>
             </div>
 
@@ -89,30 +154,46 @@ export default function UserAIContent() {
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-semibold text-[#5B5B5B]">Last topics</h2>
                     <div className="flex items-center gap-2">
-                        <button className="p-1 hover:bg-gray-100 rounded">
+                        <button
+                            className="p-1 hover:bg-gray-100 rounded"
+                            onClick={() => setSelectedTopicMonth((m) => (m === 1 ? 12 : m - 1))}
+                            aria-label="previous month"
+                        >
                             <ChevronLeft className="w-4 h-4" />
                         </button>
                         <select
-                            value={selectedMonth}
-                            onChange={(e) => setSelectedMonth(e.target.value)}
-                            className="text-sm border border-base-300  rounded px- py-1"
+                            value={selectedTopicMonth}
+                            onChange={(e) => setSelectedTopicMonth(Number(e.target.value))}
+                            className="text-sm border border-base-300 rounded px-2 py-1"
                         >
-                            <option value="JUN">JUN</option>
-                            <option value="MAY">MAY</option>
-                            <option value="APR">APR</option>
+                            {MONTHS.map((mo) => (
+                                <option key={mo.value} value={mo.value}>{mo.label}</option>
+                            ))}
                         </select>
-                        <button className="p-1 hover:bg-gray-100 rounded">
+                        <button
+                            className="p-1 hover:bg-gray-100 rounded"
+                            onClick={() => setSelectedTopicMonth((m) => (m === 12 ? 1 : m + 1))}
+                            aria-label="next month"
+                        >
                             <ChevronRight className="w-4 h-4" />
                         </button>
                     </div>
                 </div>
                 <div className="space-y-2 bg-white rounded-xl p-3 shadow-xl">
-                    {aiData.lastTopics.map((topic, index) => (
-                        <div key={index} className="border-b border-gray-100 pb-4 last:border-b-0">
-                            <p className="text-gray-900 mb-2 leading-relaxed">{topic.title}</p>
-                            <p className="text-gray-600 text-sm leading-relaxed">{topic.content}</p>
-                        </div>
-                    ))}
+                    {topicsLoading ? (
+                        <div className="py-2 text-gray-500">Loading topics...</div>
+                    ) : topicsError ? (
+                        <div className="py-2 text-red-500">Error loading topics: {String(topicsErr)}</div>
+                    ) : Array.isArray(lastTopics) && lastTopics.length > 0 ? (
+                        // show only the latest 5 topics
+                        lastTopics.slice(0, 5).map((topic, index) => (
+                            <div key={index} className="border-b border-gray-100 pb-4 last:border-b-0">
+                                <p className="text-gray-900 mb-2 leading-relaxed">{typeof topic === 'string' ? topic : String(topic)}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="py-2 text-gray-500">No topics found for this month.</div>
+                    )}
                 </div>
             </div>
 

@@ -29,7 +29,7 @@ export const connectWebSocket = (roomId, onMessage, onSeen) => {
     console.log(token);
 
     const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const wsUrl = `${wsProtocol}://10.10.13.59:8005/ws/chat/${roomId}/?token=${token}`;
+    const wsUrl = `${wsProtocol}://10.10.13.80:8005/ws/chat/${roomId}/?token=${token}`;
 
     const socket = new WebSocket(wsUrl);
 
@@ -70,7 +70,7 @@ export const connectWebSocketForNotifications = (onNotification) => {
     console.log(token);
 
     const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const wsUrl = `${wsProtocol}://10.10.13.59:8005/ws/notifications/?token=${token}`;
+    const wsUrl = `${wsProtocol}://10.10.13.80:8005/ws/notifications/?token=${token}`;
 
     const socket = new WebSocket(wsUrl); "wss://api.alyona.ai/ws/notifications/?token=${token}";
 

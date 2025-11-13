@@ -45,7 +45,10 @@ const AIChat = () => {
             const res = await axiosApi.post('/chatbot/api/v1/ai-conversation', form, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
+            console.log(res)
+
             return res.data;
+
         },
         onSuccess(data) {
             // If the server response doesn't include images, attach local previews so the sent message

@@ -30,7 +30,7 @@ const AdminDashboardLogin = () => {
 
 
 
-        axios.post('http://10.10.13.59:8005/accounts/api/v1/login', { email, password })
+        axios.post('http://10.10.13.80:8005/accounts/api/v1/login', { email, password })
             .then((response) => {
                 console.log(response?.data.login_user_info.role)
                 if (response?.data.login_user_info.role === 'admin') {
