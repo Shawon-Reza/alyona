@@ -9,6 +9,7 @@ const AIChat = () => {
     const [pendingQuestion, setPendingQuestion] = useState(null);
     const [previewUrls, setPreviewUrls] = useState([]);
     const [pendingLocalPreviews, setPendingLocalPreviews] = useState([]);
+    const [lastOptimisticId, setLastOptimisticId] = useState(null);
     const [lightboxSrc, setLightboxSrc] = useState(null);
     const scrollRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -45,15 +46,29 @@ const AIChat = () => {
         onSuccess(data) {
             // Normalize server response into a conversation object for immediate UI append
             const normalized = normalizeConversation(data) || { id: `local-${Date.now()}`, created_at: new Date().toISOString(), ai_response: data };
-            // If server didn't return images, attach the pending local previews so UI shows them
-            if ((!normalized.conversation_images || normalized.conversation_images.length === 0) && pendingLocalPreviews && pendingLocalPreviews.length) {
-                normalized._local_preview_urls = pendingLocalPreviews.map(p => p.url);
-            }
+            // If server didn't return images, attach the optimistic local previews (from cache) so UI shows them
+            try {
+                const existing = queryClient.getQueryData(['aiConversation']) || [];
+                const opt = Array.isArray(existing) ? existing.find(i => i && i.id === lastOptimisticId) : null;
+                const localUrls = opt && Array.isArray(opt._local_preview_urls) ? opt._local_preview_urls : [];
+                if ((!normalized.conversation_images || normalized.conversation_images.length === 0) && localUrls.length) {
+                    normalized._local_preview_urls = localUrls.slice();
+                }
+            } catch (e) { /* ignore */ }
 
             queryClient.setQueryData(['aiConversation'], (old = []) => {
-                if (!old) return [normalized];
-                return Array.isArray(old) ? [...old, normalized] : [old, normalized];
+                const list = Array.isArray(old) ? old.slice() : [];
+                if (lastOptimisticId) {
+                    const idx = list.findIndex(i => i && i.id === lastOptimisticId);
+                    if (idx !== -1) {
+                        list[idx] = normalized;
+                        return list;
+                    }
+                }
+                return [...list, normalized];
             });
+
+            setLastOptimisticId(null);
 
             setQuestion('');
             setFiles([]);
@@ -64,6 +79,14 @@ const AIChat = () => {
         },
         onError(err) {
             console.error(err);
+            // remove optimistic entry if present
+            try {
+                queryClient.setQueryData(['aiConversation'], (old = []) => {
+                    const list = Array.isArray(old) ? old.filter(i => !(i && i.id === lastOptimisticId)) : [];
+                    return list;
+                });
+            } catch (e) { }
+            setLastOptimisticId(null);
             setPendingQuestion(null);
             toast.error('Failed to send message');
         }
@@ -86,15 +109,29 @@ const AIChat = () => {
         onSuccess(data) {
             // Normalize server response into a conversation object for immediate UI append
             const normalized = normalizeConversation(data) || { id: `local-${Date.now()}`, created_at: new Date().toISOString(), ai_response: data };
-            // If server didn't return images, attach the pending local previews so UI shows them
-            if ((!normalized.conversation_images || normalized.conversation_images.length === 0) && pendingLocalPreviews && pendingLocalPreviews.length) {
-                normalized._local_preview_urls = pendingLocalPreviews.map(p => p.url);
-            }
+            // If server didn't return images, attach the optimistic local previews (from cache) so UI shows them
+            try {
+                const existing = queryClient.getQueryData(['aiConversation']) || [];
+                const opt = Array.isArray(existing) ? existing.find(i => i && i.id === lastOptimisticId) : null;
+                const localUrls = opt && Array.isArray(opt._local_preview_urls) ? opt._local_preview_urls : [];
+                if ((!normalized.conversation_images || normalized.conversation_images.length === 0) && localUrls.length) {
+                    normalized._local_preview_urls = localUrls.slice();
+                }
+            } catch (e) { /* ignore */ }
 
             queryClient.setQueryData(['aiConversation'], (old = []) => {
-                if (!old) return [normalized];
-                return Array.isArray(old) ? [...old, normalized] : [old, normalized];
+                const list = Array.isArray(old) ? old.slice() : [];
+                if (lastOptimisticId) {
+                    const idx = list.findIndex(i => i && i.id === lastOptimisticId);
+                    if (idx !== -1) {
+                        list[idx] = normalized;
+                        return list;
+                    }
+                }
+                return [...list, normalized];
             });
+
+            setLastOptimisticId(null);
 
             setQuestion('');
             setFiles([]);
@@ -105,6 +142,14 @@ const AIChat = () => {
         },
         onError(err) {
             console.error('imageMutation error', err);
+            // remove optimistic entry if present
+            try {
+                queryClient.setQueryData(['aiConversation'], (old = []) => {
+                    const list = Array.isArray(old) ? old.filter(i => !(i && i.id === lastOptimisticId)) : [];
+                    return list;
+                });
+            } catch (e) { }
+            setLastOptimisticId(null);
             setPendingQuestion(null);
             toast.error('Failed to send images');
         }
@@ -305,9 +350,21 @@ const AIChat = () => {
             ? sendingFiles.map((f) => ({ name: f.name, url: URL.createObjectURL(f), file: f }))
             : [];
 
-        // set pending UI (show user's pending text/image on right and AI typing on left)
-        setPendingQuestion(trimmed || ' ');
-        setPendingLocalPreviews(sendingPreviews);
+        // create optimistic conversation entry so message appears immediately in history
+        const optId = `local-${Date.now()}`;
+        const optimistic = {
+            id: optId,
+            created_at: new Date().toISOString(),
+            question: trimmed || null,
+            ai_response: null,
+            conversation_images: [],
+            _local_preview_urls: sendingPreviews.map(p => p.url),
+            _optimistic: true,
+        };
+        queryClient.setQueryData(['aiConversation'], (old = []) => {
+            return Array.isArray(old) ? [...old, optimistic] : [optimistic];
+        });
+        setLastOptimisticId(optId);
 
         // clear the visible input immediately
         setQuestion('');
@@ -395,7 +452,9 @@ const AIChat = () => {
                                     <div className="max-w-[75%]">
                                         <div className="text-sm font-medium text-gray-600">AI</div>
                                         <div className="mt-1 bg-gray-100 text-gray-800 p-3 rounded-lg whitespace-pre-wrap">
-                                            {renderAIResponse(msg.ai_response)}
+                                            {(msg && msg._optimistic && (sendMutation.isLoading || imageMutation.isLoading))
+                                                ? 'AI is typing...'
+                                                : renderAIResponse(msg.ai_response)}
                                         </div>
                                     </div>
                                 </div>
@@ -404,46 +463,7 @@ const AIChat = () => {
                     })
                 )}
                 {/* If we have a pending (just-sent) message, show it plus AI typing indicator */}
-                {pendingQuestion && (
-                    <div className="mb-4" key="pending">
-                        <div className="text-xs text-gray-400 mb-2">{new Date().toLocaleString()}</div>
-
-                        {/* Pending user message - right */}
-                        <div className="flex justify-end mb-1">
-                            <div className="max-w-[75%] text-right">
-                                <div className="text-sm font-medium text-gray-600">You</div>
-                                <div className="mt-1 inline-block bg-[#BB9777] text-white p-3 rounded-lg whitespace-pre-wrap">
-                                    {pendingQuestion}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* AI typing indicator - left */}
-                        <div className="flex justify-start">
-                            <div className="max-w-[75%]">
-                                <div className="text-sm font-medium text-gray-600">AI</div>
-                                <div className="mt-1 bg-gray-100 text-gray-800 p-3 rounded-lg whitespace-pre-wrap italic text-sm">
-                                    {(sendMutation.isLoading || imageMutation.isLoading) ? 'AI is typing...' : <em className="text-gray-400">(no response)</em>}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* pending previews shown under the user's (right) bubble instead */}
-                        {pendingLocalPreviews.length > 0 && (
-                            <div className="mt-2 flex flex-wrap gap-2 justify-end">
-                                {pendingLocalPreviews.map((p, i) => (
-                                    <img
-                                        key={i}
-                                        src={p.url}
-                                        alt={p.name || `pending-${i}`}
-                                        className="w-28 h-20 object-cover rounded-md border cursor-pointer"
-                                        onClick={() => setLightboxSrc(p.url)}
-                                    />
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                )}
+                
             </div>
 
             <div className="bg-white p-3 rounded-md shadow-sm">
@@ -465,7 +485,7 @@ const AIChat = () => {
                 />
 
                 {/* Immediate local previews (show before sending) */}
-                {previewUrls.length > 0 && !pendingQuestion && (
+                {previewUrls.length > 0 && (
                     <div className="mb-2 flex flex-wrap gap-2 justify-end">
                         {previewUrls.map((p, i) => (
                             <img key={i} src={p.url} alt={p.name} className="w-28 h-20 object-cover rounded-md border" />
