@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Download } from "lucide-react"
 import { useParams } from "react-router-dom"
 import { useQuery } from '@tanstack/react-query'
 import axiosApi from '@/api/axiosApi'
+import { toast } from 'react-toastify'
 
 export default function UserAIContent() {
     // Months list: value should be 1..12 for backend compatibility
@@ -58,8 +59,43 @@ export default function UserAIContent() {
 
     const lastTopics = Array.isArray(lastTopicsRaw) ? lastTopicsRaw : []
 
-    const handleDownloadConversations = () => {
-        console.log("Download conversations clicked")
+    const [downloading, setDownloading] = useState(false)
+
+    const handleDownloadConversations = async () => {
+        if (downloading) return
+        setDownloading(true)
+        try {
+            const res = await axiosApi.get(`/admin_panel/api/v1/download-user-conversation/${userId}`, {
+                responseType: 'blob',
+            })
+
+            // Try to extract filename from content-disposition header
+            const disposition = res.headers && (res.headers['content-disposition'] || res.headers['Content-Disposition'])
+            let filename = 'conversations.csv'
+            if (disposition) {
+                const match = /filename\*=UTF-8''(.+)$/.exec(disposition) || /filename="?([^";]+)"?/.exec(disposition)
+                if (match && match[1]) {
+                    filename = decodeURIComponent(match[1])
+                }
+            }
+
+            const contentType = (res.headers && (res.headers['content-type'] || res.headers['Content-Type'])) || 'text/csv'
+            const blob = new Blob([res.data], { type: contentType })
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = filename
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+            window.URL.revokeObjectURL(url)
+            toast.success('Download started')
+        } catch (err) {
+            console.error('download error', err)
+            toast.error('Failed to download conversations')
+        } finally {
+            setDownloading(false)
+        }
     }
 
     return (

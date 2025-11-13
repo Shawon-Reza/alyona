@@ -8,11 +8,13 @@ const AIChat = () => {
     const [files, setFiles] = useState([]);
     const [pendingQuestion, setPendingQuestion] = useState(null);
     const [previewUrls, setPreviewUrls] = useState([]);
+    const [pendingLocalPreviews, setPendingLocalPreviews] = useState([]);
     const [lightboxSrc, setLightboxSrc] = useState(null);
     const scrollRef = useRef(null);
+    const fileInputRef = useRef(null);
     const queryClient = useQueryClient();
     // Base URL for conversation images returned by the backend
-    const IMG_BASE = 'http://10.10.13.59:8005';
+    const IMG_BASE = 'http://10.10.13.80:8005';
 
     // Fetch conversation history
     const { data: history = [], isLoading, isError, error } = useQuery({
@@ -33,51 +35,78 @@ const AIChat = () => {
         });
     }, [history]);
 
-    // Mutation to send a message (with optional images)
+    // Mutation to send a message (text-only or images)
+    // Text-only mutation
     const sendMutation = useMutation({
-        mutationFn: async ({ question, files }) => {
-            // Use FormData to support file uploads; backend should accept multipart/form-data
-            const form = new FormData();
-            form.append('question', question);
-            if (files && files.length) {
-                Array.from(files).forEach((f) => form.append('images', f));
-            }
-            const res = await axiosApi.post('/chatbot/api/v1/ai-conversation', form, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
-            console.log(res)
-
+        mutationFn: async ({ question }) => {
+            const res = await axiosApi.post('/chatbot/api/v1/ai-conversation', { question });
             return res.data;
-
         },
         onSuccess(data) {
-            // If the server response doesn't include images, attach local previews so the sent message
-            // still displays the images on the right. We'll add a temporary `_local_preview_urls` field.
-            const serverImgs = (data && data.conversation_images) || (data && data.images) || [];
-            const hasServerImgs = Array.isArray(serverImgs) && serverImgs.length > 0;
-            const augmented = { ...data };
-            if (!hasServerImgs && previewUrls && previewUrls.length) {
-                augmented._local_preview_urls = previewUrls.map(p => p.url);
+            // Normalize server response into a conversation object for immediate UI append
+            const normalized = normalizeConversation(data) || { id: `local-${Date.now()}`, created_at: new Date().toISOString(), ai_response: data };
+            // If server didn't return images, attach the pending local previews so UI shows them
+            if ((!normalized.conversation_images || normalized.conversation_images.length === 0) && pendingLocalPreviews && pendingLocalPreviews.length) {
+                normalized._local_preview_urls = pendingLocalPreviews.map(p => p.url);
             }
 
             queryClient.setQueryData(['aiConversation'], (old = []) => {
-                if (!old) return [augmented];
-                return Array.isArray(old) ? [...old, augmented] : [old, augmented];
+                if (!old) return [normalized];
+                return Array.isArray(old) ? [...old, normalized] : [old, normalized];
             });
 
             setQuestion('');
             setFiles([]);
-            // clear local previewUrls now that we've attached them to the conversation message
             setPreviewUrls([]);
-            // clear local pending indicator
+            setPendingLocalPreviews([]);
             setPendingQuestion(null);
             toast.success('Message sent');
         },
         onError(err) {
             console.error(err);
-            // clear pending on error as well but keep previews so user can retry
             setPendingQuestion(null);
             toast.error('Failed to send message');
+        }
+    });
+
+    // Images-only mutation
+    const imageMutation = useMutation({
+        mutationFn: async (files) => {
+            const form = new FormData();
+            // normalize to an Array (accepts Array or FileList)
+            const fileArray = Array.isArray(files) ? files : Array.from(files || []);
+            // append under both `images[]` and `images` to match different backend expectations
+            fileArray.forEach((f) => {
+                try { form.append('images[]', f); } catch (e) { /* ignore */ }
+                try { form.append('images', f); } catch (e) { /* ignore */ }
+            });
+            const res = await axiosApi.post('/chatbot/api/v1/run-skin-analysis', form);
+            return res.data;
+        },
+        onSuccess(data) {
+            // Normalize server response into a conversation object for immediate UI append
+            const normalized = normalizeConversation(data) || { id: `local-${Date.now()}`, created_at: new Date().toISOString(), ai_response: data };
+            // If server didn't return images, attach the pending local previews so UI shows them
+            if ((!normalized.conversation_images || normalized.conversation_images.length === 0) && pendingLocalPreviews && pendingLocalPreviews.length) {
+                normalized._local_preview_urls = pendingLocalPreviews.map(p => p.url);
+            }
+
+            queryClient.setQueryData(['aiConversation'], (old = []) => {
+                if (!old) return [normalized];
+                return Array.isArray(old) ? [...old, normalized] : [old, normalized];
+            });
+
+            setQuestion('');
+            setFiles([]);
+            setPreviewUrls([]);
+            setPendingLocalPreviews([]);
+            setPendingQuestion(null);
+            toast.success('Image(s) sent');
+        },
+        onError(err) {
+            console.error('imageMutation error', err);
+            setPendingQuestion(null);
+            toast.error('Failed to send images');
         }
     });
 
@@ -107,6 +136,15 @@ const AIChat = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [files]);
 
+    // clean up pendingLocalPreviews object URLs when they change/clear
+    useEffect(() => {
+        return () => {
+            pendingLocalPreviews.forEach(p => {
+                try { URL.revokeObjectURL(p.url); } catch (e) { }
+            });
+        };
+    }, [pendingLocalPreviews]);
+
     // scroll to bottom when messages load or new messages arrive
     useEffect(() => {
         if (!scrollRef.current) return;
@@ -130,8 +168,44 @@ const AIChat = () => {
         setFiles(f);
     };
 
+    // When files are selected, listen for global Enter key so users can press Enter to send images
+    useEffect(() => {
+        if (!files || files.length === 0) return undefined;
+        const onKey = (e) => {
+            if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
+                e.preventDefault();
+                if (!sendMutation.isLoading) {
+                    // send regardless of textarea state when files are present
+                    handleSend();
+                }
+            }
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [files, sendMutation.isLoading]);
+
     // helper: normalize server-side image arrays in a message (supports new `conversation_images`)
     const getMessageImageUrls = (msg) => {
+        // helper to quickly detect image-like paths
+        const looksLikeImage = (s) => {
+            if (!s || typeof s !== 'string') return false;
+            // common image extensions or media path
+            return /\.(png|jpe?g|gif|webp|svg)(\?.*)?$|^\/media\//i.test(s);
+        };
+
+        // If the question field itself contains image paths (array or single string), prefer that
+        const q = msg && msg.question;
+        if (Array.isArray(q) && q.length) {
+            const fromQ = q
+                .map((it) => (typeof it === 'string' ? it : (it.url || it.path || '')))
+                .map((p) => (p && p.startsWith('/') ? IMG_BASE + p : p))
+                .filter(Boolean);
+            if (fromQ.length) return fromQ;
+        }
+        if (typeof q === 'string' && looksLikeImage(q)) {
+            const single = q.startsWith('/') ? IMG_BASE + q : q;
+            return [single];
+        }
         // prefer the new field `conversation_images` if present
         const conv = msg && msg.conversation_images;
         if (Array.isArray(conv) && conv.length) {
@@ -167,7 +241,7 @@ const AIChat = () => {
                     <img
                         key={i}
                         src={u}
-                        alt={`img-${i}`}
+                        alt={`http://10.10.13.80:8005${i}`}
                         className="w-28 h-20 object-cover rounded-md border cursor-pointer"
                         onClick={() => setLightboxSrc(u)}
                     />
@@ -176,16 +250,86 @@ const AIChat = () => {
         );
     };
 
+    // Render AI response safely: handle string, array, or object responses
+    const renderAIResponse = (resp) => {
+        if (resp === null || resp === undefined || resp === '') {
+            return <em className="text-gray-400">(no response)</em>;
+        }
+        if (typeof resp === 'string') return resp;
+        if (Array.isArray(resp)) {
+            return resp.map((r, i) => (
+                <div key={i}>{typeof r === 'string' ? r : JSON.stringify(r)}</div>
+            ));
+        }
+        // object or other: stringify in a <pre> for readability
+        try {
+            return <pre className="whitespace-pre-wrap text-sm">{JSON.stringify(resp, null, 2)}</pre>;
+        } catch (e) {
+            return String(resp);
+        }
+    };
+
+    // Normalize a server response into a conversation-like object we can render immediately
+    const normalizeConversation = (data) => {
+        if (!data || typeof data !== 'object') return null;
+        const serverImgs = (data && data.conversation_images) || (data && data.images) || [];
+        const imgs = Array.isArray(serverImgs) ? serverImgs.map((p) => (p && p.startsWith ? (p.startsWith('/') ? IMG_BASE + p : p) : p)) : [];
+
+        const aiResp = data.ai_response || data.response || data.summary || data.message || null;
+
+        const normalized = {
+            id: data.id || `local-${Date.now()}`,
+            created_at: data.created_at || new Date().toISOString(),
+            question: data.question || data.question_text || null,
+            ai_response: aiResp || (Object.keys(data).length ? data : null),
+            conversation_images: imgs,
+            // keep original payload (for debugging)
+            _raw: data,
+        };
+
+        return normalized;
+    };
+
     const handleSend = async () => {
         if (!question.trim() && (!files || files.length === 0)) {
             toast.warn('Please enter a question or attach images');
             return;
         }
+
         const trimmed = question.trim();
-        // show pending user message and typing indicator
-        setPendingQuestion(trimmed);
-        console.log("Question:", trimmed)
-        sendMutation.mutate({ question: trimmed, files });
+
+        // snapshot files as an Array immediately so they aren't invalidated by clearing the input
+        const sendingFiles = files && files.length ? Array.from(files) : null;
+        // create fresh object URLs for the pending previews (don't reuse previewUrls which we'll revoke)
+        const sendingPreviews = sendingFiles && sendingFiles.length
+            ? sendingFiles.map((f) => ({ name: f.name, url: URL.createObjectURL(f), file: f }))
+            : [];
+
+        // set pending UI (show user's pending text/image on right and AI typing on left)
+        setPendingQuestion(trimmed || ' ');
+        setPendingLocalPreviews(sendingPreviews);
+
+        // clear the visible input immediately
+        setQuestion('');
+
+        // clear the file input DOM so it appears empty to the user
+        try {
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        } catch (e) { /* ignore */ }
+
+        // revoke and clear current previewUrls (we created new pending preview URLs above so don't revoke them)
+        previewUrls.forEach(p => {
+            try { URL.revokeObjectURL(p.url); } catch (e) { }
+        });
+        setPreviewUrls([]);
+        setFiles([]);
+
+        // send the captured payload: prefer images-only mutation when files were selected
+        if (sendingFiles) {
+            imageMutation.mutate(sendingFiles);
+        } else {
+            sendMutation.mutate({ question: trimmed });
+        }
     };
 
     // lightbox: close on Escape
@@ -199,7 +343,7 @@ const AIChat = () => {
     }, [lightboxSrc]);
 
     return (
-        <div className="">
+        <div className=" max-w-[800px]">
             <h2 className="text-xl font-semibold mb-4">AI Chat</h2>
 
             <div className="border border-gray-300 rounded-md p-4 mb-4 max-h-[600px] overflow-auto bg-white" ref={scrollRef}>
@@ -220,20 +364,27 @@ const AIChat = () => {
                                 <div className="flex justify-end mb-1">
                                     <div className="max-w-[75%] text-right">
                                         <div className="text-sm font-medium text-gray-600">You</div>
-                                        <div className="mt-1 inline-block bg-[#BB9777] text-white p-3 rounded-lg whitespace-pre-wrap">
-                                            {msg.question}
-                                        </div>
+                                        {imgs.length === 0 ? (
+                                            <div className="mt-1 inline-block bg-[#BB9777] text-white p-3 rounded-lg whitespace-pre-wrap">
+                                                {typeof msg.question === 'string' ? msg.question : String(msg.question)}
+                                            </div>
+                                        ) : null}
                                         {imgs.length > 0 && (
                                             <div className="mt-2 flex flex-wrap gap-2 justify-end">
-                                                {imgs.map((u, i) => (
-                                                    <img
-                                                        key={i}
-                                                        src={u}
-                                                        alt={`img-${i}`}
-                                                        className="w-28 h-20 object-cover rounded-md border cursor-pointer"
-                                                        onClick={() => setLightboxSrc(u)}
-                                                    />
-                                                ))}
+                                                {
+                                                    imgs.map((u, i) => (
+                                                        <img
+                                                            key={i}
+                                                            src={u}
+                                                            alt={`img-${i}`}
+                                                            className="w-28 h-20 object-cover rounded-md border cursor-pointer"
+                                                            onClick={() => setLightboxSrc(u)}
+                                                        />
+                                                        
+                                                    ))
+
+                                                }
+
                                             </div>
                                         )}
                                     </div>
@@ -244,7 +395,7 @@ const AIChat = () => {
                                     <div className="max-w-[75%]">
                                         <div className="text-sm font-medium text-gray-600">AI</div>
                                         <div className="mt-1 bg-gray-100 text-gray-800 p-3 rounded-lg whitespace-pre-wrap">
-                                            {msg.ai_response || <em className="text-gray-400">(no response)</em>}
+                                            {renderAIResponse(msg.ai_response)}
                                         </div>
                                     </div>
                                 </div>
@@ -272,19 +423,19 @@ const AIChat = () => {
                             <div className="max-w-[75%]">
                                 <div className="text-sm font-medium text-gray-600">AI</div>
                                 <div className="mt-1 bg-gray-100 text-gray-800 p-3 rounded-lg whitespace-pre-wrap italic text-sm">
-                                    {sendMutation.isLoading ? 'AI is typing...' : <em className="text-gray-400">(no response)</em>}
+                                    {(sendMutation.isLoading || imageMutation.isLoading) ? 'AI is typing...' : <em className="text-gray-400">(no response)</em>}
                                 </div>
                             </div>
                         </div>
 
                         {/* pending previews shown under the user's (right) bubble instead */}
-                        {previewUrls.length > 0 && (
+                        {pendingLocalPreviews.length > 0 && (
                             <div className="mt-2 flex flex-wrap gap-2 justify-end">
-                                {previewUrls.map((p, i) => (
+                                {pendingLocalPreviews.map((p, i) => (
                                     <img
                                         key={i}
                                         src={p.url}
-                                        alt={p.name}
+                                        alt={p.name || `pending-${i}`}
                                         className="w-28 h-20 object-cover rounded-md border cursor-pointer"
                                         onClick={() => setLightboxSrc(p.url)}
                                     />
@@ -305,10 +456,11 @@ const AIChat = () => {
                         // Send on Enter (without Shift/Ctrl/Alt/Meta). Shift+Enter inserts newline.
                         if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
                             e.preventDefault();
-                            if (!sendMutation.isLoading) handleSend();
+                            if (!sendMutation.isLoading && !imageMutation.isLoading) handleSend();
                         }
                     }}
-                    disabled={sendMutation.isLoading}
+                    // disable textarea while images are selected or when sending
+                    disabled={(sendMutation.isLoading || imageMutation.isLoading) || (files && files.length > 0)}
                     rows={3}
                 />
 
@@ -322,13 +474,24 @@ const AIChat = () => {
                 )}
 
                 <div className="flex items-center gap-3 justify-between">
-                    <input type="file" multiple onChange={handleFilesChange} disabled={sendMutation.isLoading} />
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        multiple
+                        onChange={handleFilesChange}
+                        // disable file input when there's typed text or when sending
+                        disabled={(sendMutation.isLoading || imageMutation.isLoading) || (question && question.trim().length > 0)}
+                        className="text-sm"
+                    />
+
                     <button
-                        className="btn bg-[#BB9777] text-white"
                         onClick={handleSend}
-                        disabled={sendMutation.isLoading}
+                        disabled={sendMutation.isLoading || imageMutation.isLoading}
+                        className={`inline-flex items-center px-4 py-2 rounded-md text-white ${(sendMutation.isLoading || imageMutation.isLoading) ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#BB9777] hover:bg-[#a7765f]'}`}
+                        aria-disabled={sendMutation.isLoading || imageMutation.isLoading}
+                        type="button"
                     >
-                        {sendMutation.isLoading ? 'Sending...' : 'Send'}
+                        {(sendMutation.isLoading || imageMutation.isLoading) ? 'Sending...' : 'Send'}
                     </button>
                 </div>
             </div>
