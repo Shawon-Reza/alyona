@@ -295,23 +295,160 @@ const AIChat = () => {
         );
     };
 
+    // Try to parse a string that may contain JSON (handles single-quoted Python-like strings)
+    const parsePossibleJSON = (s) => {
+        if (!s || typeof s !== 'string') return null;
+        try {
+            return JSON.parse(s);
+        } catch (e) {
+            // try a heuristic: replace single quotes with double quotes for Python-style repr
+            try {
+                const replaced = s.replace(/\'/g, '"');
+                return JSON.parse(replaced);
+            } catch (e2) {
+                return null;
+            }
+        }
+    };
+
+    const renderAnalysisCard = (obj) => {
+        if (!obj) return null;
+        const analysis = obj.analysis_report || {};
+        const skinType = analysis.skin_type || {};
+        const conditions = analysis.conditions || {};
+        const healthScore = analysis.health_score || null;
+        const tips = obj.tips || [];
+        const routine = obj.routine || {};
+        const ingredients = obj.recommended_ingredients || [];
+
+        return (
+            <div className="border border-gray-300 rounded-md p-4 bg-white shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                    <div>
+                        <div className="text-sm text-gray-500">Skin analysis</div>
+                        <div className="text-lg font-semibold">{skinType.classification || 'Unknown'}</div>
+                        {skinType.description && <div className="text-xs text-gray-600 mt-1">{skinType.description}</div>}
+                    </div>
+                    {healthScore && (
+                        <div className="text-center">
+                            <div className="text-xs text-gray-500">Health</div>
+                            <div className="text-xl font-bold">{healthScore}</div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Conditions */}
+                <div className="mb-3">
+                    <div className="text-sm font-medium mb-1">Conditions</div>
+                    <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
+                        {Object.keys(conditions).map((k) => {
+                            const v = conditions[k];
+                            return (
+                                <div key={k} className="p-2 bg-gray-50 rounded">
+                                    <div className="font-semibold">{k}</div>
+                                    {v.level && <div className="text-xs">Level: {v.level}</div>}
+                                    {v.insight && <div className="text-xs text-gray-600">{v.insight}</div>}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Tips */}
+                {tips && tips.length > 0 && (
+                    <div className="mb-3">
+                        <div className="text-sm font-medium mb-1">Tips</div>
+                        <ul className="list-disc list-inside text-sm text-gray-700">
+                            {tips.map((t, i) => <li key={i}>{t}</li>)}
+                        </ul>
+                    </div>
+                )}
+
+                {/* Routine */}
+                {routine && (
+                    <div className="mb-3">
+                        <div className="text-sm font-medium mb-1">Routine</div>
+                        {routine.daily_routine && (
+                            <div className="mb-2">
+                                <div className="text-xs font-semibold">Daily</div>
+                                <ul className="list-decimal list-inside text-sm text-gray-700">
+                                    {routine.daily_routine.map((r, i) => <li key={i}>{r}</li>)}
+                                </ul>
+                            </div>
+                        )}
+                        {routine.monthly_routine && (
+                            <div className="mb-2">
+                                <div className="text-xs font-semibold">Monthly</div>
+                                <ul className="list-decimal list-inside text-sm text-gray-700">
+                                    {routine.monthly_routine.map((r, i) => <li key={i}>{r}</li>)}
+                                </ul>
+                            </div>
+                        )}
+                        {routine.washday && (
+                            <div>
+                                <div className="text-xs font-semibold">Washday</div>
+                                <div className="space-y-2 text-sm text-gray-700">
+                                    {routine.washday.map((w, i) => (
+                                        <div key={i} className="p-2 bg-gray-50 rounded">
+                                            <div className="font-semibold">{w.step_name}</div>
+                                            <div className="text-xs text-gray-600">{w.step_description}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Ingredients */}
+                {ingredients && ingredients.length > 0 && (
+                    <div>
+                        <div className="text-sm font-medium mb-1">Recommended Ingredients</div>
+                        <div className="flex flex-wrap gap-2">
+                            {ingredients.map((ing, i) => (
+                                <span key={i} className="text-xs bg-[#F3EDE6] px-2 py-1 rounded">{ing}</span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     // Render AI response safely: handle string, array, or object responses
     const renderAIResponse = (resp) => {
         if (resp === null || resp === undefined || resp === '') {
             return <em className="text-gray-400">(no response)</em>;
         }
-        if (typeof resp === 'string') return resp;
-        if (Array.isArray(resp)) {
-            return resp.map((r, i) => (
-                <div key={i}>{typeof r === 'string' ? r : JSON.stringify(r)}</div>
-            ));
+
+        // If it's a string, try to parse JSON-like payloads (some image responses come back as JSON strings)
+        if (typeof resp === 'string') {
+            const parsed = parsePossibleJSON(resp);
+            if (parsed && (parsed.analysis_report || parsed.tips || parsed.recommended_ingredients)) {
+                return renderAnalysisCard(parsed);
+            }
+            return resp;
         }
-        // object or other: stringify in a <pre> for readability
-        try {
-            return <pre className="whitespace-pre-wrap text-sm">{JSON.stringify(resp, null, 2)}</pre>;
-        } catch (e) {
-            return String(resp);
+
+        // If it's already an object and looks like analysis result, render the card
+        if (typeof resp === 'object' && resp !== null) {
+            if (resp.analysis_report || resp.tips || resp.recommended_ingredients) {
+                return renderAnalysisCard(resp);
+            }
+            if (Array.isArray(resp)) {
+                return resp.map((r, i) => (
+                    <div key={i}>{typeof r === 'string' ? r : JSON.stringify(r)}</div>
+                ));
+            }
+            // fallback: pretty-print object
+            try {
+                return <pre className="whitespace-pre-wrap text-sm">{JSON.stringify(resp, null, 2)}</pre>;
+            } catch (e) {
+                return String(resp);
+            }
         }
+
+        return String(resp);
     };
 
     // Normalize a server response into a conversation-like object we can render immediately
@@ -400,7 +537,7 @@ const AIChat = () => {
     }, [lightboxSrc]);
 
     return (
-        <div className=" max-w-[800px]">
+        <div className="">
             <h2 className="text-xl font-semibold mb-4">AI Chat</h2>
 
             <div className="border border-gray-300 rounded-md p-4 mb-4 max-h-[600px] overflow-auto bg-white" ref={scrollRef}>
