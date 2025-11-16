@@ -212,7 +212,7 @@ const Dashboard = () => {
                             {/* Profile Menu Popup */}
                             {isProfileMenuOpen && (
                                 <div
-                                    className="fixed top-[117px] lg:top-[134px] rounded-2xl right-4 lg:right-10 w-80 bg-white/80 shadow-lg p-4 z-50"
+                                    className="fixed top-[90px] lg:top-[90px] rounded-2xl right-10 lg:right-10 w-80 bg-white/80 shadow-lg p-4 z-50"
                                 >
                                     <ul className="text-sm space-y-5">
                                         {/* My Profile */}
@@ -231,18 +231,18 @@ const Dashboard = () => {
                                         </li>
 
                                         {/* Support */}
-                                        <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
+                                        {/* <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
                                             <Phone size={18} />
                                             <span className="flex-1">Support</span>
                                             <ChevronRight size={18} />
-                                        </li>
+                                        </li> */}
 
                                         {/* Privacy Policy */}
-                                        <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
+                                        {/* <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
                                             <Info size={18} />
                                             <span className="flex-1">Privacy Policy</span>
                                             <ChevronRight size={18} />
-                                        </li>
+                                        </li> */}
 
                                         {/* Log out */}
                                         <li
