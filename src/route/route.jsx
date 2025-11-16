@@ -392,7 +392,7 @@ const router = createBrowserRouter([
                 element: <ReportsTable></ReportsTable>
             },
             {
-                path: 'reports/user-reports',
+                path: 'reports/user-reports/:id',
                 element: <ReportsDashboard></ReportsDashboard>
             },
             {
