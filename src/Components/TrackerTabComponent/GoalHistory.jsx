@@ -7,10 +7,12 @@ import { AiOutlineDelete } from 'react-icons/ai';
 const GoalHistory = ({ data }) => {
   // Use data passed from parent (expected to be an array). No local dummy data.
   const goalHistory = Array.isArray(data) ? data : [];
+  console.log(goalHistory)
 
   // Track which goal is expanded for answering (by id)
   const [activeGoalId, setActiveGoalId] = useState(null)
   const [isSaving, setIsSaving] = useState(false)
+  const queryClient = useQueryClient()
 
   // Function to handle clicking on a goal history item (toggle inline answer UI)
   const handleGoalClick = (goal) => {
@@ -24,21 +26,35 @@ const GoalHistory = ({ data }) => {
     if (!goal) return
     setIsSaving(true)
     try {
-      // Post the user's answer for this goal. Adjust endpoint/payload as backend expects.
-      // await axiosApi.post('/products/api/v1/goal-response', {
-      //   goal_id: goal.id,
-      //   answer: answerBool,
-      // })
-      console.log(goal.id, answerBool)
-      toast.success('Response saved')
+      let res
+      if (answerBool) {
+        // Mark goal as complete
+        res = await axiosApi.patch(`/products/api/v1/goals/${goal.id}`)
+      } else {
+        // Rollback goal
+        res = await axiosApi.patch(`/products/api/v1/goals-rollback/${goal.id}`)
+      }
+
+      if (res && res.status >= 200 && res.status < 300) {
+        const successMsg = res?.data?.message || res?.data?.detail || 'Response saved'
+        toast.success(successMsg)
+        // Refresh goal data and trackers
+        queryClient.invalidateQueries(['goalData'])
+        queryClient.invalidateQueries(['trackersAllData'])
+      } else {
+        const errMsg = res?.data?.message || res?.data?.detail || 'Failed to save response'
+        toast.error(errMsg)
+      }
     } catch (err) {
       console.error('Failed to save goal response', err)
-      toast.error('Failed to save response')
+      const errMsg = err?.response?.data?.message || err?.response?.data?.detail || err.message || 'Failed to save response'
+      toast.error(errMsg)
     } finally {
       setIsSaving(false)
       closeInline()
     }
   }
+
 
   // Function to get status badge color
   const getStatusBadgeClass = (status) => {
@@ -55,7 +71,6 @@ const GoalHistory = ({ data }) => {
   };
 
   // Handler for delete click (stops propagation so it doesn't toggle the card)
-  const queryClient = useQueryClient()
   const handleDeleteClick = (e, id) => {
     e.stopPropagation()
     console.log('Delete goal id:', id)
@@ -101,8 +116,26 @@ const GoalHistory = ({ data }) => {
                 onClick={() => handleGoalClick(goal)}
                 className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors duration-200"
               >
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+                  <div className="flex items-center gap-3">
+                    {/* Show progress percentage if available */}
+                    {typeof goal.get_progress_percentage !== 'undefined' && (
+                      <span className="text-sm font-medium text-gray-700">{Number(goal.get_progress_percentage).toFixed(1)}%</span>
+                    )}
+                  </div>
+                </div>
+
                 <p className="text-sm text-gray-600 mb-3">From: {startDate} {endDate ? `to ${endDate}` : ''}</p>
+                {/* Progress bar */}
+                {typeof goal.get_progress_percentage !== 'undefined' && (
+                  <div className="w-full bg-gray-100 rounded-full h-2 mb-3">
+                    <div
+                      className="bg-amber-500 h-2 rounded-full"
+                      style={{ width: `${Math.max(0, Math.min(100, Number(goal.get_progress_percentage) || 0))}%` }}
+                    />
+                  </div>
+                )}
 
                 <div className="flex justify-between items-center">
                   <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadgeClass(status)}`}>
