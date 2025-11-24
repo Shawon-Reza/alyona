@@ -117,7 +117,7 @@ const ChatPage = () => {
                         </div>
 
                         {/* Reports */}
-                        <div className="-mt-5">
+                        <div className="-mt-5 max-h-[]">
                             <MonthlySkinReport />
                         </div>
                     </div>

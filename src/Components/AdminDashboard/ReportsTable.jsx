@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, ArrowUp, ArrowDown, ArrowUpDown, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -6,6 +6,9 @@ import axiosApi from '@/api/axiosApi';
 
 const ReportsTable = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    // Local input state to avoid rapid re-renders on every keystroke
+    const [inputValue, setInputValue] = useState('');
+    const inputRef = useRef(null);
     const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
 
     // Keep hooks in the same order on every render: place navigation hook here
@@ -36,6 +39,14 @@ const ReportsTable = () => {
             return Array.isArray(res.data) ? res.data : [];
         }
     });
+
+    // Debounce updating the actual searchTerm used for queries
+    useEffect(() => {
+        const t = setTimeout(() => {
+            setSearchTerm(inputValue);
+        }, 300);
+        return () => clearTimeout(t);
+    }, [inputValue]);
 
     console.log(data)
 
@@ -79,11 +90,12 @@ const ReportsTable = () => {
                         {/* Search */}
                         <div className="relative w-full sm:w-64">
                             <input
+                                ref={inputRef}
                                 type="text"
                                 placeholder="Search"
                                 className="input input-bordered bg-white pl-10 w-full rounded-lg shadow-md"
-                                value={searchTerm}
-                                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                                value={inputValue}
+                                onChange={(e) => { setInputValue(e.target.value); }}
                             />
                             <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                         </div>

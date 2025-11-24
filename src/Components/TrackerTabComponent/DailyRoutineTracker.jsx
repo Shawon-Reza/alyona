@@ -62,7 +62,10 @@ const DailyRoutineTracker = () => {
     // Determine the category slug from the path (e.g. 'skincare', 'add-on-skincare')
     const categorySlug = location.pathname.split("/")[2] || "skincare"
 
-    const defaultRoutine = routineMap[mode] || routineMap.day;
+    // For all categories except 'skincare', force the UI to use 'day' mode
+    const effectiveMode = categorySlug === 'skincare' ? mode : 'day';
+
+    const defaultRoutine = routineMap[effectiveMode] || routineMap.day;
     const { title, icon } = defaultRoutine;
 
     const [routineDone, setRoutineDone] = useState(null);
@@ -90,7 +93,7 @@ const DailyRoutineTracker = () => {
     // selection keyed by product id or fallback key — default selects day/night appropriate products
     const [selectedProducts, setSelectedProducts] = useState(() => computeInitialSel(
         defaultRoutine.products.map(p => ({ id: p.key, daily: p.daily || 'Both' })),
-        mode
+        effectiveMode
     ))
     const [isSaving, setIsSaving] = useState(false)
 
@@ -153,8 +156,8 @@ const DailyRoutineTracker = () => {
     }
 
     useEffect(() => {
-        console.log("Current mode:", mode);
-    }, [mode]);
+        console.log("Current mode:", effectiveMode);
+    }, [effectiveMode]);
 
     // useLocation is used above to derive categorySlug
 
@@ -194,7 +197,7 @@ const DailyRoutineTracker = () => {
             }))
             setLocalProducts(mapped)
             // initialize selection: select products that match the current mode (day/night)
-            const initialSel = computeInitialSel(mapped, mode)
+            const initialSel = computeInitialSel(mapped, effectiveMode)
             setSelectedProducts(initialSel)
         }
     }, [data, categorySlug])
@@ -231,10 +234,10 @@ const DailyRoutineTracker = () => {
                     {["yes", "no"].map((value) => {
                         const isSelected = routineDone === value;
 
-                        // Determine background color
+                        // Determine background color (use effectiveMode so non-skincare pages stay in 'day')
                         const bgClass =
                             isSelected && value === "yes"
-                                ? mode === "night"
+                                ? effectiveMode === "night"
                                     ? "bg-[#3F53A0] text-white"
                                     : "bg-[#E6D1C0] text-[#181818]"
                                 : isSelected && value === "no"
@@ -243,7 +246,7 @@ const DailyRoutineTracker = () => {
 
                         const tickBgClass =
                             isSelected
-                                ? mode === "night" && value === "yes"
+                                ? effectiveMode === "night" && value === "yes"
                                     ? "bg-[#3F53A0] text-white"
                                     : "bg-[#8C6D56] text-white"
                                 : "border border-[#8C6D56] text-[#8C6D56]";
@@ -273,7 +276,7 @@ const DailyRoutineTracker = () => {
                     {(() => {
                         const filteredProducts = localProducts.filter(p => {
                             const daily = String((p.daily || 'Both')).toUpperCase()
-                            if (mode === 'day') return daily === 'AM' || daily === 'BOTH'
+                            if (effectiveMode === 'day') return daily === 'AM' || daily === 'BOTH'
                             return daily === 'PM' || daily === 'BOTH'
                         })
                         return filteredProducts.map((product) => (

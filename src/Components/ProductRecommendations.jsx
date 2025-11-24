@@ -12,7 +12,7 @@ const ProductRecommendations = ({ data }) => {
 
     const toPercent = (val) => {
         const n = Number(val) || 0
-        return `${Math.round(n * 100)}%`
+        return `${Math.round(n)}%`
     }
 
     return (
