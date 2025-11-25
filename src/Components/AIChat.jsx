@@ -23,6 +23,7 @@ const AIChat = () => {
         queryFn: () => axiosApi.get('/chatbot/api/v1/ai-conversation').then(res => res.data),
         staleTime: 30 * 1000,
     });
+    console.log(history)
 
     // no longer need currentUser for placement — question/images always on right
 
@@ -311,6 +312,48 @@ const AIChat = () => {
         }
     };
 
+    // Minimal, safe markdown -> HTML renderer (supports bold, italic, inline code, code blocks, links, and line breaks)
+    const escapeHtml = (str) => String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    const markdownToHtml = (md) => {
+        if (md == null) return '';
+        let s = String(md);
+        // Escape HTML first
+        s = escapeHtml(s);
+
+        // Code blocks ``` ``` -> <pre><code>
+        s = s.replace(/```([\s\S]*?)```/g, (_, code) => {
+            return `<pre class="rounded bg-gray-900 text-white p-3 overflow-auto"><code>${code.replace(/&/g, '&amp;')}</code></pre>`;
+        });
+
+        // Inline code `code`
+        s = s.replace(/`([^`]+)`/g, (_, code) => `<code class="bg-gray-100 px-1 rounded">${code}</code>`);
+
+        // Links [text](url)
+        s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
+            const safeUrl = escapeHtml(url);
+            return `<a href="${safeUrl}" target="_blank" rel="noreferrer" class="underline text-blue-600">${text}</a>`;
+        });
+
+        // Bold **text** or __text__
+        s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+
+        // Italic *text* or _text_
+        s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+        s = s.replace(/_([^_]+)_/g, '<em>$1</em>');
+
+        // Convert two or more newlines into paragraph breaks
+        s = s.split(/\n\n+/).map(p => p.replace(/\n/g, '<br/>')).join('<p class="mb-2">') + (s.includes('\n\n') ? '</p>' : '');
+
+        return s;
+    };
+
     const renderAnalysisCard = (obj) => {
         if (!obj) return null;
         const analysis = obj.analysis_report || {};
@@ -427,7 +470,8 @@ const AIChat = () => {
             if (parsed && (parsed.analysis_report || parsed.tips || parsed.recommended_ingredients)) {
                 return renderAnalysisCard(parsed);
             }
-            return resp;
+            // render markdown-aware HTML
+            return <div className="prose max-w-none text-sm" dangerouslySetInnerHTML={{ __html: markdownToHtml(resp) }} />;
         }
 
         // If it's already an object and looks like analysis result, render the card
@@ -437,7 +481,7 @@ const AIChat = () => {
             }
             if (Array.isArray(resp)) {
                 return resp.map((r, i) => (
-                    <div key={i}>{typeof r === 'string' ? r : JSON.stringify(r)}</div>
+                    <div key={i}>{typeof r === 'string' ? <div dangerouslySetInnerHTML={{ __html: markdownToHtml(r) }} /> : JSON.stringify(r)}</div>
                 ));
             }
             // fallback: pretty-print object
@@ -574,7 +618,7 @@ const AIChat = () => {
                                                             className="w-28 h-20 object-cover rounded-md border cursor-pointer"
                                                             onClick={() => setLightboxSrc(u)}
                                                         />
-                                                        
+
                                                     ))
 
                                                 }
@@ -600,7 +644,7 @@ const AIChat = () => {
                     })
                 )}
                 {/* If we have a pending (just-sent) message, show it plus AI typing indicator */}
-                
+
             </div>
 
             <div className="bg-white p-3 rounded-md shadow-sm">

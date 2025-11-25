@@ -5,6 +5,10 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axiosApi from '@/api/axiosApi';
 import { FaDownload } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import TextEditor from './TextEditor';
+
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 
 const IMG_BASE = import.meta.env.VITE_IMG_BASE || 'http://10.10.13.80:8005';
@@ -13,6 +17,7 @@ const ReportsDashboard = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
+     const [content, setContent] = useState<string>("");
 
     // Create modal state and form (hooks must run unconditionally and before early returns)
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -36,13 +41,13 @@ const ReportsDashboard = () => {
     const handleCreateReport = () => {
         setShowCreateModal(true);
     };
-    
+
     const handleCreateChange = (e) => {
         const { name, value } = e.target;
         setCreateForm((s) => ({ ...s, [name]: value }));
     };
 
-    
+
 
     const handleConfirmCreate = async () => {
         // Prepare payload, ensure numeric month/year
@@ -66,6 +71,7 @@ const ReportsDashboard = () => {
                 params: {
                     month: payload.month,
                     year: payload.year,
+                    contents: payload.notes || ''
                 }
             });
             console.log('Report generation response:', res.data);
@@ -83,12 +89,34 @@ const ReportsDashboard = () => {
     };
     const list = Array.isArray(data) ? data : [];
 
+    const handleConfirmCreateForUser = async (reportId) => {
+        console.log("report send",reportId)
+        if (!reportId) {
+            console.warn('No report id provided to handleConfirmCreateForUser');
+            return;
+        }
+
+        try {
+            // Call the API endpoint to mark as sent
+            const res = await axiosApi.patch(`/mentor/api/v1/report-sent/${reportId}/`);
+            console.log('report-sent response', res?.data);
+            toast.success('Report send status updated');
+            // refresh list
+            queryClient.invalidateQueries(['monthlySkinReports']);
+        } catch (e) {
+            console.error('Failed to mark report as sent', e);
+            toast.error('Failed to update report status');
+        }
+    }
+
+
+
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     return (
         <div className="min-h-screen">
             <div className="">
-                
+
                 {/* Page Title */}
                 <h1 className="text-2xl font-semibold text-gray-800 mb-6 mt-2">Reports</h1>
 
@@ -107,10 +135,11 @@ const ReportsDashboard = () => {
                     </div>
                 </div>
 
+
                 {/* Create Report Modal */}
                 {showCreateModal && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                        <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+                        <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[calc(100vh-200px)] overflow-auto p-6">
                             <h3 className="text-lg font-semibold mb-4">Create New Report</h3>
 
                             <div className="space-y-3">
@@ -130,10 +159,23 @@ const ReportsDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm text-gray-600">Notes (optional)</label>
-                                    <textarea name="notes" value={createForm.notes} onChange={handleCreateChange} className="textarea textarea-bordered w-full mt-1" rows={3} />
+                                    <label className="block text-sm text-gray-600">Notes</label>
+                                    <div className="mt-2">
+                                        <TextEditor
+                                            initialContent={createForm.notes}
+                                            onChange={(html) => {
+                                                const next = { ...createForm, notes: html };
+                                                setCreateForm(next);
+                                                console.log('TextEditor HTML:', html);
+                                                console.log('CreateForm updated:', next);
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
+
+
+                            {/* removed duplicate TextEditor; notes editor is above in the form */}
 
                             <div className="mt-6 flex justify-end gap-3">
                                 <button onClick={() => setShowCreateModal(false)} className="btn btn-ghost">Cancel</button>
@@ -180,7 +222,8 @@ const ReportsDashboard = () => {
 
                                 return (
                                     <div key={keyId} className="w-full flex justify-between items-center px-4 py-3 bg-[#FFFFFF] rounded-md border border-base-100 shadow-sm">
-                                        <span onClick={() => { navigate(`report-details/${(rpt && rpt.id) || item.id || ''}`); }} className="text-sm font-medium text-gray-800 cursor-pointer w-1/2">{label || 'Report'}</span>
+
+                                        <span className="text-sm font-medium text-gray-800 cursor-pointer w-1/2">{label || 'Report'}</span>
                                         <div className="flex space-x-3 text-base items-center">
                                             {downloadUrl ? (
                                                 <a href={downloadUrl} target="_blank" rel="noreferrer" className="text-sm text-gray-700 flex items-center gap-2">
@@ -191,6 +234,12 @@ const ReportsDashboard = () => {
                                                 <span className="text-sm text-gray-400">No file</span>
                                             )}
                                         </div>
+                                        <button
+                                            onClick={() => handleConfirmCreateForUser(keyId)}
+                                            className={`cursor-pointer rounded-lg p-1 px-2 ${rpt?.sent_to_user ? 'bg-green-500 text-white' : 'bg-[#AD8E73] text-white'}`}
+                                        >
+                                            {rpt?.sent_to_user ? 'Sent' : 'Not Sent'}
+                                        </button>
                                     </div>
                                 );
                             })

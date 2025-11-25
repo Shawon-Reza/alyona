@@ -12,7 +12,7 @@ const MonthlySkinReport = () => {
     const [userId, setUserId] = useState(null);
 
     // Decode token once and set userId if available
-    useEffect(() => {
+    useEffect(() => {             
         const token = localStorage.getItem('token');
         if (!token) return;
 
