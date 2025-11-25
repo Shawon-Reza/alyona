@@ -7,8 +7,7 @@ import { FaDownload } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import TextEditor from './TextEditor';
 
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+
 
 
 const IMG_BASE = import.meta.env.VITE_IMG_BASE || 'http://10.10.13.80:8005';
@@ -17,7 +16,6 @@ const ReportsDashboard = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-     const [content, setContent] = useState<string>("");
 
     // Create modal state and form (hooks must run unconditionally and before early returns)
     const [showCreateModal, setShowCreateModal] = useState(false);
