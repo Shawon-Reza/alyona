@@ -62,7 +62,7 @@ const UserDashboardContent = () => {
                         <AboutMySkin data={data?.dashboard_average} />
 
                         {/* Goal Progress */}
-                        <GoalProgress /> 
+                        <GoalProgress data={data?.avg_usage} />
                     </div>
 
                     {/* Routine & Data Set */}
@@ -71,7 +71,7 @@ const UserDashboardContent = () => {
                         <RoutineCompletion />
 
                         {/* Data Set */}
-                        <DataSetSummary  data={data?.dashboard_average} />
+                        <DataSetSummary data={data?.product_usage_consistency} />
                     </div>
                 </div>
             </div>

@@ -8,58 +8,31 @@ const ChatWithUser = () => {
     const [showMobileRecommendations, setShowMobileRecommendations] = useState(false)
 
     return (
-        <div className='max-h-[calc(100vh-100px)]'>
+        <div className='max-h-[calc(100vh-200px)]'>
             {/* Chat Panel Header */}
             <div className='bg-white rounded-2xl my-4'>
                 <MentorChatPalenHeader></MentorChatPalenHeader>
             </div>
-            
-            <div className='flex justify-between gap-5'>
-                {/* Leftside Content - Hidden on mobile, visible on desktop */}
-                <div className='hidden md:block w-[30%] xl:w-[20%] h-scr'>
-                    <RecomendationsForUser></RecomendationsForUser>
-                    <div className='mt-5 flex flex-col gap-5'>
-                        <div className='bg-[#EDDBCB] p-4 rounded-xl font-bold flex items-center gap-3 cursor-pointer '>
-                            <span className='p-2 bg-white rounded-full'>
-                                <ShoppingBag />
-                            </span>
-                            Recommended products
-                        </div>
-                        <div className='bg-[#EDDBCB] p-4 rounded-xl font-bold flex items-center gap-3 cursor-pointer' >
-                            <span className='p-2 bg-white rounded-full'>
-                                <Paperclip />
-                            </span>
-                            Attach a document
-                        </div>
-                    </div>
-                </div>
+
+            <div className='flex justify-between gap-5 min-h-[calc(100vh-160px)] h-full'>
+
 
                 {/* Rightside Content */}
-                <div className={`w-full md:w-[70%] xl:w-[80%] bg-white rounded-xl h-[calc(100vh-0px)] transition-opacity duration-300 ${showMobileRecommendations ? 'md:opacity-100 opacity-50' : 'opacity-100'} max-h-[calc(100vh-215px)]`}>
-                    {/* Mobile AI Recommendations Button - Only visible on mobile */}
-                    <div className='md:hidden p-4 border-b border-gray-100'>
-                        <button 
-                            onClick={() => setShowMobileRecommendations(true)}
-                            className='w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white p-3 rounded-lg font-semibold flex items-center justify-center gap-2 hover:from-purple-600 hover:to-blue-600 transition-all duration-200 cursor-pointer'
-                        >
-                            <Sparkles size={20} />
-                            AI Recommendations
-                        </button>
-                    </div>
-                    
-                    <ChatPanel></ChatPanel>
-                </div>
+
+
+                <ChatPanel></ChatPanel>
+
             </div>
 
             {/* Mobile Recommendations Popup - Only visible on mobile */}
             {showMobileRecommendations && (
                 <div className='md:hidden fixed inset-0 z-50 flex'>
                     {/* Backdrop - Transparent to show background content */}
-                    <div 
+                    <div
                         className='absolute inset-0 bg-transparent'
                         onClick={() => setShowMobileRecommendations(false)}
                     ></div>
-                    
+
                     {/* Popup Content */}
                     <div className='relative bg-white w-80 h-full overflow-y-auto shadow-2xl animate-slide-in-left border-r border-gray-200'>
                         {/* Popup Header */}
@@ -68,19 +41,19 @@ const ChatWithUser = () => {
                                 <Sparkles size={20} className='text-purple-500' />
                                 AI Recommendations
                             </h2>
-                            <button 
+                            <button
                                 onClick={() => setShowMobileRecommendations(false)}
                                 className='p-2 hover:bg-gray-100 rounded-full transition-colors'
                             >
                                 <X size={20} className='text-gray-600' />
                             </button>
                         </div>
-                        
+
                         {/* Popup Body */}
                         <div className='p-4'>
                             <RecomendationsForUser></RecomendationsForUser>
                             <div className='mt-5 flex flex-col gap-5'>
-                                <div 
+                                <div
                                     className='bg-[#EDDBCB] p-4 rounded-xl font-bold flex items-center gap-3 cursor-pointer hover:bg-[#e5d1bb] transition-colors'
                                     onClick={() => {
                                         // Handle recommended products action
@@ -92,7 +65,7 @@ const ChatWithUser = () => {
                                     </span>
                                     Recommended products
                                 </div>
-                                <div 
+                                <div
                                     className='bg-[#EDDBCB] p-4 rounded-xl font-bold flex items-center gap-3 cursor-pointer hover:bg-[#e5d1bb] transition-colors'
                                     onClick={() => {
                                         // Handle attach document action

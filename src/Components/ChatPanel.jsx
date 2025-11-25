@@ -42,7 +42,7 @@ const ChatPanel = () => {
         socketRef.current = connectWebSocket(roomId, (newMsg) => {
           const nm = normalizeMessage(newMsg);
           addUniqueMessages(nm);
-        }, () => {});
+        }, () => { });
       } catch (err) {
         console.error("Error initializing chat:", err);
       }
@@ -103,7 +103,6 @@ const ChatPanel = () => {
     }
 
     try {
-      toast.info('Uploading file(s)...');
       const res = await axiosApi.post(`/messaging/api/v1/message/${roomId}`, form);
       if (res && res.data) {
         const returned = Array.isArray(res.data) ? res.data.map(normalizeMessage) : normalizeMessage(res.data);
@@ -199,7 +198,7 @@ const ChatPanel = () => {
   }
 
   return (
-    <>
+    < div className="min-h-[calc(100vh-200px)] w-full">
       {previewSrc && (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center" onClick={() => setPreviewSrc(null)}>
           <div className="relative max-w-full max-h-full p-4" onClick={(e) => e.stopPropagation()}>
@@ -212,54 +211,54 @@ const ChatPanel = () => {
       )}
 
       <div className="flex flex-col h-full w-full rounded-2xl overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-gray-50">
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex flex-col gap-1 max-w-[80%] ${msg.sender == userID ? "items-end ml-auto" : "items-start"}`}
-          >
-            <div className={`px-4 py-2 rounded-xl text-sm shadow-sm ${msg.sender == userID ? "bg-[#695CFF] text-white" : "bg-white text-gray-800"}`}>
-              {renderMessageContent(msg)}
+        <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-gray-50 max-h-[calc(100vh-280px)]">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex flex-col gap-1 max-w-[80%] ${msg.sender == userID ? "items-end ml-auto" : "items-start"}`}
+            >
+              <div className={`px-4 py-2 rounded-xl text-sm shadow-sm ${msg.sender == userID ? "bg-[#695CFF] text-white" : "bg-white text-gray-800"}`}>
+                {renderMessageContent(msg)}
+              </div>
+              <span className={`text-xs text-gray-400 ${msg.sender == userID ? "pr-1 text-right" : "pl-1"}`}>
+                {msg.created_at?.slice(11, 16)}
+              </span>
             </div>
-            <span className={`text-xs text-gray-400 ${msg.sender == userID ? "pr-1 text-right" : "pl-1"}`}>
-              {msg.created_at?.slice(11, 16)}
-            </span>
-          </div>
-        ))}
-        <div ref={scrollRef} />
-      </div>
+          ))}
+          <div ref={scrollRef} />
+        </div>
 
-      <div className="w-full border-t border-gray-200 bg-white/50 backdrop-blur-[100px] px-4 py-3">
-        <div className="flex items-center gap-2 pb-2">
-          <div className="flex items-center justify-between w-full bg-white rounded-lg px-4 py-2 shadow-sm">
-            <input
-              type="text"
-              placeholder="Write a message..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
-              className="flex-1 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"
-            />
+        <div className="w-full border-t border-gray-200 bg-white/50 backdrop-blur-[100px] px-4 py-3">
+          <div className="flex items-center gap-2 pb-2">
+            <div className="flex items-center justify-between w-full bg-white rounded-lg px-4 py-2 shadow-sm">
+              <input
+                type="text"
+                placeholder="Write a message..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                className="flex-1 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"
+              />
 
-            <input ref={fileInputRef} type="file" accept="image/*,application/pdf" multiple onChange={handleFileChange} className="hidden" />
+              <input ref={fileInputRef} type="file" accept="image/*,application/pdf" multiple onChange={handleFileChange} className="hidden" />
 
-            <button type="button" onClick={handleAttachClick} className="p-1.5 rounded-full hover:bg-gray-100 transition">
-              <Paperclip size={18} className="text-gray-500" />
+              <button type="button" onClick={handleAttachClick} className="p-1.5 rounded-full hover:bg-gray-100 transition">
+                <Paperclip size={18} className="text-gray-500" />
+              </button>
+            </div>
+
+            <button onClick={handleSend} className="w-12 h-10 flex items-center justify-center bg-[#0D0A44] text-white rounded-lg hover:opacity-90 transition">
+              <Send size={18} />
             </button>
           </div>
-
-          <button onClick={handleSend} className="w-12 h-10 flex items-center justify-center bg-[#0D0A44] text-white rounded-lg hover:opacity-90 transition">
-            <Send size={18} />
-          </button>
         </div>
       </div>
     </div>
-    </>
   );
 };
 
