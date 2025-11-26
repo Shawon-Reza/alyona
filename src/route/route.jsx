@@ -71,6 +71,8 @@ import PrivateRoute from "./PrivateRoute";
 import PrivetAdminRoute from "./PrivetAdminRoute";
 import DownloadPDFButton from "@/Components/PdfReport/DownloadPDFButton";
 import AIChat from "@/Components/AIChat";
+import MissedQuiz from "@/Pages/MissedQuiz";
+import Extraquiz from "@/Pages/Extraquiz";
 
 const router = createBrowserRouter([
     {
@@ -124,6 +126,14 @@ const router = createBrowserRouter([
     {
         path: "/maindashboard",
         element: <PrivateRoute><MainDashboard></MainDashboard></PrivateRoute>
+    },
+    {
+        path: "/missedquiz",
+        element: <PrivateRoute><MissedQuiz></MissedQuiz></PrivateRoute>
+    },
+    {
+        path: "/extraquiz/:id",
+        element: <PrivateRoute><Extraquiz></Extraquiz></PrivateRoute>
     },
     // Dashboard or Home route
     {

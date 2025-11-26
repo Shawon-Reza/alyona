@@ -48,10 +48,16 @@ const ReportsDashboard = () => {
 
 
     const handleConfirmCreate = async () => {
+        // Validate required fields
+        if (!createForm.month || !createForm.year) {
+            toast.error('Please select both month and year before confirming.');
+            return;
+        }
+
         // Prepare payload, ensure numeric month/year
         const payload = {
-            month: createForm.month ? Number(createForm.month) : undefined,
-            year: createForm.year ? Number(createForm.year) : undefined,
+            month: Number(createForm.month),
+            year: Number(createForm.year),
             notes: createForm.notes || ''
         };
 
@@ -88,7 +94,7 @@ const ReportsDashboard = () => {
     const list = Array.isArray(data) ? data : [];
 
     const handleConfirmCreateForUser = async (reportId) => {
-        console.log("report send",reportId)
+        console.log("report send", reportId)
         if (!reportId) {
             console.warn('No report id provided to handleConfirmCreateForUser');
             return;
@@ -143,7 +149,13 @@ const ReportsDashboard = () => {
                             <div className="space-y-3">
                                 <div>
                                     <label className="block text-sm text-gray-600">Month</label>
-                                    <select name="month" value={createForm.month} onChange={handleCreateChange} className="input input-bordered w-full mt-1 ">
+                                    <select
+                                        name="month"
+                                        value={createForm.month}
+                                        onChange={handleCreateChange}
+                                        required
+                                        className="input input-bordered w-full mt-1
+                                        ">
                                         <option value="">Select month</option>
                                         {monthNames.map((mn, i) => (
                                             <option key={i} value={i + 1}>{mn}</option>
@@ -177,7 +189,11 @@ const ReportsDashboard = () => {
 
                             <div className="mt-6 flex justify-end gap-3">
                                 <button onClick={() => setShowCreateModal(false)} className="btn btn-ghost">Cancel</button>
-                                <button onClick={handleConfirmCreate} disabled={isCreating} className="btn btn-primary">
+                                <button
+                                    onClick={handleConfirmCreate}
+                                    disabled={isCreating || !createForm.month || !createForm.year}
+                                    className="btn btn-primary"
+                                >
                                     {isCreating ? 'Creating...' : 'Confirm'}
                                 </button>
                             </div>
@@ -224,7 +240,7 @@ const ReportsDashboard = () => {
                                         <span className="text-sm font-medium text-gray-800 cursor-pointer w-1/2">{label || 'Report'}</span>
                                         <div className="flex space-x-3 text-base items-center">
                                             {downloadUrl ? (
-                                                <a href={downloadUrl} target="_blank" rel="noreferrer" className="text-sm text-gray-700 flex items-center gap-2">
+                                                <a href={downloadUrl} target="_blank" rel="noreferrer" className="text-sm  text-gray-700 flex items-center gap-2">
                                                     <FaDownload />
                                                     <span className="hidden sm:inline">Download</span>
                                                 </a>

@@ -315,10 +315,11 @@ const ProductDetailPage = () => {
                 {/* Left Side (Text Content) */}
                 <div className="sm:col-span-3 flex-1 space-y-4">
                     <h1 className="text-xl sm:text-[28px] font-semibold">{data?.productName}</h1>
-                    <p className="text-base sm:text-lg font-medium">32.00 €</p>
+                    {/* <p className="text-base sm:text-lg font-medium">32.00 €</p> */}
 
                     {/* Sizes */}
                     <div>
+                        <h2 className='text-md sm:text-[22px] font-semibold'>Price range: {data?.price}</h2>
                         <h4 className="text-lg sm:text-[22px] font-semibold mb-2">Available size</h4>
                         <div className="flex gap-2 flex-wrap">
                             {

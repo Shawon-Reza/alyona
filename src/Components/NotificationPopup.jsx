@@ -1,28 +1,44 @@
 import axiosApi from '@/api/axiosApi';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MdDeleteOutline } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotifications }) => {
     const [activeTab, setActiveTab] = useState('all');
+    const navigate = useNavigate();
 
 
-    const handleClickOnNotification = (id) => {
-        console.log("Cliked notification:", id)
+    const handleClickOnNotification = (notification) => {
+        if (!notification) return;
+        console.log('Clicked notification:', notification.id);
+        const id = notification.id;
         // Make notification as read
         axiosApi.get(`/messaging/api/v1/notifications/${id}`)
             .then(res => {
-                console.log("Notification marked as read:", res.data);
-                // Optionally update local state to reflect the change
+                console.log('Notification marked as read:', res.data);
+                // Update local state to reflect the change
                 setNotifications((prev) =>
-                    prev.map((n) =>
-                        n.id === id ? { ...n, is_read: true } : n
-                    )
+                    prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
                 );
+                // For Reminder notifications, navigate accordingly
+                // Navigate based on category and target_url for Reminder notifications
+                if (notification.category === 'Reminder') {
+                    const target = notification.target_url;
+                    if (target) {
+                        // If target_url exists, go to extra quiz with that id
+                        navigate(`/extraquiz/${target}`);
+                    } else {
+                        // otherwise go to missed quiz page
+                        navigate('/missedquiz');
+                    }
+                    // close popup after navigation
+                    if (typeof onClose === 'function') onClose();
+                }
             })
             .catch(err => {
-                console.error("Error marking notification as read:", err);
+                console.error('Error marking notification as read:', err);
             });
 
     }
@@ -126,10 +142,9 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
 
                 {displayed.map((notification) => (
                     <div
-                        onClick={() => handleClickOnNotification(notification?.id)}
+                        onClick={() => handleClickOnNotification(notification)}
                         key={notification?.id}
-                        className={`cursor-pointer flex items-center justify-between p-3 border border-gray-200 rounded-lg ${!notification.is_read ? 'bg-gray-100' : 'bg-white'
-                            } hover:bg-gray-50 transition`}
+                        className={`cursor-pointer flex items-center justify-between p-3 border border-gray-200 rounded-lg ${!notification.is_read ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-50 transition`}
                     >
                         <div>
                             <p className="text-sm font-semibold">{notification?.category}</p>
