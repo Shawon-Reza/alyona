@@ -1,6 +1,6 @@
 import Navbar from '@/Components/Navbar'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axiosApi from '@/api/axiosApi';
 import { toast } from 'react-toastify';
@@ -9,6 +9,7 @@ const Extraquiz = () => {
     const { id } = useParams();
     const [answers, setAnswers] = useState({}); // question_id -> array of selected choice_ids
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['extraquiz', id],
@@ -62,19 +63,21 @@ const Extraquiz = () => {
             return;
         }
 
+        // Build payload in new format: { answers: [ { question_id, choices: [...] }, ... ] }
+        const payloadAnswers = Object.keys(answers).map((question_id) => ({
+            question_id,
+            choices: (answers[question_id] || []).filter(Boolean),
+        })).filter(item => Array.isArray(item.choices) && item.choices.length > 0);
+
         setIsSubmitting(true);
         try {
-            const res = await axiosApi.post(`/extra_quiz/api/v1/extra-quiz-answer/${id}`, { choices: selectedIds });
+            const res = await axiosApi.post(`/extra_quiz/api/v1/extra-quiz-answer/${id}`, { answers: payloadAnswers });
             console.log('Submit response:', res.data);
             toast.success('Answers submitted successfully');
-            // Clear selections after successful submit
-            if (Array.isArray(data?.questions)) {
-                const cleared = {};
-                data.questions.forEach((q) => { cleared[q.question_id] = []; });
-                setAnswers(cleared);
-            } else {
-                setAnswers({});
-            }
+            // Navigate back to missed quizzes after successful submit
+            navigate('/missedquiz');
+
+
         } catch (err) {
             console.error('Failed to submit answers:', err?.response?.data || err.message || err);
             toast.error('Failed to submit answers. Please try again.');

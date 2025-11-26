@@ -73,7 +73,7 @@ const MissedQuiz = () => {
 
                                     <div className="mt-4 flex items-center justify-between gap-3">
                                         <Link to={`/extraquiz/${quiz.quiz_id}`} className="btn btn-primary">Take Quiz</Link>
-                                        <div className="text-sm text-gray-500">Day to appear: {quiz.day_to_appear ?? '—'}</div>
+                                        <div className="text-sm text-gray-500">Day to appear: {quiz.unlocked_at ?? '—'}</div>
                                     </div>
                                 </div>
                             )
