@@ -19,6 +19,9 @@ const Extraquiz = () => {
         enabled: !!id,
     });
 
+
+
+
     // Prefill answers if API provided selected_choice per question
     useEffect(() => {
         if (!data || !Array.isArray(data.questions)) return;
@@ -131,7 +134,7 @@ const Extraquiz = () => {
 
                         <div className="space-y-5">
                             {Array.isArray(data.questions) && data.questions.map((q, idx) => (
-                                <div key={q.question_id} className="p-4 sm:p-5 border rounded-lg">
+                                <div key={q.question_id} className="p-4 sm:p-5 border border-gray-300 shadow-md rounded-lg">
                                     <div className="flex items-start justify-between">
                                         <div className="font-medium text-sm sm:text-base">{idx + 1}. {q.text}</div>
                                         <div className="text-xs text-gray-500">{(answers[q.question_id] || []).length} selected</div>
@@ -167,7 +170,7 @@ const Extraquiz = () => {
                     </div>
 
                     {/* Action bar: sticky on mobile */}
-                    <div className="border-t bg-white p-4 sm:p-5">
+                    <div className="border-t border-gray-300 bg-white p-4 sm:p-5">
                         <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
                             <div className="text-sm text-gray-600">{answeredCount} / {totalQuestions} answered</div>
                             <div className="flex items-center gap-3">
