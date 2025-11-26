@@ -16,6 +16,7 @@ import AuthNavIcon from '../assets/NavbarLogo.png';
 import { Bell, ChevronRight, Info, LogOut, Pencil, Phone } from 'lucide-react';
 import annaImg from '../assets/annaImg.png';
 import NotificationPopup from '../Components/NotificationPopup';
+import { connectWebSocketForNotifications, getnotifications } from '@/Chat/chatService';
 import useIsBelowMd from '../hooks/useIsBelowMd';
 import { BsLayoutSidebarInset } from 'react-icons/bs';
 import Swal from 'sweetalert2';
@@ -70,6 +71,9 @@ const Dashboard = () => {
     // NAVBAR ITEMS
     const isMobile = useIsMobile();
     const [isPopupOpen, setIsPopupOpen] = useState(false); // State to manage popup visibility
+    const [notifications, setNotifications] = useState([]);
+    const [unSeenCount, setUnSeenCout] = useState(null);
+    const socketRef = useRef(null);
     const [isNavMenuOpen, setIsNavMenuOpen] = useState(false); // State to manage nav menu popup
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State to manage mobile menu visibility
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false); // State to manage profile menu visibility
@@ -81,12 +85,26 @@ const Dashboard = () => {
     const { user, loading } = useCurrentUser();
 
     // Toggle notification popup visibility
+    const handleGetNotifications = async () => {
+        try {
+            const nots = await getnotifications();
+            setNotifications(nots || []);
+            setUnSeenCout(0);
+        } catch (err) {
+            console.error('Failed to fetch notifications:', err);
+        }
+    };
+
     const togglePopup = () => {
         if (isProfileMenuOpen) {
             setIsProfileMenuOpen(false); // Close profile menu when notification is opened
         }
         if (isMobileMenuOpen) {
             setIsMobileMenuOpen(false); // Close mobile menu when notification is opened
+        }
+        // Fetch notifications when opening popup
+        if (!isPopupOpen) {
+            handleGetNotifications();
         }
         setIsPopupOpen(!isPopupOpen); // Toggle notification popup visibility
     };
@@ -125,6 +143,30 @@ const Dashboard = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    // Connect WebSocket for real-time notifications
+    useEffect(() => {
+        (async () => {
+            try {
+                socketRef.current = connectWebSocketForNotifications((newNotification) => {
+                    if (newNotification?.type === 'count') {
+                        setUnSeenCout(newNotification?.unread_count);
+                    } else if (newNotification?.type === 'notification') {
+                        setNotifications((prev) => {
+                            const exists = prev.find((n) => n.id === newNotification.data.id);
+                            return exists ? prev : [newNotification.data, ...prev];
+                        });
+                    }
+                });
+            } catch (err) {
+                console.error('Error connecting notifications WS:', err);
+            }
+        })();
+
+        return () => {
+            socketRef.current?.close();
         };
     }, []);
 
@@ -197,8 +239,16 @@ const Dashboard = () => {
                     {/* Auth/Profile & Menu */}
                     <div className="flex items-center gap-3 sm:gap-4">
                         {/* Notification Icon */}
-                        <div className="p-2 rounded-full border border-base-300 cursor-pointer" onClick={togglePopup}>
+                        <div
+                            onClickCapture={handleGetNotifications}
+                            className=" relative p-2 rounded-full border border-base-300 cursor-pointer"
+                            onClick={togglePopup}
+                        >
                             <Bell />
+
+                            <div className={`${unSeenCount > 0 ? " absolute flex items-center justify-center -top-2 right-0 h-4 w-4 p-2 rounded-full bg-red-500 text-xs" : "hidden"}`}>
+                                {unSeenCount}
+                            </div>
                         </div>
 
                         <div className="relative">
@@ -284,7 +334,7 @@ const Dashboard = () => {
                     </div>
 
                     {/* Notification Popup */}
-                    <NotificationPopup isOpen={isPopupOpen} onClose={togglePopup} />
+                    <NotificationPopup isOpen={isPopupOpen} onClose={togglePopup} notifications={notifications} setNotifications={setNotifications} />
                 </div>
 
                 {/* Navigation Menu Popup */}
