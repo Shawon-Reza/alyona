@@ -176,8 +176,8 @@ const ProductDetailPage = () => {
                         <div className="relative w-full">
                             <div className="w-full h-[340px] sm:h-[465px]  rounded-lg overflow-hidden flex items-center justify-center ">
                                 <img
-                                    src={data?.image || dummyImage}
-                                    alt="Product"
+                                    src={data?.image }
+                                    alt="Product image"
                                     className="w-full h-full object-cover cursor-pointer hover:scale-103 rounded-lg transition duration-300"
                                 />
                             </div>

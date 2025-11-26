@@ -35,6 +35,18 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
                     }
                     // close popup after navigation
                     if (typeof onClose === 'function') onClose();
+
+                } else if (notification.category === 'Product') {
+                    const target = notification.target_url;
+                    if (target) {
+                        // If target_url exists, navigate to the product detail page
+                        navigate(`/library/product-detail/${target}`);
+                    } else {
+                        // otherwise go to the product library
+                        navigate('/library');
+                    }
+                    // close popup after navigation
+                    if (typeof onClose === 'function') onClose();
                 }
             })
             .catch(err => {
