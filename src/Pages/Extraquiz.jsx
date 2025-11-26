@@ -3,10 +3,12 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axiosApi from '@/api/axiosApi';
+import { toast } from 'react-toastify';
 
 const Extraquiz = () => {
     const { id } = useParams();
     const [answers, setAnswers] = useState({}); // question_id -> array of selected choice_ids
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['extraquiz', id],
@@ -47,11 +49,35 @@ const Extraquiz = () => {
         });
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         // Flatten selected choice ids into a single array
         const selectedIds = Object.values(answers).flat().filter(Boolean);
         console.log('Selected choice ids:', selectedIds);
-        // Later you can POST this array to the API
+
+        if (!selectedIds.length) {
+            toast.error('Please select at least one option before submitting.');
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const res = await axiosApi.post(`/extra_quiz/api/v1/extra-quiz-answer/${id}`, { choices: selectedIds });
+            console.log('Submit response:', res.data);
+            toast.success('Answers submitted successfully');
+            // Clear selections after successful submit
+            if (Array.isArray(data?.questions)) {
+                const cleared = {};
+                data.questions.forEach((q) => { cleared[q.question_id] = []; });
+                setAnswers(cleared);
+            } else {
+                setAnswers({});
+            }
+        } catch (err) {
+            console.error('Failed to submit answers:', err?.response?.data || err.message || err);
+            toast.error('Failed to submit answers. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     if (isLoading) return (
@@ -145,8 +171,8 @@ const Extraquiz = () => {
                         <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
                             <div className="text-sm text-gray-600">{answeredCount} / {totalQuestions} answered</div>
                             <div className="flex items-center gap-3">
-                                <button onClick={handleSubmit} className="btn btn-primary px-4 py-2">Submit Answers</button>
-                                <button onClick={() => { const selected = Object.values(answers).flat().filter(Boolean); alert(`Selected: ${selected.join(', ')}`); }} className="btn btn-ghost px-4 py-2">Show Selected</button>
+                                <button onClick={handleSubmit} disabled={isSubmitting} className="btn btn-primary px-4 py-2">{isSubmitting ? 'Submitting...' : 'Submit Answers'}</button>
+                                <button onClick={() => { const selected = Object.values(answers).flat().filter(Boolean); alert(`Selected: ${selected.join(', ')}`); }} disabled={isSubmitting} className="btn btn-ghost px-4 py-2">Show Selected</button>
                             </div>
                         </div>
                     </div>
@@ -156,8 +182,8 @@ const Extraquiz = () => {
             {/* Mobile sticky footer for actions */}
             <div className="fixed bottom-0 left-0 right-0 sm:hidden bg-white border-t p-3">
                 <div className="max-w-4xl mx-auto flex gap-3">
-                    <button onClick={handleSubmit} className="flex-1 btn btn-primary">Submit</button>
-                    <button onClick={() => { const selected = Object.values(answers).flat().filter(Boolean); alert(`Selected: ${selected.join(', ')}`); }} className="flex-1 btn btn-ghost">Show</button>
+                    <button onClick={handleSubmit} disabled={isSubmitting} className="flex-1 btn btn-primary">{isSubmitting ? 'Submitting...' : 'Submit'}</button>
+                    <button onClick={() => { const selected = Object.values(answers).flat().filter(Boolean); alert(`Selected: ${selected.join(', ')}`); }} disabled={isSubmitting} className="flex-1 btn btn-ghost">Show</button>
                 </div>
             </div>
         </div>
