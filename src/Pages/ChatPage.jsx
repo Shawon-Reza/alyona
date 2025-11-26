@@ -17,6 +17,7 @@ const ChatPage = () => {
     const navigate = useNavigate();
     const isMobile = useIsMobile();
     const [showOptions, setShowOptions] = useState(false);
+    const [aiEnabled, setAiEnabled] = useState(true);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#f9f0f0] to-[#f0f5ff] px-4 sm:px-6 py-6">
@@ -40,7 +41,12 @@ const ChatPage = () => {
                         </div>
                         <div className="flex items-center gap-2">
                             <label className="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" className="sr-only peer" defaultChecked />
+                                <input
+                                    type="checkbox"
+                                    className="sr-only peer"
+                                    checked={aiEnabled}
+                                    onChange={(e) => setAiEnabled(e.target.checked)}
+                                />
                                 <div className="w-10 h-4 bg-gray-200 rounded-full peer peer-checked:bg-purple-400" />
                                 <div className="absolute left-0.5 -top-0.5 w-5 h-5 bg-white rounded-full shadow peer-checked:translate-x-full transition-transform" />
                             </label>
@@ -87,19 +93,21 @@ const ChatPage = () => {
 
                             
                             {/* Ai Chat */}
-                            <button
-                                onClick={() => {
-                                    navigate('/chat/ai-chat');
-                                    setShowOptions((prev) => !prev)
-                                }}
-                                className="flex items-center justify-between bg-[#f7f9ff] px-4 py-3 rounded-xl shadow-sm hover:bg-[#eef3fd] cursor-pointer"
-                            >
-                                <div className="flex items-center gap-2 text-sm text-[#4F46E5] font-medium">
-                                    <IoChatbubbleEllipsesOutline size={16} />
-                                    <span>AI Chat</span>
-                                </div>
-                                <span className="text-2xl text-blue-600">›</span>
-                            </button>
+                            {aiEnabled && (
+                                <button
+                                    onClick={() => {
+                                        navigate('/chat/ai-chat');
+                                        setShowOptions((prev) => !prev)
+                                    }}
+                                    className="flex items-center justify-between bg-[#f7f9ff] px-4 py-3 rounded-xl shadow-sm hover:bg-[#eef3fd] cursor-pointer"
+                                >
+                                    <div className="flex items-center gap-2 text-sm text-[#4F46E5] font-medium">
+                                        <IoChatbubbleEllipsesOutline size={16} />
+                                        <span>AI Chat</span>
+                                    </div>
+                                    <span className="text-2xl text-blue-600">›</span>
+                                </button>
+                            )}
                         </div>
 
                         {/* Upcoming Meeting */}

@@ -414,7 +414,7 @@ const AIChat = () => {
                         {routine.daily_routine && (
                             <div className="mb-2">
                                 <div className="text-xs font-semibold">Daily</div>
-                                <ul className="list-decimal list-inside text-sm text-gray-700">
+                                <ul className="list-decimala list-inside text-sm text-gray-700">
                                     {routine.daily_routine.map((r, i) => <li key={i}>{r}</li>)}
                                 </ul>
                             </div>

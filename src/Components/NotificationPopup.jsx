@@ -36,6 +36,10 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
                     // close popup after navigation
                     if (typeof onClose === 'function') onClose();
 
+                } else if (notification.category === 'Mentor') {
+                    // For Mentor notifications, open the monthly report dashboard
+                    navigate('/dashboard/monthly-report');
+                    if (typeof onClose === 'function') onClose();
                 } else if (notification.category === 'Product') {
                     const target = notification.target_url;
                     if (target) {
