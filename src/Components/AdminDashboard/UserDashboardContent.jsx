@@ -68,7 +68,8 @@ const UserDashboardContent = () => {
                     {/* Routine & Data Set */}
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-10">
                         {/* Routine Completion */}
-                        <RoutineCompletion />
+                        <RoutineCompletion data1={data?.weekly_goal_tracking
+                        } data2={data?.weekly_product_completion} />
 
                         {/* Data Set */}
                         <DataSetSummary data={data?.product_usage_consistency} />
