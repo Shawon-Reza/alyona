@@ -1,20 +1,22 @@
+import axiosApi from '@/api/axiosApi';
 import React, { useState } from 'react';
 import { FaStar, FaRegStar } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
-const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} }) => {
+const ProductFeedback = ({ product = {}, onSubmit = () => { }, onSkip = () => { } }) => {
   // State for feedback
   const [starRating, setStarRating] = useState(0); // 1-5
-  const [textureChoice, setTextureChoice] = useState('Not sure');
-  const [packagingChoice, setPackagingChoice] = useState('Not sure');
-  const [skinFeelChoice, setSkinFeelChoice] = useState('Not sure');
+  const [textureChoice, setTextureChoice] = useState('Like');
+  const [packagingChoice, setPackagingChoice] = useState('Like');
+  const [skinFeelChoice, setSkinFeelChoice] = useState('Like');
   const [comment, setComment] = useState('');
 
   // Product data comes from `product` prop
   const productName = product?.productName || product?.name || 'Product';
-  const productProgress = product?.compatibility_score ? Math.round(product.compatibility_score) : (product?.percent ? parseInt(String(product.percent).replace('%','')) || 0 : 0);
+  const productProgress = product?.compatibility_score ? Math.round(product.compatibility_score) : (product?.percent ? parseInt(String(product.percent).replace('%', '')) || 0 : 0);
   const productProgressText = product?.progressText || 'Get cleaner';
 
-  
+
 
   // Handle comment change
   const handleCommentChange = (e) => {
@@ -31,18 +33,18 @@ const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} 
   };
 
   // Handle feedback submission
+  // Handle feedback submission
   const handleSubmitFeedback = async () => {
     console.log('=== SUBMITTING FEEDBACK ===');
 
     // Validate form
     if (!validateForm()) {
+      console.warn('Feedback form is invalid - submission blocked');
       return;
     }
 
-    // Prepare data in the requested shape (rating as numeric 1-5)
+    // Build payload
     const submissionData = {
-      product_id: product?.id,
-      productName: productName,
       rating: starRating,
       texture: textureChoice || 'Not sure',
       skin_feel: skinFeelChoice || 'Not sure',
@@ -50,54 +52,30 @@ const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} 
       description: comment || ''
     };
 
-    console.log('Feedback data to be sent (formatted):', submissionData);
-    console.log('Submitted data (JSON):', JSON.stringify(submissionData));
+    console.log('Feedback data (ready to submit):', submissionData);
+    console.log('Product being reviewed:', product);
 
     try {
-      // Simulate API call (replace with real API request if desired)
-      console.log('Calling feedback API...');
-
-      const mockResponse = {
-        status: 'success',
-        message: 'Feedback submitted successfully',
-        data: {
-          ...submissionData,
-          id: Math.random().toString(36).substr(2, 9),
-          submittedAt: new Date().toISOString()
-        }
-      };
-
-      console.log('API Response:', mockResponse);
-
-      // Call parent callback with submission data (if provided)
-      try {
-        onSubmit(submissionData);
-      } catch (e) {
-        console.warn('onSubmit handler threw:', e);
-      }
-
-      // Call parent callback with submission data (if provided)
-      try {
-        onSubmit(submissionData);
-      } catch (e) {
-        console.warn('onSubmit handler threw:', e);
-      }
-
-      // Show success message
-      alert('Thank you for your feedback!');
-
+      // Make API request
+      await axiosApi.post(`/products/api/v1/review/${product.id}`, submissionData);
+      toast.success('Feedback submitted successfully');
+      // Notify parent
+      onSubmit(submissionData);
       // Reset form
       setStarRating(0);
-      setTextureChoice('Not sure');
-      setPackagingChoice('Not sure');
-      setSkinFeelChoice('Not sure');
+      setTextureChoice('Like');
+      setPackagingChoice('Like');
+      setSkinFeelChoice('Like');
       setComment('');
-
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
-      alert('Error submitting feedback. Please try again.');
+    } catch (e) {
+      console.warn('Error during feedback submission:', e);
+      toast.error('Failed to submit feedback. Please try again later.');
     }
+
+
+
   };
+
 
   // Progress bar component
   const ProgressBar = ({ percentage, text }) => (
@@ -107,7 +85,7 @@ const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} 
         <span className="text-sm text-gray-500">{text}</span>
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2">
-        <div 
+        <div
           className="bg-green-500 h-2 rounded-full transition-all duration-300"
           style={{ width: `${percentage}%` }}
         ></div>
@@ -118,7 +96,7 @@ const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} 
   // Star rating component
   const StarRating = ({ value, onChange }) => (
     <div className="flex items-center">
-      {[1,2,3,4,5].map((n) => (
+      {[1, 2, 3, 4, 5].map((n) => (
         <button
           key={n}
           type="button"
@@ -133,7 +111,7 @@ const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} 
   );
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg h-screen">
+    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg ">
       {/* Header */}
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Give your feedback</h1>
 
@@ -164,9 +142,9 @@ const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">Texture:</label>
           <div className="flex items-center gap-4">
-            {['Like','Dislike','Not sure'].map(opt => (
+            {['Like', 'Dislike'].map(opt => (
               <label key={opt} className="inline-flex items-center gap-2">
-                <input type="radio" name="texture" value={opt} checked={textureChoice===opt} onChange={() => setTextureChoice(opt)} />
+                <input type="radio" name="texture" value={opt} checked={textureChoice === opt} onChange={() => setTextureChoice(opt)} />
                 <span className="text-sm">{opt}</span>
               </label>
             ))}
@@ -176,9 +154,9 @@ const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">Packaging:</label>
           <div className="flex items-center gap-4">
-            {['Like','Dislike','Not sure'].map(opt => (
+            {['Like', 'Dislike'].map(opt => (
               <label key={opt} className="inline-flex items-center gap-2">
-                <input type="radio" name="packaging" value={opt} checked={packagingChoice===opt} onChange={() => setPackagingChoice(opt)} />
+                <input type="radio" name="packaging" value={opt} checked={packagingChoice === opt} onChange={() => setPackagingChoice(opt)} />
                 <span className="text-sm">{opt}</span>
               </label>
             ))}
@@ -188,9 +166,9 @@ const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">Skin Feel:</label>
           <div className="flex items-center gap-4">
-            {['Like','Dislike','Not sure'].map(opt => (
+            {['Like', 'Dislike'].map(opt => (
               <label key={opt} className="inline-flex items-center gap-2">
-                <input type="radio" name="skinfeel" value={opt} checked={skinFeelChoice===opt} onChange={() => setSkinFeelChoice(opt)} />
+                <input type="radio" name="skinfeel" value={opt} checked={skinFeelChoice === opt} onChange={() => setSkinFeelChoice(opt)} />
                 <span className="text-sm">{opt}</span>
               </label>
             ))}
@@ -228,7 +206,7 @@ const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} 
       </div>
 
       {/* Debug info - can be removed in production */}
-      <div className="mt-4 p-3 bg-gray-100 rounded-md text-xs">
+      {/* <div className="mt-4 p-3 bg-gray-100 rounded-md text-xs">
         <p className="font-semibold mb-2">Feedback Debug Info:</p>
         <p>Star Rating: {starRating || 'Not selected'}</p>
         <p>Texture: {textureChoice}</p>
@@ -236,7 +214,7 @@ const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} 
         <p>Skin Feel: {skinFeelChoice}</p>
         <p>Comment: {comment || 'None'}</p>
         <p>Form Valid: {validateForm() ? 'Yes' : 'No'}</p>
-      </div>
+      </div> */}
     </div>
   );
 };

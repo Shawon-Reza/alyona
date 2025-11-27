@@ -276,7 +276,7 @@ const DailyRoutineTracker = () => {
                                     <div>
                                         <p className="font-medium text-lg">{product.name}</p>
                                         <div className="flex gap-5">
-                                            <p className="text-sm text-blue-500">{product.percent}</p>
+                                            <p className="text-sm text-blue-500">{product.percent }</p>
                                             <p className="text-sm text-gray-500">{product.type}</p>
                                         </div>
 
@@ -301,7 +301,7 @@ const DailyRoutineTracker = () => {
 
             {/* Product Feedback Overlay */}
             {feedbackProduct && (
-                <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40">
+                <div className="fixed right-0 top-0 bottom-0 z-60 flex items-center justify-center  ">
                     <div className="w-full max-w-xl p-6">
                         <ProductFeedback
                             product={feedbackProduct}
