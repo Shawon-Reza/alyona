@@ -81,36 +81,36 @@ const UserDashboardContent = () => {
                 {/* Main Grid Layout */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Left Column: Skincare Efficiency */}
-                    <div className="bg-white p-6 rounded-lg shadow-md">
+                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
                         {/* Efficiency Title */}
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-semibold text-gray-700">Your skincare is {efficiency}% efficient</h3>
+                            <h3 className="text-md xl:text-xl font-semibold text-gray-700">Your have {data?.level?.points || "N/A"} point</h3>
                             <div className="flex items-center space-x-2">
-                                <span className="bg-blue-100 text-blue-800 text-xs py-1 px-3 rounded-full">Level 3</span>
-                                <span className="bg-yellow-100 text-yellow-800 text-xs py-1 px-3 rounded-full">3 days streak</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs py-1 px-3 rounded-full">{data?.level?.current_level || "N/A"}</span>
+                                <span className="bg-yellow-100 text-yellow-800 text-xs py-1 px-3 rounded-full">{data?.streak || "N/A"} days streak</span>
                             </div>
                         </div>
 
                         {/* Efficiency Progress Bar */}
                         <div className="w-full bg-gray-200 h-2 rounded-full mb-2">
-                            <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${efficiency}%` }}></div>
+                            <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${data?.dashboard_average?.avg_efficiency || "N/A"}%` }}></div>
                         </div>
-                        <span className="text-gray-600 text-sm">{efficiency}% efficient</span>
+                        <span className="text-gray-600 text-sm">{data?.dashboard_average?.avg_efficiency || "N/A"}% Efficient</span>
                     </div>
 
                     {/* Right Column: Skincare Proficiency Level */}
-                    <div className="bg-white p-6 rounded-lg shadow-md">
+                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
                         {/* Proficiency Title */}
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-semibold text-gray-700">Your skincare proficiency level</h3>
-                            <span className="bg-blue-100 text-blue-800 text-xs py-1 px-3 rounded-full">Level 3</span>
+                            <h3 className="text-md xl:text-xl font-semibold text-gray-700">Your skincare proficiency level</h3>
+                            <span className="bg-blue-100 text-blue-800 text-xs py-1 px-3 rounded-full">{data?.level?.current_level}</span>
                         </div>
 
                         {/* Proficiency Progress Bar */}
                         <div className="w-full bg-gray-200 h-2 rounded-full mb-2">
-                            <div className="bg-gray-400 h-2 rounded-full" style={{ width: `${proficiency}%` }}></div>
+                            <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${data?.dashboard_average?.avg_efficiency || "N/A"}%` }}></div>
                         </div>
-                        <span className="text-gray-600 text-sm">Level 3</span>
+                        <span className="text-gray-600 text-sm">{data?.level?.current_level || 'N/A'}</span>
                     </div>
                 </div>
 

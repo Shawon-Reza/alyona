@@ -27,7 +27,8 @@ export default function AdminDashboardNavbar({ toggleView }) {
                 {/* User Profile Dropdown */}
                 <div className="relative">
                     <button
-                        onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                        // onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+
                         className="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50 transition-colors cursor-pointer"
                     >
                         {/* User Avatar */}

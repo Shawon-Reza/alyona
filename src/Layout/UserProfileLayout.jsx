@@ -34,10 +34,10 @@ export default function UserProfileLayout() {
             {/* Breadcrumb */}
             <div className="flex items-center text-xs md:text-sm text-gray-600 mb-4 md:mb-6 px-4 md:px-0 mt-4">
                 <span
-                onClick={()=>{
-                    navigate(-1)
-                }}
-                className="cursor-pointer hover:text-gray-900 truncate">Users List</span>
+                    onClick={() => {
+                        navigate("/admindashboard/userlist")
+                    }}
+                    className="cursor-pointer hover:text-gray-900 truncate">Users List</span>
                 <ChevronRight className="w-3 h-3 md:w-4 md:h-4 mx-1 md:mx-2 flex-shrink-0" />
                 <span className="text-gray-900 truncate">{data?.full_name || 'Unnamed User'}</span>
             </div>
