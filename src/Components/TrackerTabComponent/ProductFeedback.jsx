@@ -1,90 +1,32 @@
 import React, { useState } from 'react';
-import { FaStar, FaRegStar, FaSmile, FaFrown, FaCheck } from 'react-icons/fa';
+import { FaStar, FaRegStar } from 'react-icons/fa';
 
-const ProductFeedback = () => {
+const ProductFeedback = ({ product = {}, onSubmit = () => {}, onSkip = () => {} }) => {
   // State for feedback
-  const [feedback, setFeedback] = useState({
-    rating: null, // 'like' or 'dislike'
-    dislikedAspects: [],
-    comment: ''
-  });
+  const [starRating, setStarRating] = useState(0); // 1-5
+  const [textureChoice, setTextureChoice] = useState('Not sure');
+  const [packagingChoice, setPackagingChoice] = useState('Not sure');
+  const [skinFeelChoice, setSkinFeelChoice] = useState('Not sure');
+  const [comment, setComment] = useState('');
 
-  // State for UI
-  const [showDislikeReasons, setShowDislikeReasons] = useState(false);
+  // Product data comes from `product` prop
+  const productName = product?.productName || product?.name || 'Product';
+  const productProgress = product?.compatibility_score ? Math.round(product.compatibility_score) : (product?.percent ? parseInt(String(product.percent).replace('%','')) || 0 : 0);
+  const productProgressText = product?.progressText || 'Get cleaner';
 
-  // Product data (could come from props in real app)
-  const product = {
-    name: "Alpha Beta Pore Perfecting Cleansing Gel",
-    progress: 70,
-    progressText: "Get cleaner"
-  };
-
-  // Dislike reasons options
-  const dislikeReasons = [
-    "I don't see results",
-    "Texture",
-    "Smell",
-    "Packaging experience"
-  ];
-
-  // Handle like/dislike selection
-  const handleRatingSelect = (rating) => {
-    console.log('Rating selected:', rating);
-    setFeedback(prev => ({
-      ...prev,
-      rating,
-      // Reset disliked aspects if switching from dislike to like
-      ...(rating === 'like' && { dislikedAspects: [] })
-    }));
-
-    // Show/hide dislike reasons section
-    if (rating === 'dislike') {
-      setShowDislikeReasons(true);
-    } else {
-      setShowDislikeReasons(false);
-    }
-  };
-
-  // Handle dislike reason toggle
-  const handleDislikeReasonToggle = (reason) => {
-    console.log('Toggling dislike reason:', reason);
-    setFeedback(prev => {
-      const currentReasons = [...prev.dislikedAspects];
-      if (currentReasons.includes(reason)) {
-        return {
-          ...prev,
-          dislikedAspects: currentReasons.filter(r => r !== reason)
-        };
-      } else {
-        return {
-          ...prev,
-          dislikedAspects: [...currentReasons, reason]
-        };
-      }
-    });
-  };
+  
 
   // Handle comment change
   const handleCommentChange = (e) => {
-    console.log('Comment changed:', e.target.value);
-    setFeedback(prev => ({
-      ...prev,
-      comment: e.target.value
-    }));
+    setComment(e.target.value);
   };
 
   // Validate form before submission
   const validateForm = () => {
-    if (!feedback.rating) {
-    //   alert('Please select whether you like or dislike the product');
-      return false;
-    }
-
-    if (feedback.rating === 'dislike' && feedback.dislikedAspects.length === 0) {
-    //   alert('Please select at least one reason for disliking the product');
-      return false;
-    }
-
+    if (!starRating || starRating < 1) return false;
+    if (!textureChoice) return false;
+    if (!packagingChoice) return false;
+    if (!skinFeelChoice) return false;
     return true;
   };
 
@@ -97,36 +39,24 @@ const ProductFeedback = () => {
       return;
     }
 
-    // Prepare data for API
+    // Prepare data in the requested shape (rating as numeric 1-5)
     const submissionData = {
-      product: product.name,
-      rating: feedback.rating,
-      dislikedAspects: feedback.dislikedAspects,
-      comment: feedback.comment,
-      pointsEarned: 2,
-      timestamp: new Date().toISOString(),
-      metadata: {
-        progress: product.progress,
-        progressText: product.progressText
-      }
+      product_id: product?.id,
+      productName: productName,
+      rating: starRating,
+      texture: textureChoice || 'Not sure',
+      skin_feel: skinFeelChoice || 'Not sure',
+      packaging: packagingChoice || 'Not sure',
+      description: comment || ''
     };
 
-    console.log('Feedback data to be sent:', submissionData);
+    console.log('Feedback data to be sent (formatted):', submissionData);
+    console.log('Submitted data (JSON):', JSON.stringify(submissionData));
 
     try {
-      // Simulate API call
+      // Simulate API call (replace with real API request if desired)
       console.log('Calling feedback API...');
-      
-      // In real implementation:
-      // const response = await fetch('/api/feedback', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(submissionData)
-      // });
 
-      // Simulate API response
       const mockResponse = {
         status: 'success',
         message: 'Feedback submitted successfully',
@@ -139,16 +69,29 @@ const ProductFeedback = () => {
 
       console.log('API Response:', mockResponse);
 
+      // Call parent callback with submission data (if provided)
+      try {
+        onSubmit(submissionData);
+      } catch (e) {
+        console.warn('onSubmit handler threw:', e);
+      }
+
+      // Call parent callback with submission data (if provided)
+      try {
+        onSubmit(submissionData);
+      } catch (e) {
+        console.warn('onSubmit handler threw:', e);
+      }
+
       // Show success message
-      alert('Thank you for your feedback! You earned 2 points.');
+      alert('Thank you for your feedback!');
 
       // Reset form
-      setFeedback({
-        rating: null,
-        dislikedAspects: [],
-        comment: ''
-      });
-      setShowDislikeReasons(false);
+      setStarRating(0);
+      setTextureChoice('Not sure');
+      setPackagingChoice('Not sure');
+      setSkinFeelChoice('Not sure');
+      setComment('');
 
     } catch (error) {
       console.error('Error submitting feedback:', error);
@@ -172,49 +115,20 @@ const ProductFeedback = () => {
     </div>
   );
 
-  // Like/Dislike button component
-  const RatingButton = ({ type, selected, onClick }) => {
-    const isLike = type === 'like';
-    const Icon = isLike ? FaSmile : FaFrown;
-    const text = isLike ? "I like it" : "I don't recommend it";
-    const selectedClass = isLike 
-      ? 'bg-green-100 border-green-500 text-green-700' 
-      : 'bg-red-100 border-red-500 text-red-700';
-    const defaultClass = 'bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200';
-
-    return (
-      <button
-        onClick={() => onClick(type)}
-        className={`flex items-center justify-center p-4 border-2 rounded-lg font-medium transition-all duration-200 ${
-          selected ? selectedClass : defaultClass
-        } ${isLike ? 'mr-3' : 'ml-3'}`}
-      >
-        <Icon className={`mr-2 text-lg ${selected ? 'opacity-100' : 'opacity-60'}`} />
-        {text}
-      </button>
-    );
-  };
-
-  // Dislike reason checkbox component
-  const DislikeReasonCheckbox = ({ reason, checked, onChange }) => (
-    <div
-      onClick={() => onChange(reason)}
-      className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
-        checked
-          ? 'border-red-500 bg-red-50'
-          : 'border-gray-200 hover:bg-gray-50'
-      }`}
-    >
-      <div
-        className={`w-5 h-5 border rounded flex items-center justify-center mr-3 ${
-          checked
-            ? 'bg-red-500 border-red-500'
-            : 'border-gray-300'
-        }`}
-      >
-        {checked && <FaCheck className="text-white text-xs" />}
-      </div>
-      <span className="text-gray-700">{reason}</span>
+  // Star rating component
+  const StarRating = ({ value, onChange }) => (
+    <div className="flex items-center">
+      {[1,2,3,4,5].map((n) => (
+        <button
+          key={n}
+          type="button"
+          onClick={() => onChange(n)}
+          className="p-1 text-2xl text-yellow-500"
+          aria-label={`${n} star`}
+        >
+          {n <= value ? <FaStar /> : <FaRegStar />}
+        </button>
+      ))}
     </div>
   );
 
@@ -226,9 +140,9 @@ const ProductFeedback = () => {
       {/* Product Info */}
       <div className="mb-6 border-2 border-[#EFEBEB] p-2 rounded-2xl ">
         <h2 className="text-lg font-semibold text-gray-800 mb-2">
-          {product.name}
+          {productName}
         </h2>
-        <ProgressBar percentage={product.progress} text={product.progressText} />
+        <ProgressBar percentage={productProgress} text={productProgressText} />
       </div>
 
       {/* Feedback Question */}
@@ -240,69 +154,87 @@ const ProductFeedback = () => {
           Share your opinion and earn 2 points
         </p>
 
-        {/* Like/Dislike Buttons */}
-        <div className="flex justify-between mb-6">
-          <RatingButton
-            type="like"
-            selected={feedback.rating === 'like'}
-            onClick={handleRatingSelect}
-          />
-          <RatingButton
-            type="dislike"
-            selected={feedback.rating === 'dislike'}
-            onClick={handleRatingSelect}
-          />
+        {/* Star Rating */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Rating:</label>
+          <StarRating value={starRating} onChange={setStarRating} />
         </div>
 
-        {/* Dislike Reasons Section */}
-        {showDislikeReasons && (
-          <div className="mb-6">
-            <h4 className="text-md font-medium text-gray-700 mb-3">
-              What aspect did you dislike?
-            </h4>
-            <div className="space-y-2">
-              {dislikeReasons.map((reason) => (
-                <DislikeReasonCheckbox
-                  key={reason}
-                  reason={reason}
-                  checked={feedback.dislikedAspects.includes(reason)}
-                  onChange={handleDislikeReasonToggle}
-                />
-              ))}
-            </div>
+        {/* Radio groups */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Texture:</label>
+          <div className="flex items-center gap-4">
+            {['Like','Dislike','Not sure'].map(opt => (
+              <label key={opt} className="inline-flex items-center gap-2">
+                <input type="radio" name="texture" value={opt} checked={textureChoice===opt} onChange={() => setTextureChoice(opt)} />
+                <span className="text-sm">{opt}</span>
+              </label>
+            ))}
           </div>
-        )}
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Packaging:</label>
+          <div className="flex items-center gap-4">
+            {['Like','Dislike','Not sure'].map(opt => (
+              <label key={opt} className="inline-flex items-center gap-2">
+                <input type="radio" name="packaging" value={opt} checked={packagingChoice===opt} onChange={() => setPackagingChoice(opt)} />
+                <span className="text-sm">{opt}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Skin Feel:</label>
+          <div className="flex items-center gap-4">
+            {['Like','Dislike','Not sure'].map(opt => (
+              <label key={opt} className="inline-flex items-center gap-2">
+                <input type="radio" name="skinfeel" value={opt} checked={skinFeelChoice===opt} onChange={() => setSkinFeelChoice(opt)} />
+                <span className="text-sm">{opt}</span>
+              </label>
+            ))}
+          </div>
+        </div>
 
         {/* Additional Comments */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Additional comments (optional)
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Your Review</label>
           <textarea
-            value={feedback.comment}
+            value={comment}
             onChange={handleCommentChange}
-            placeholder="Share more details about your experience..."
-            className="w-full p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows="3"
+            placeholder="Write your review..."
+            className="w-full p-3 border border-[#D6A98C] rounded-md resize-none focus:outline-none"
+            rows="4"
           />
         </div>
       </div>
 
-      {/* Submit Button */}
-      <button
-        onClick={handleSubmitFeedback}
-        disabled={!feedback.rating || (feedback.rating === 'dislike' && feedback.dislikedAspects.length === 0)}
-        className="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        Send my feedback
-      </button>
+      {/* Action Buttons */}
+      <div className="flex gap-3">
+        <button
+          onClick={handleSubmitFeedback}
+          disabled={!validateForm()}
+          className="flex-1 bg-[#B78E6D] text-white py-3 px-4 rounded-md font-medium hover:opacity-95 transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Submit Review
+        </button>
+        <button
+          onClick={() => onSkip(product)}
+          className="flex-1 bg-gray-200 text-gray-700 py-3 px-4 rounded-md font-medium hover:opacity-95 transition-colors focus:outline-none"
+        >
+          Skip
+        </button>
+      </div>
 
       {/* Debug info - can be removed in production */}
       <div className="mt-4 p-3 bg-gray-100 rounded-md text-xs">
         <p className="font-semibold mb-2">Feedback Debug Info:</p>
-        <p>Rating: {feedback.rating || 'Not selected'}</p>
-        <p>Disliked Aspects: {feedback.dislikedAspects.join(', ') || 'None'}</p>
-        <p>Comment: {feedback.comment || 'None'}</p>
+        <p>Star Rating: {starRating || 'Not selected'}</p>
+        <p>Texture: {textureChoice}</p>
+        <p>Packaging: {packagingChoice}</p>
+        <p>Skin Feel: {skinFeelChoice}</p>
+        <p>Comment: {comment || 'None'}</p>
         <p>Form Valid: {validateForm() ? 'Yes' : 'No'}</p>
       </div>
     </div>

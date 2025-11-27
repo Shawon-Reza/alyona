@@ -12,44 +12,14 @@ const routineMap = {
         title: "Did you do your morning routine?",
         icon: <Sun color="#BB9777" size={25} />,
         products: [
-            {
-                key: "tone",
-                step: "1. Tone",
-                name: "Purifying Toner",
-                percent: "79%",
-                type: "Toner",
-                image: productImage,
-            },
-            {
-                key: "hydrate",
-                step: "2. Hydrate",
-                name: "Hydrating Toner",
-                percent: "100%",
-                type: "Moisturizer",
-                image: productImage,
-            },
+            // product list intentionally empty — real products come from API
         ]
     },
     night: {
         title: "Did you do your nighttime routine?",
         icon: <Moon color="#7271E3" size={25} />,
         products: [
-            {
-                key: "tone",
-                step: "1. Tone",
-                name: "Purifying Toner",
-                percent: "79%",
-                type: "Toner",
-                image: productImage,
-            },
-            {
-                key: "hydrate",
-                step: "2. Hydrate",
-                name: "Moisturising Night Cream",
-                percent: "100%",
-                type: "Moisturizer",
-                image: productImage,
-            },
+            // product list intentionally empty — real products come from API
         ]
     }
 };
@@ -71,14 +41,14 @@ const DailyRoutineTracker = () => {
     const [routineDone, setRoutineDone] = useState(null);
     // products that will be rendered (either from API or fallback)
     const [localProducts, setLocalProducts] = useState(
-        defaultRoutine.products.map(p => ({
+        Array.isArray(defaultRoutine.products) ? defaultRoutine.products.map(p => ({
             id: p.key,
             name: p.name,
             percent: p.percent,
             type: p.type,
             image: p.image,
             daily: p.daily || 'Both',
-        }))
+        })) : []
     )
 
     // helper: compute initial selection based on mode and product.daily
@@ -96,6 +66,7 @@ const DailyRoutineTracker = () => {
         effectiveMode
     ))
     const [isSaving, setIsSaving] = useState(false)
+    const [feedbackProduct, setFeedbackProduct] = useState(null);
 
     const slugToCategory = {
         'skincare': 'Skincare',
@@ -138,7 +109,7 @@ const DailyRoutineTracker = () => {
                 // Create/record the tracked products
                 await axiosApi.post('/products/api/v1/product-tracker/', payload)
                 toast.success('Routine saved')
-                console.log("payload",payload)
+                console.log("payload", payload)
             } else {
                 // Remove tracked products
                 // Axios delete with body requires passing { data: payload }
@@ -194,6 +165,9 @@ const DailyRoutineTracker = () => {
                 type: p.type || categoryObj.category,
                 image: p.image,
                 daily: p.daily || 'Both',
+                days_used: p.days_used || 0,
+                feedback_given: !!p.feedback_given,
+                compatibility_score: p.compatibility_score,
             }))
             setLocalProducts(mapped)
             // initialize selection: select products that match the current mode (day/night)
@@ -202,7 +176,7 @@ const DailyRoutineTracker = () => {
         }
     }, [data, categorySlug])
 
-   
+
     // legacy per-route logic removed — the effect above maps categories to localProducts
 
 
@@ -210,15 +184,6 @@ const DailyRoutineTracker = () => {
 
     if (isPending) return 'Loading...'
     if (error) return 'An error has occurred: ' + error.message
-
-
-
-
-
-
-
-
-
 
 
     return (
@@ -279,44 +244,84 @@ const DailyRoutineTracker = () => {
                             if (effectiveMode === 'day') return daily === 'AM' || daily === 'BOTH'
                             return daily === 'PM' || daily === 'BOTH'
                         })
-                        return filteredProducts.map((product) => (
-                        <div key={product.id || product.key}>
-                            <p className="font-medium mb-2 text-xl">{product.name}</p>
-                            <div
-                                className={`relative flex items-center gap-4 rounded-xl p-2 border border-base-300 bg-white cursor-pointer transition shadow-sm hover:scale-102`}
-                                onClick={() => toggleProduct(String(product.id || product.key))}
-                            >
-                                <div
-                                    className={`absolute top-2 right-2 w-7 h-7 rounded-lg flex items-center justify-center text-xs z-10 ${selectedProducts[String(product.id || product.key)]
-                                        ? "bg-[#B1805A] text-white"
-                                        : "border border-[#B1805A] text-[#B1805A]"
-                                        }`}
-                                >
-                                    ✓
+                        if (!filteredProducts || filteredProducts.length === 0) {
+                            return (
+                                <div className="col-span-full py-8 text-center text-gray-500" key="no-products">
+                                    No products available here
                                 </div>
+                            )
+                        }
 
-                                <img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className="w-18 h-18 rounded-md object-cover"
-                                />
-                                <div>
-                                    <p className="font-medium text-lg">{product.name}</p>
-                                    <div className="flex gap-5">
-                                        <p className="text-sm text-blue-500">{product.percent}</p>
-                                        <p className="text-sm text-gray-500">{product.type}</p>
+                        return filteredProducts.map((product) => (
+                            <div key={product.id || product.key}>
+                                <p className="font-medium mb-2 text-xl">{product.name}</p>
+                                <div
+                                    className={`relative flex items-center gap-4 rounded-xl p-2 border border-base-300 bg-white cursor-pointer transition shadow-sm hover:scale-102`}
+                                    onClick={() => toggleProduct(String(product.id || product.key))}
+                                >
+                                    <div
+                                        className={`absolute top-2 right-2 w-7 h-7 rounded-lg flex items-center justify-center text-xs z-10 ${selectedProducts[String(product.id || product.key)]
+                                            ? "bg-[#B1805A] text-white"
+                                            : "border border-[#B1805A] text-[#B1805A]"
+                                            }`}
+                                    >
+                                        ✓
+                                    </div>
+
+                                    <img
+                                        src={product.image}
+                                        alt={product.name}
+                                        className="w-18 h-18 rounded-md object-cover"
+                                    />
+                                    <div>
+                                        <p className="font-medium text-lg">{product.name}</p>
+                                        <div className="flex gap-5">
+                                            <p className="text-sm text-blue-500">{product.percent}</p>
+                                            <p className="text-sm text-gray-500">{product.type}</p>
+                                        </div>
+
+                                        {/* Feedback CTA: show when days_used>10 and not yet given */}
+                                        {product.days_used > 0 && !product.feedback_given && (
+                                            <div className="mt-3 ">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); setFeedbackProduct(product); }}
+                                                    className="text-sm bg-[#B78E6D] text-white px-3 py-1 rounded-md"
+                                                >
+                                                    Give Feedback
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))})()}
+                        ))
+                    })()}
                 </div>
             </div>
 
-            {/* Give your Feedback */}
-            <div className="absolute -top-33 -right-6 z-50 hidden ">
-                <ProductFeedback></ProductFeedback>
-            </div>
+            {/* Product Feedback Overlay */}
+            {feedbackProduct && (
+                <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40">
+                    <div className="w-full max-w-xl p-6">
+                        <ProductFeedback
+                            product={feedbackProduct}
+                            onSubmit={(data) => {
+                                console.log('Feedback submitted for product:', data);
+                                // mark product as feedback_given locally so CTA hides
+                                setLocalProducts((prev) => prev.map(p => p.id === feedbackProduct.id ? { ...p, feedback_given: true } : p));
+                                setFeedbackProduct(null);
+                            }}
+                            onSkip={(prod) => {
+                                console.log('Feedback skipped for', prod?.id);
+                                setLocalProducts((prev) => prev.map(p => p.id === prod.id ? { ...p, feedback_given: true } : p));
+                                setFeedbackProduct(null);
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* (old static ProductFeedback removed) */}
         </div>
     );
 };
