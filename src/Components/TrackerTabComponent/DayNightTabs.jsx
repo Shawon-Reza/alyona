@@ -47,20 +47,7 @@ export default function DayNightTabs() {
                         Night
                     </NavLink>
                 </>
-            ) : (
-                <NavLink
-                    to={`/tracker/${basePath}/day`}
-                    end
-                    className={({ isActive }) =>
-                        `w-full text-center py-2 text-sm font-medium transition-all ${isActive
-                            ? 'text-[#B1805A] border-b-2 border-[#B1805A]'
-                            : 'text-gray-600 hover:text-[#B1805A]'
-                        }`
-                    }
-                >
-                    Day
-                </NavLink>
-            )}
+            ) : null}
 
 
           
@@ -70,3 +57,4 @@ export default function DayNightTabs() {
         </div>
     );
 }
+

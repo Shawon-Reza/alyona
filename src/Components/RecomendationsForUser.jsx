@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 const RecomendationsForUser = ({ data }) => {
     const navigate = useNavigate()
 
+    console.log(data)
+
     // Safely read properties from data (original format provided by parent)
     const title = data?.title || 'Recommendations'
     const traits = data?.traits || ''
