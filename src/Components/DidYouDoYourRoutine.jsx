@@ -27,10 +27,10 @@ export const DidYouDoYourRoutine = ({ data }) => {
     }
 
     return (
-        <div className="">
-            <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold">Mi Daily Routine</h3>
-                <span className="text-sm text-gray-500">Track your AM / PM usage</span>
+        <div className="bg-white rounded-xl shadow-md p-5">
+            <div className="flex items-center justify-between mb-3 gap-2">
+                <h3 className="text-lg font-semibold">My Daily Routine</h3>
+                <span className="text-sm text-gray-500">Track your AM / PM routine</span>
             </div>
 
             <div className="space-y-4">
@@ -43,7 +43,7 @@ export const DidYouDoYourRoutine = ({ data }) => {
                         <div className="flex items-end gap-2 flex-nowrap overflow-x-auto">
                             {am.map((v, i) => (
                                 <div key={i} className="flex flex-col items-center min-w-[20px]">
-                                    <div className={`w-6 md:w-7 h-2 rounded-sm ${v ? 'bg-violet-500' : 'bg-violet-200'}`} />
+                                    <div className={`w-8  sm:w-14 md:w-24 lg:w-7 2xl:w-9 h-2 rounded-sm ${v ? 'bg-violet-500' : 'bg-violet-200'}`} />
                                 </div>
                             ))}
                         </div>
@@ -58,7 +58,7 @@ export const DidYouDoYourRoutine = ({ data }) => {
                         <div className="flex items-end gap-2 flex-nowrap overflow-x-auto">
                             {pm.map((v, i) => (
                                 <div key={i} className="flex flex-col items-center min-w-[20px]">
-                                    <div className={`w-6 md:w-7 h-2 rounded-sm ${v ? 'bg-violet-500' : 'bg-violet-200'}`} />
+                                    <div className={`w-8  sm:w-14 md:w-24 lg:w-7 2xl:w-9 h-2 rounded-sm ${v ? 'bg-violet-500' : 'bg-violet-200'}`} />
                                 </div>
                             ))}
                         </div>

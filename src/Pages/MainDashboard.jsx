@@ -294,7 +294,8 @@ export default function MainDashboard() {
                     </div> */}
 
                     {/* Recommendations */}
-                    <RecomendationsForUser data={dashboardData?.extra_quiz_result} />
+                    {/* <RecomendationsForUser data={dashboardData?.extra_quiz_result}  /> */}
+                    <RecomendationsForUser data={dashboardData?.quick_tips}  />
 
                 </div>
 

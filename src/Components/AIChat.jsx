@@ -461,7 +461,7 @@ const AIChat = () => {
     // Render AI response safely: handle string, array, or object responses
     const renderAIResponse = (resp) => {
         if (resp === null || resp === undefined || resp === '') {
-            return <em className="text-gray-400">(no response)</em>;
+            return <em className="text-gray-400">Thinking......</em>;
         }
 
         // If it's a string, try to parse JSON-like payloads (some image responses come back as JSON strings)

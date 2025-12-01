@@ -1,10 +1,25 @@
-import { FaLeaf, FaPaw, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { FaLeaf, FaPaw, FaThumbsUp, FaThumbsDown, FaStar, FaRegStar } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
 export default function ProductDetails() {
 
     const product = useSelector((state) => state.product?.details?.details || {});
     console.log(product)
+    const reviews = product?.reviews?.reviews || []
+    console.log("product reviews:", reviews)
+    const BASE_REPO_URL = 'http://10.10.13.80:8005';
+    const buildImageUrl = (img) => {
+        if (!img) return null;
+        try {
+            // if already absolute URL, return as-is
+            if (/^https?:\/\//i.test(img)) return img;
+            // otherwise prefix base
+            return `${BASE_REPO_URL}${img}`;
+        } catch (e) {
+            return img;
+        }
+    }
+
     // Add loading state or handle the case when product is not loaded
     if (!product || Object.keys(product).length === 0) {
         return <div>Loading...</div>; // Or use a spinner here
@@ -48,7 +63,7 @@ export default function ProductDetails() {
                 <p className="font-bold text-[22px] text-gray-900">Reviews</p>
                 <p className="text-gray-700 mt-1 text-[18px]">
                     {/* Show number of reviews if available, or fallback */}
-                    {product?.user_with_similar_skin_type_count || 0 } users with your skin type left a review
+                    {product?.user_with_similar_skin_type_count || 0} users with your skin type left a review
                 </p>
 
                 {/* Reaction Row */}
@@ -65,7 +80,7 @@ export default function ProductDetails() {
             </div>
 
             {/* Tags */}
-            <div className="flex flex-wrap gap-2">
+            {/* <div className="flex flex-wrap gap-2">
                 {
                     // Check if tags exist before rendering
                     product?.tags?.length > 0 ? (
@@ -83,6 +98,41 @@ export default function ProductDetails() {
                         </span>
                     )
                 }
+            </div> */}
+
+            {/* Display user reviews: show avatar and rating only */}
+            <div className="mt-6 border border-gray-300 max-h-72 p-4 rounded-lg overflow-y-auto ">
+                {Array.isArray(reviews) && reviews.length > 0 ? (
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                        {reviews.map((rev, idx) => (
+                            <div key={rev.id ?? idx} className="flex items-start gap-3 bg-white/30 p-3 rounded-lg shadow-sm">
+                                <img
+                                    src={buildImageUrl(rev.user_image) || ''}
+                                    alt={rev.user || 'Reviewer'}
+                                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/fallback-avatar.png'; }}
+                                    className="w-12 h-12 rounded-full object-cover"
+                                />
+                                <div className="flex-1">
+                                    <div className="flex items-center justify-between">
+                                        <div className="font-medium text-sm text-gray-800">{rev.user || 'Anonymous'}</div>
+                                        <div className="flex items-center gap-1">
+                                            {[1,2,3,4,5].map((n) => (
+                                                <span key={n} className="text-sm">
+                                                    {n <= (Number(rev.rating) || 0) ? <FaStar className="text-amber-400" /> : <FaRegStar className="text-gray-300" />}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    {rev.description && (
+                                        <p className="text-sm text-gray-600 mt-2">{rev.description}</p>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-sm text-gray-500">No reviews yet.</div>
+                )}
             </div>
         </div>
     );

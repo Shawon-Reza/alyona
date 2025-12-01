@@ -189,53 +189,51 @@ const DailyRoutineTracker = () => {
 
     return (
         <div className="relative p-6 text-[#181818]">
-            {/* Question - only show mood prompt for skincare (supportsNight) */}
-            {supportsNight && (
-                <div>
-                    <div className="text-lg font-semibold mb-4 flex items-center gap-2">
-                        {icon}
-                        <p>{title}</p>
+                    {/* Question - show mood prompt for skincare; for other categories show morning routine prompt too */}
+                    <div>
+                        <div className="text-lg font-semibold mb-4 flex items-center gap-2">
+                            {icon}
+                            <p>{title}</p>
+                        </div>
+
+                        <div className="flex gap-4 mb-6 ">
+                            {["yes", "no"].map((value) => {
+                                const isSelected = routineDone === value;
+
+                                // Determine background color (use effectiveMode so non-skincare pages stay in 'day')
+                                const bgClass =
+                                    isSelected && value === "yes"
+                                        ? effectiveMode === "night"
+                                            ? "bg-[#3F53A0] text-white"
+                                            : "bg-[#E6D1C0] text-[#181818]"
+                                        : isSelected && value === "no"
+                                            ? "bg-[#F5F2EF] text-[#181818]"
+                                            : "bg-white text-gray-500";
+
+                                const tickBgClass =
+                                    isSelected
+                                        ? effectiveMode === "night" && value === "yes"
+                                            ? "bg-[#3F53A0] text-white"
+                                            : "bg-[#8C6D56] text-white"
+                                        : "border border-[#8C6D56] text-[#8C6D56]";
+
+                                return (
+                                    <button
+                                        key={value}
+                                        onClick={() => handleRoutineResponse(value)}
+                                        disabled={isSaving}
+                                        className={`px-6 w-full py-2 rounded-lg flex items-center justify-between border border-base-300 ${bgClass} cursor-pointer hover:scale-103 transition ${isSaving ? 'opacity-60 pointer-events-none' : ''}`}
+                                    >
+                                        {value.charAt(0).toUpperCase() + value.slice(1)}
+                                        <span className={`ml-3 w-7 h-7 rounded-lg flex items-center justify-center ${tickBgClass} `}>
+                                            ✓
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+
                     </div>
-
-                    <div className="flex gap-4 mb-6 ">
-                        {["yes", "no"].map((value) => {
-                            const isSelected = routineDone === value;
-
-                            // Determine background color (use effectiveMode so non-skincare pages stay in 'day')
-                            const bgClass =
-                                isSelected && value === "yes"
-                                    ? effectiveMode === "night"
-                                        ? "bg-[#3F53A0] text-white"
-                                        : "bg-[#E6D1C0] text-[#181818]"
-                                    : isSelected && value === "no"
-                                        ? "bg-[#F5F2EF] text-[#181818]"
-                                        : "bg-white text-gray-500";
-
-                            const tickBgClass =
-                                isSelected
-                                    ? effectiveMode === "night" && value === "yes"
-                                        ? "bg-[#3F53A0] text-white"
-                                        : "bg-[#8C6D56] text-white"
-                                    : "border border-[#8C6D56] text-[#8C6D56]";
-
-                            return (
-                                <button
-                                    key={value}
-                                    onClick={() => handleRoutineResponse(value)}
-                                    disabled={isSaving}
-                                    className={`px-6 w-full py-2 rounded-lg flex items-center justify-between border border-base-300 ${bgClass} cursor-pointer hover:scale-103 transition ${isSaving ? 'opacity-60 pointer-events-none' : ''}`}
-                                >
-                                    {value.charAt(0).toUpperCase() + value.slice(1)}
-                                    <span className={`ml-3 w-7 h-7 rounded-lg flex items-center justify-center ${tickBgClass} `}>
-                                        ✓
-                                    </span>
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                </div>
-            )}
 
             {/* Products */}
             <div>

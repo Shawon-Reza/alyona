@@ -6,12 +6,19 @@ const RecomendationsForUser = ({ data }) => {
 
     console.log(data)
 
-    // Safely read properties from data (original format provided by parent)
-    const title = data?.title || 'Recommendations'
-    const traits = data?.traits || ''
-    const description = data?.description || ''
-    const quickTip = data?.quick_tip || ''
-    const recommended = Array.isArray(data?.recommended_products) ? data.recommended_products : []
+    // Support two possible `data` shapes:
+    // 1) An array of tip strings: ["tip1", "tip2", ...]
+    // 2) An object with fields: { title, traits, description, quick_tip, recommended_products }
+    const isTipsArray = Array.isArray(data);
+    const tipsArray = isTipsArray ? data : (
+        Array.isArray(data?.quick_tip) ? data.quick_tip : (data?.quick_tip ? [data.quick_tip] : [])
+    );
+
+    // Safely read properties from object-shaped data when available
+    const title = !isTipsArray ? (data?.title || 'Recommendations') : 'Recommendations';
+    const traits = !isTipsArray ? (data?.traits || '') : '';
+    const description = !isTipsArray ? (data?.description || '') : '';
+    const recommended = !isTipsArray && Array.isArray(data?.recommended_products) ? data.recommended_products : [];
 
     const handleProductClick = (product) => {
         const url = product?.url || ''
@@ -36,44 +43,25 @@ const RecomendationsForUser = ({ data }) => {
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                     <span className="text-indigo-700 text-xl">📄</span>
-                    <p className="font-bold text-xl ">{title}</p>
+                    <p className="font-bold text-xl ">Latest Tips</p>
                 </div>
                 <span className="text-indigo-700 text-xl">▾</span>
             </div>
 
-            {traits && <p className="text-sm text-gray-500 mb-3"><span className="font-semibold">Traits:</span> {traits}</p>}
+            {/* {traits && <p className="text-sm text-gray-500 mb-3"><span className="font-semibold">Traits:</span> {traits}</p>} */}
 
-            {description && <p className="text-sm text-[#5B5B5B] mb-4">{description}</p>}
+            {/* {description && <p className="text-sm text-[#5B5B5B] mb-4">{description}</p>} */}
 
-            {quickTip && (
-                <div className="mb-4 p-3 bg-[#f7f7ff] rounded-lg border border-gray-100">
-                    <p className="text-sm font-semibold mb-1">Quick Tip</p>
-                    <p className="text-sm text-[#5B5B5B]">{quickTip}</p>
+            {tipsArray && tipsArray.length > 0 && (
+                <div className="mb-4">
+                    <ul className=" list-inside text-sm space-y-1 grid xl:grid-cols-2 gap-2">
+                        {tipsArray.map((t, i) => (
+                            <li key={i} className="text-[#5B5B5B] border rounded-lg p-2 border-gray-300 shadow-lg bg-white ">{t}</li>
+                        ))}
+                    </ul>
                 </div>
             )}
 
-            <div>
-                <p className="font-semibold mb-2">Recommended products</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-3">
-                    {recommended.length === 0 && (
-                        <div className="text-sm text-[#5B5B5B]">No recommendations available.</div>
-                    )}
-
-                    {recommended.map((prod, idx) => (
-                        <button
-                            key={idx}
-                            onClick={() => handleProductClick(prod)}
-                            className="w-full text-left bg-white border border-gray-100 rounded-lg p-3 hover:shadow-sm transition flex items-center justify-between"
-                        >
-                            <div>
-                                <div className="text-sm font-semibold">{prod?.name || 'Product'}</div>
-                                {prod?.brand && <div className="text-xs text-gray-400">{prod.brand}</div>}
-                            </div>
-                            <div className="text-indigo-600 text-sm">Open</div>
-                        </button>
-                    ))}
-                </div>
-            </div>
         </div>
     )
 }

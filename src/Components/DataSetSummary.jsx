@@ -82,7 +82,7 @@ const DataSetSummary = ({ data }) => {
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border-base-100 text-gray-800 w-full mx-auto">
-      <h2 className="text-base font-bold mb-6">Product Usage Consistency</h2>
+      <h2 className="text-base font-bold mb-6">Product Usage Consistency By Type</h2>
 
       <div className="flex flex-wrap justify-center gap-10">
         {items.map((set, idx) => {

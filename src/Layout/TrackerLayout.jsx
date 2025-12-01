@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import PopUpCalendarOnClick from "../Components/PopUpCalenderOnClick";
 import Productimgfordetails from '../assets/Productimgfordetails.png';
@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { DidYouDoYourRoutine } from "@/Components/DidYouDoYourRoutine";
 
 const TrackerLayout = () => {
+    const navigate = useNavigate();
     const [isGoalPopupVisible, setIsGoalPopupVisible] = useState(false);
     const [isGoalHistoryPopup, setIsGoalHistoryPopup] = useState(false);
 
@@ -75,7 +76,7 @@ const TrackerLayout = () => {
                     <PopUpCalendarOnClick calenderData={trackerSidebarData?.tracker_records} />
 
                     {/* Routine Prompt */}
-                    <div className="rounded-md p-4 shadow-lg">
+                    <div className="rounded-lg shadow-lg">
 
                         <DidYouDoYourRoutine data={trackerSidebarData?.weekly_result}></DidYouDoYourRoutine>
 
@@ -184,6 +185,14 @@ const TrackerLayout = () => {
                     <TrackerTabs />
                     <DayNightTabs />
                     <Outlet />
+
+                    <button
+                        onClick={() => {
+                            navigate("/library")
+                        }}
+                        className="bg-[#B1805A] text-white px-4 py-2 rounded-lg hover:bg-[#9c7251] transition-colors duration-300 mt-6 flex items-center gap-2 justify-end mx-auto cursor-pointer">
+                        Add More Product
+                    </button>
                 </div>
             </div>
         </div >

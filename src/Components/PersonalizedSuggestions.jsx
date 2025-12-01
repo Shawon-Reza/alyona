@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DidYouDoYourRoutine } from './DidYouDoYourRoutine'
+import { FaHeart } from 'react-icons/fa'
 
 const PersonalizedSuggestions = ({ data, onShowQuiz }) => {
     console.log("personaized suggestions data:", data)
@@ -16,14 +17,19 @@ const PersonalizedSuggestions = ({ data, onShowQuiz }) => {
                 <h1 className="text-xl font-bold">Improve your routine</h1>
                 <div className="flex flex-col sm:flex-row gap-4">
                     {/* Skincare efficiency */}
-                    <div className="bg-white rounded-xl border-base-700 p-4 shadow-sm flex-1 hover:scale-101 transition-transform duration-300 ease-in-out">
+                    <div
+                    onClick={()=>{
+                        navigate("/missedquiz")
+                    }}
+                    
+                    className="bg-white rounded-xl border-base-700 p-4 shadow-sm flex-1 hover:scale-101 transition-transform duration-300 ease-in-out cursor-pointer">
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-sm font-semibold text-purple-600 flex items-center gap-1">
-                                    <span>💧</span> Skincare efficiency
+                                    <span><FaHeart /></span> Extra quizzes
                                 </p>
                                 <p className="text-sm mt-1 text-gray-800">
-                                    Would you like us to give you more recommendations to improve it?
+                                   Fun way to get personalised skincare recommendations
                                 </p>
                             </div>
                             <span className="text-lg text-gray-400">›</span>
@@ -37,10 +43,10 @@ const PersonalizedSuggestions = ({ data, onShowQuiz }) => {
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-sm font-semibold text-pink-500 flex items-center gap-1">
-                                    <span>🧠</span> Quiz
+                                    <span>🧠</span> Daily Quiz
                                 </p>
                                 <p className="text-sm mt-1 text-gray-800">
-                                    Take more quizzes for custom skincare advice
+                                    Take Your daily quiz to assess Your skin improvement
                                 </p>
                             </div>
                             <span className="text-lg text-gray-400">›</span>
@@ -54,7 +60,11 @@ const PersonalizedSuggestions = ({ data, onShowQuiz }) => {
                 <h1 className="text-xl font-bold -mt-5">For you</h1>
                 <div className="flex flex-col sm:flex-row gap-4">
                     {/* Mi Daily Routine */}
-                   <div className='bg-white p-2 px-3 rounded-xl'>
+                   <div 
+                   onClick={()=>{
+                    navigate("/tracker/skincare/day")
+                   }}
+                   className=' cursor-pointer'>
                     <DidYouDoYourRoutine data={routineData} />
                    </div>
 

@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 
 export default function ProductLibrary() {
     const [selectedCategory, setSelectedCategory] = useState("");
-    const [compatibility, setCompatibility] = useState(100);
+    const [compatibility, setCompatibility] = useState(0);
     const [searchValue, setSearchValue] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -176,7 +176,7 @@ export default function ProductLibrary() {
                     {/* Compatibility */}
                     <div>
                         <h4 className="text-[22px] font-semibold text-gray-800 mb-2">
-                            Compatibilidad mínima
+                           Choose Minimum Compatibility
                         </h4>
                         <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
                             <span>0%</span>

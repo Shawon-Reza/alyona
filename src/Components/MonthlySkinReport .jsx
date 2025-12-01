@@ -87,7 +87,7 @@ const MonthlySkinReport = () => {
 
                         return (
                             <div key={keyId} className="w-full flex justify-between items-center px-4 py-3 bg-[#FFFFFF] rounded-md border border-base-100 shadow-sm">
-                                <span onClick={() => { navigate(`report-details/${(rpt && rpt.id) || item.id || ''}`); }} className="text-sm font-medium text-gray-800 cursor-pointer w-1/2">{label || 'Report'}</span>
+                                <span className="text-sm font-medium text-gray-800  w-1/2">{label || 'Report'}</span>
                                 <div className="flex space-x-3 text-base items-center">
                                     {downloadUrl ? (
                                         <a href={downloadUrl} target="_blank" rel="noreferrer" className="text-sm text-gray-700 flex items-center gap-2">

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const plans = [
     {
         title: 'Free',
-        price: '0€',
+        monthly: 0,
         features: [
             'Basic skin analysis and profile creation',
             'Limited access to product library',
@@ -16,7 +16,7 @@ const plans = [
     },
     {
         title: 'Premium',
-        price: '7€',
+        monthly: 7,
         features: [
             'All free features',
             'Monthly reports on your skincare progress',
@@ -26,7 +26,7 @@ const plans = [
     },
     {
         title: 'Luxury',
-        price: '17€',
+        monthly: 17,
         features: [
             'All standard features',
             'Skincare coach',
@@ -81,7 +81,23 @@ const SubscriptionPlanComponent = () => {
                         >
                             <div className="flex justify-between items-center mb-3">
                                 <h2 className="text-lg font-semibold">{plan.title}</h2>
-                                <span className="text-sm">{plan.price}</span>
+                                {(() => {
+                                    const monthly = Number(plan.monthly || 0);
+                                    const isYearly = billingCycle === 'yearly';
+                                    const yearlyRaw = Math.round(monthly * 12 * 0.9); // 10% discount
+                                    const priceDisplay = isYearly
+                                        ? `${yearlyRaw}€ / year`
+                                        : `${monthly}€ / month`;
+                                    const savings = monthly > 0 ? Math.round((1 - (yearlyRaw / (monthly * 12))) * 100) : 0;
+                                    return (
+                                        <div className="text-sm text-right ">
+                                            <div>{priceDisplay}</div>
+                                            {isYearly && monthly > 0 && (
+                                                <div className="text-xs text-gray-500 pl-2">Save {savings}% compared to monthly</div>
+                                            )}
+                                        </div>
+                                    );
+                                })()}
                             </div>
                             <ul className="text-sm text-gray-700 space-y-3 mb-15">
                                 {plan.features.map((feature, i) => (

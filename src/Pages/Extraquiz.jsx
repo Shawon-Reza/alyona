@@ -124,6 +124,8 @@ const Extraquiz = () => {
                         <h1 className="text-lg sm:text-2xl font-semibold mb-1">{data.title}</h1>
                         {data.description && <p className="text-sm sm:text-base text-gray-600 mb-4">{data.description}</p>}
 
+                        {/* persona (moved below questions) */}
+
                         {/* Progress */}
                         <div className="mb-4">
                             <div className="flex items-center justify-between mb-1">
@@ -170,6 +172,37 @@ const Extraquiz = () => {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Persona card: show at the end (below questions) only when persona exists in the response */}
+                        {data.persona && (
+                            <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                                <div className="flex items-start justify-between">
+                                    <div>
+                                        <h3 className="text-md font-semibold">Persona: {data.persona.title}</h3>
+                                        {data.persona.traits && <p className="text-sm text-gray-600 mt-1">{data.persona.traits}</p>}
+                                        {data.persona.description && <p className="text-sm text-gray-700 mt-2">{data.persona.description}</p>}
+                                        {data.persona.quick_tip && <p className="text-sm italic text-gray-700 mt-2"><strong>Quick tip:</strong> {data.persona.quick_tip}</p>}
+                                    </div>
+                                </div>
+
+                                {Array.isArray(data.persona.recommended_products) && data.persona.recommended_products.length > 0 && (
+                                    <div className="mt-3">
+                                        <p className="text-sm font-medium mb-2">Recommended products</p>
+                                        <ul className="list-disc list-inside text-sm">
+                                            {data.persona.recommended_products.map((rp, i) => (
+                                                <li key={i} className="text-blue-600 hover:underline">
+                                                    {rp.url ? (
+                                                        <a href={rp.url} target="_blank" rel="noreferrer">{rp.name || rp.title || rp.label}</a>
+                                                    ) : (
+                                                        <span>{rp.name || rp.title || rp.label}</span>
+                                                    )}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* Action bar: sticky on mobile */}

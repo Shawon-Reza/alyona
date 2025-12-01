@@ -29,7 +29,7 @@ export default function GoalProgress({data}) {
         <div className="bg-white rounded-2xl p-6 text-gray-800 w-full">
             {/* Title */}
             <div className="text-base font-semibold mb-4 text-center">
-                <span className="font-bold">My Goal:</span> Use moisturizer for {totalDays} day{totalDays > 1 ? 's' : ''}
+                 Product Usage Consistency {totalDays} day{totalDays > 1 ? 's' : ''}
             </div>
 
             {/* Chart */}
