@@ -1,13 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { IoSearchOutline, IoAdd } from "react-icons/io5";
+import { BsCheck2Circle } from 'react-icons/bs'
 import Navbar from "../Components/Navbar";
 import { FaPlus } from "react-icons/fa6";
 import LoginPageOverLap from "../assets/LoginPageOverLap.png";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axiosApi from "@/api/axiosApi";
-import { AiOutlineFileSearch } from "react-icons/ai";
+import { AiOutlineFileSearch, AiFillStar } from "react-icons/ai";
 import { toast } from "react-toastify";
+import { MdBookmarkAdded, MdRateReview } from "react-icons/md";
 
 export default function ProductLibrary() {
     const [selectedCategory, setSelectedCategory] = useState("");
@@ -74,6 +76,8 @@ export default function ProductLibrary() {
         refetchOnWindowFocus: false,
     });
 
+    console.log(data)
+    
     const products = data?.results ?? [];
     const handleAddProductRequest = async () => {
         try {
@@ -176,7 +180,7 @@ export default function ProductLibrary() {
                     {/* Compatibility */}
                     <div>
                         <h4 className="text-[22px] font-semibold text-gray-800 mb-2">
-                           Choose Minimum Compatibility
+                            Choose Minimum Compatibility
                         </h4>
                         <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
                             <span>0%</span>
@@ -227,6 +231,19 @@ export default function ProductLibrary() {
                                             }`}
                                     >
                                         {Math.round(score)}%
+                                    </div>
+                                    {/* badges: tracker (in routine) and review */}
+                                    <div className="absolute top-2 right-2 flex flex-col items-end gap-2">
+                                        {product?.is_in_routine && (
+                                            <div title="In routine" className="bg-white rounded-full p-1 shadow-sm">
+                                                <MdBookmarkAdded className="text-green-600 w-5 h-5" />
+                                            </div>
+                                        )}
+                                        {product?.is_reviewed && (
+                                            <div title="Reviewed" className="bg-white rounded-full p-1 shadow-sm">
+                                                <MdRateReview className="text-yellow-400 w-5 h-5" />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
