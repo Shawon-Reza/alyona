@@ -73,6 +73,7 @@ import DownloadPDFButton from "@/Components/PdfReport/DownloadPDFButton";
 import AIChat from "@/Components/AIChat";
 import MissedQuiz from "@/Pages/MissedQuiz";
 import Extraquiz from "@/Pages/Extraquiz";
+import ProductRecommendation from "@/Components/AdminDashboard/ProductRecommendation";
 
 const router = createBrowserRouter([
     {
@@ -212,6 +213,10 @@ const router = createBrowserRouter([
             {
                 path: "ai-chat",
                 element: <AIChat></AIChat>, // <-- renders inside <Outlet />
+            },
+            {
+                path: "product-recommendation",
+                element: <ProductRecommendation></ProductRecommendation>, // <-- renders inside <Outlet />
             },
         ]
     },

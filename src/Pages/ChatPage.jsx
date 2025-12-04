@@ -12,6 +12,7 @@ import MonthlySkinReport from '../Components/MonthlySkinReport ';
 import useIsMobile from '../hooks/useIsMobile';
 import MentorDropdown from './MentorDropdown';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
+import { MdProductionQuantityLimits } from 'react-icons/md';
 
 const ChatPage = () => {
     const navigate = useNavigate();
@@ -91,22 +92,38 @@ const ChatPage = () => {
                                 </div>
                             </div>
 
-                            
+
                             {/* Ai Chat */}
                             {aiEnabled && (
-                                <button
-                                    onClick={() => {
-                                        navigate('/chat/ai-chat');
-                                        setShowOptions((prev) => !prev)
-                                    }}
-                                    className="flex items-center justify-between bg-[#f7f9ff] px-4 py-3 rounded-xl shadow-sm hover:bg-[#eef3fd] cursor-pointer"
-                                >
-                                    <div className="flex items-center gap-2 text-sm text-[#4F46E5] font-medium">
-                                        <IoChatbubbleEllipsesOutline size={16} />
-                                        <span>AI Chat</span>
-                                    </div>
-                                    <span className="text-2xl text-blue-600">›</span>
-                                </button>
+                                <>
+                                    <button
+                                        onClick={() => {
+                                            navigate('/chat/ai-chat');
+                                            setShowOptions((prev) => !prev)
+                                        }}
+                                        className="flex items-center justify-between bg-[#f7f9ff] px-4 py-3 rounded-xl shadow-sm hover:bg-[#eef3fd] cursor-pointer"
+                                    >
+                                        <div className="flex items-center gap-2 text-sm text-[#4F46E5] font-medium">
+                                            <IoChatbubbleEllipsesOutline size={16} />
+                                            <span>AI Chat</span>
+                                        </div>
+                                        <span className="text-2xl text-blue-600">›</span>
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            navigate('/chat/product-recommendation');
+                                            setShowOptions((prev) => !prev)
+                                        }}
+                                        className="flex items-center justify-between bg-[#f7f9ff] px-4 py-3 rounded-xl shadow-sm hover:bg-[#eef3fd] cursor-pointer"
+                                    >
+                                        <div className="flex items-center gap-2 text-sm text-[#4F46E5] font-medium">
+                                            <MdProductionQuantityLimits  size={16} />
+                                            <span>Product Recommendation</span>
+                                        </div>
+                                        <span className="text-2xl text-blue-600">›</span>
+                                    </button>
+                                </>
                             )}
                         </div>
 
