@@ -186,13 +186,7 @@ const TrackerLayout = () => {
                     <DayNightTabs />
                     <Outlet />
 
-                    <button
-                        onClick={() => {
-                            navigate("/library")
-                        }}
-                        className="bg-[#B1805A] text-white px-4 py-2 rounded-lg hover:bg-[#9c7251] transition-colors duration-300 mt-6 flex items-center gap-2 justify-end mx-auto cursor-pointer">
-                        Add More Product
-                    </button>
+                 
                 </div>
             </div>
         </div >

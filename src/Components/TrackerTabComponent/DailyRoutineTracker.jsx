@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom"; // ✅ Make sure this is imported
+import { useLocation, useNavigate, useParams } from "react-router-dom"; // ✅ Make sure this is imported
 import productImage from '../../assets/ProductIMG.png';
 import { Sun, Moon } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -28,6 +28,7 @@ const DailyRoutineTracker = () => {
 
     const { mode = "day" } = useParams(); // ✅ use from router
     const location = useLocation();
+    const navigate = useNavigate();
 
     // Determine the category slug from the path (e.g. 'skincare', 'add-on-skincare')
     const categorySlug = location.pathname.split("/")[2] || "skincare"
@@ -92,36 +93,44 @@ const DailyRoutineTracker = () => {
     }
 
     const queryClient = useQueryClient()
-    const handleRoutineResponse = async (value) => {
-        // value is 'yes' or 'no'
+    // Set the user's answer locally. API call happens when user clicks "Submit used products".
+    const handleRoutineResponse = (value) => {
         setRoutineDone(value)
+    }
+
+    // Submit tracked products to the API based on the selected answer
+    const handleSubmitUsedProducts = async () => {
         const selectedIds = Object.keys(selectedProducts).filter(k => selectedProducts[k]).map(id => {
             const n = Number(id)
             return Number.isNaN(n) ? id : n
         })
 
-        const payload = {
-            product_ids: selectedIds,
+        // If nothing selected, do not call API
+        if (!selectedIds || selectedIds.length === 0) {
+            toast.warn('Please select at least one product before submitting')
+            return
         }
+
+        const payload = { product_ids: selectedIds }
 
         setIsSaving(true)
         try {
-            if (value === 'yes') {
-                // Create/record the tracked products
+            if (routineDone === 'yes') {
                 await axiosApi.post('/products/api/v1/product-tracker/', payload)
                 toast.success('Routine saved')
-                console.log("payload", payload)
-            } else {
-                // Remove tracked products
-                // Axios delete with body requires passing { data: payload }
+            } else if (routineDone === 'no') {
                 await axiosApi.delete('/products/api/v1/product-tracker/', { data: payload })
                 toast.success('Routine cleared')
+            } else {
+                // Should not happen because button is disabled when routineDone is null
+                toast.warn('Please answer the routine question first')
+                return
             }
-            // Refresh trackers data so UI updates
+
             queryClient.invalidateQueries(['trackersAllData'])
         } catch (err) {
-            console.error('Failed to save/clear routine', err)
-            toast.error('Failed to update routine')
+            console.error('Failed to submit used products', err)
+            toast.error('Failed to submit used products')
         } finally {
             setIsSaving(false)
         }
@@ -189,51 +198,51 @@ const DailyRoutineTracker = () => {
 
     return (
         <div className="relative p-6 text-[#181818]">
-                    {/* Question - show mood prompt for skincare; for other categories show morning routine prompt too */}
-                    <div>
-                        <div className="text-lg font-semibold mb-4 flex items-center gap-2">
-                            {icon}
-                            <p>{title}</p>
-                        </div>
+            {/* Question - show mood prompt for skincare; for other categories show morning routine prompt too */}
+            <div>
+                <div className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    {icon}
+                    <p>{title}</p>
+                </div>
 
-                        <div className="flex gap-4 mb-6 ">
-                            {["yes", "no"].map((value) => {
-                                const isSelected = routineDone === value;
+                <div className="flex gap-4 mb-6 ">
+                    {["yes", "no"].map((value) => {
+                        const isSelected = routineDone === value;
 
-                                // Determine background color (use effectiveMode so non-skincare pages stay in ' day ')
-                                const bgClass =
-                                    isSelected && value === "yes"
-                                        ? effectiveMode === "night"
-                                            ? "bg-[#3F53A0] text-white"
-                                            : "bg-[#E6D1C0] text-[#181818]"
-                                        : isSelected && value === "no"
-                                            ? "bg-[#F5F2EF] text-[#181818]"
-                                            : "bg-white text-gray-500";
+                        // Determine background color (use effectiveMode so non-skincare pages stay in ' day ')
+                        const bgClass =
+                            isSelected && value === "yes"
+                                ? effectiveMode === "night"
+                                    ? "bg-[#3F53A0] text-white"
+                                    : "bg-[#E6D1C0] text-[#181818]"
+                                : isSelected && value === "no"
+                                    ? "bg-[#F5F2EF] text-[#181818]"
+                                    : "bg-white text-gray-500";
 
-                                const tickBgClass =
-                                    isSelected
-                                        ? effectiveMode === "night" && value === "yes"
-                                            ? "bg-[#3F53A0] text-white"
-                                            : "bg-[#8C6D56] text-white"
-                                        : "border border-[#8C6D56] text-[#8C6D56]";
+                        const tickBgClass =
+                            isSelected
+                                ? effectiveMode === "night" && value === "yes"
+                                    ? "bg-[#3F53A0] text-white"
+                                    : "bg-[#8C6D56] text-white"
+                                : "border border-[#8C6D56] text-[#8C6D56]";
 
-                                return (
-                                    <button
-                                        key={value}
-                                        onClick={() => handleRoutineResponse(value)}
-                                        disabled={isSaving}
-                                        className={`px-6 w-full py-2 rounded-lg flex items-center justify-between border border-base-300 ${bgClass} cursor-pointer hover:scale-103 transition ${isSaving ? 'opacity-60 pointer-events-none' : ''}`}
-                                    >
-                                        {value.charAt(0).toUpperCase() + value.slice(1)}
-                                        <span className={`ml-3 w-7 h-7 rounded-lg flex items-center justify-center ${tickBgClass} `}>
-                                            ✓
-                                        </span>
-                                    </button>
-                                );
-                            })}
-                        </div>
+                        return (
+                            <button
+                                key={value}
+                                onClick={() => handleRoutineResponse(value)}
+                                disabled={isSaving}
+                                className={`px-6 w-full py-2 rounded-lg flex items-center justify-between border border-base-300 ${bgClass} cursor-pointer hover:scale-103 transition ${isSaving ? 'opacity-60 pointer-events-none' : ''}`}
+                            >
+                                {value.charAt(0).toUpperCase() + value.slice(1)}
+                                <span className={`ml-3 w-7 h-7 rounded-lg flex items-center justify-center ${tickBgClass} `}>
+                                    ✓
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
 
-                    </div>
+            </div>
 
             {/* Products */}
             <div>
@@ -283,7 +292,7 @@ const DailyRoutineTracker = () => {
                                     <div>
                                         <p className="font-medium text-lg">{product.name}</p>
                                         <div className="flex gap-5">
-                                            <p className="text-sm text-blue-500">{product.percent }</p>
+                                            <p className="text-sm text-blue-500">{product.percent}</p>
                                             <p className="text-sm text-gray-500">{product.type}</p>
                                         </div>
 
@@ -329,6 +338,26 @@ const DailyRoutineTracker = () => {
             )}
 
             {/* (old static ProductFeedback removed) */}
+            {/* Buttons...................... */}
+            <div className="flex justify-end gap-4">
+                <button
+                    onClick={() => {
+                        navigate("/library");
+                    }}
+                    className="bg-[#B1805A] text-white px-4 py-2 rounded-lg hover:bg-[#9c7251] transition-colors duration-300 mt-6 flex items-center gap-2 cursor-pointer"
+                >
+                    Add More Product
+                </button>
+
+                <button
+                    onClick={handleSubmitUsedProducts}
+                    disabled={isSaving || routineDone === null || !Object.values(selectedProducts).some(Boolean)}
+                    className={`bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700  transition-colors duration-300 mt-6 flex items-center gap-2 cursor-pointer ${isSaving || routineDone === null || !Object.values(selectedProducts).some(Boolean) ? 'opacity-50 pointer-events-none' : ''}`}
+                >
+                    {isSaving ? 'Submitting...' : 'Submit used products'}
+                </button>
+            </div>
+
         </div>
     );
 };
