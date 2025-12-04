@@ -54,7 +54,7 @@ const RecomendationsForUser = ({ data }) => {
 
             {tipsArray && tipsArray.length > 0 && (
                 <div className="mb-4">
-                    <ul className=" list-inside text-sm space-y-1 grid xl:grid-cols-2 gap-2">
+                    <ul className=" list-inside text-sm space-y-1  gap-2">
                         {tipsArray.map((t, i) => (
                             <li key={i} className="text-[#5B5B5B] border rounded-lg p-2 border-gray-300 shadow-lg bg-white ">{t}</li>
                         ))}

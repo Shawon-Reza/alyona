@@ -73,7 +73,7 @@ const SubscriptionPlanComponent = () => {
                 </div>
 
                 {/* Plans */}
-                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-10">
+                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10">
                     {plans.map((plan, idx) => (
                         <div
                             key={idx}
@@ -84,16 +84,32 @@ const SubscriptionPlanComponent = () => {
                                 {(() => {
                                     const monthly = Number(plan.monthly || 0);
                                     const isYearly = billingCycle === 'yearly';
-                                    const yearlyRaw = Math.round(monthly * 12 * 0.9); // 10% discount
-                                    const priceDisplay = isYearly
-                                        ? `${yearlyRaw}€ / year`
-                                        : `${monthly}€ / month`;
-                                    const savings = monthly > 0 ? Math.round((1 - (yearlyRaw / (monthly * 12))) * 100) : 0;
+                                    // Yearly price: pay for 10 months (2 months free)
+                                    const originalAnnual = monthly * 12;
+                                    const yearlyRaw = monthly === 0 ? 0 : monthly * 10;
+                                    const savingsAmount = originalAnnual - yearlyRaw;
+                                    const monthsSaved = monthly > 0 ? Math.round(savingsAmount / monthly) : 0;
+
                                     return (
-                                        <div className="text-sm text-right ">
-                                            <div>{priceDisplay}</div>
-                                            {isYearly && monthly > 0 && (
-                                                <div className="text-xs text-gray-500 pl-2">Save {savings}% compared to monthly</div>
+                                        <div className="text-sm text-right">
+                                            {monthly === 0 ? (
+                                                <div>Free {monthly}€</div>
+                                            ) : (
+                                                <>
+                                                    {!isYearly ? (
+
+                                                        <div> {monthly}€ per month</div>
+                                                    ) : (
+                                                        <div>
+                                                            <div className="flex items-baseline gap-3">
+                                                                <div className="line-through text-gray-400">{originalAnnual}€</div>
+                                                                <div className="font-medium">{yearlyRaw}€ per year</div>
+
+                                                            </div>
+                                                            <div className="text-xs text-gray-500">(save {savingsAmount}€ or {monthsSaved} months of subscription)</div>
+                                                        </div>
+                                                    )}
+                                                </>
                                             )}
                                         </div>
                                     );
@@ -110,7 +126,7 @@ const SubscriptionPlanComponent = () => {
                                     navigate('Payment/promocode')
                                 }}
                                 className=" pt bg-[#0b0544] text-white text-sm py-2 px-4 rounded-md w-full mt-auto">
-                                Change plan
+                                Choose your plan
                             </button>
                         </div>
                     ))}

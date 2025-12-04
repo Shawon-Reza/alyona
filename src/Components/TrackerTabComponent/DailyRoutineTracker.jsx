@@ -200,7 +200,7 @@ const DailyRoutineTracker = () => {
                             {["yes", "no"].map((value) => {
                                 const isSelected = routineDone === value;
 
-                                // Determine background color (use effectiveMode so non-skincare pages stay in 'day')
+                                // Determine background color (use effectiveMode so non-skincare pages stay in ' day ')
                                 const bgClass =
                                     isSelected && value === "yes"
                                         ? effectiveMode === "night"

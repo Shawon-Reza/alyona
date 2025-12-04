@@ -52,6 +52,8 @@ export default function UserManagementTable() {
         }
     })
 
+    console.log(data)
+
     // mentor list loaded
 
 
@@ -64,6 +66,7 @@ export default function UserManagementTable() {
                 ...u,
                 mentor: u?.mentor ?? "No assigned",
                 status: u?.is_active ?? "Inactive",
+                country: u?.country ?? '',
                 // your payload used subscription_plan in the last message; surface both safely:
                 subscription: u?.subscription ?? u?.subscription_plan ?? "none",
             }))
@@ -295,6 +298,13 @@ export default function UserManagementTable() {
                                             (sortConfig.direction === "asc" ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />)}
                                     </div>
                                 </th>
+                                <th className="py-3 px-4 text-left cursor-pointer" onClick={() => requestSort("country") }>
+                                    <div className="flex items-center">
+                                        Country
+                                        {sortConfig.key === "country" &&
+                                            (sortConfig.direction === "asc" ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />)}
+                                    </div>
+                                </th>
                                 <th className="py-3 px-4 text-left cursor-pointer" onClick={() => requestSort("subscription")}>
                                     <div className="flex items-center">
                                         Subscription
@@ -333,6 +343,8 @@ export default function UserManagementTable() {
                                     </td>
 
                                     <td className="py-3 px-4">{user?.email}</td>
+
+                                    <td className="py-3 px-4">{user?.country || '-'}</td>
 
                                     {/* [MOD] subscription is taken from normalized field */}
                                     <td className="py-3 px-4">{user?.subscription}</td>

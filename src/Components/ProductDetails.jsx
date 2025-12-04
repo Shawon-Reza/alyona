@@ -1,5 +1,8 @@
 import { FaLeaf, FaPaw, FaThumbsUp, FaThumbsDown, FaStar, FaRegStar } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { SiOrganicmaps } from "react-icons/si";
+import { GiFragrance } from "react-icons/gi";
+import { MdPregnantWoman } from "react-icons/md";
 
 export default function ProductDetails() {
 
@@ -28,15 +31,92 @@ export default function ProductDetails() {
     return (
         <div className="p-6 sm:p-8 text-[#181818]">
             {/* Top: Icons */}
-            <div className="flex items-center gap-10 mb-6 text-[14px]">
-                <div className="flex flex-col items-center text-center text-gray-700">
-                    <FaLeaf className="text-2xl text-[#88c099]" />
-                    <span className="mt-2">{product?.natural} natural ingredients</span>
+            <div className="flex flex-col gap-10 mb-6 text-[14px]">
+
+                <div className="flex flex-row gap-2 items-center text-gray-700 ">
+                    {
+                        product?.natural ? (
+                            <>
+                                <div className="flex gap-1 items-center justify-center text-center ">
+                                    <FaLeaf className="text-2xl text-[#88c099]" />
+                                    <span className="mt-2">{product?.natural} natural ingredients</span>
+                                </div>
+                            </>
+                        ) : null
+                    }
+                    {
+                        product?.organic ? (
+                            <>
+                                <div className="flex gap-1 items-center justify-center text-center">
+                                    <SiOrganicmaps color="#88c099" className="text-2xl" />
+                                    <span className="mt-2">{product?.organic} organic ingredients</span>
+                                </div>
+                            </>
+                        ) : null
+                    }
+                    {
+                        product?.pregnancy_safe ? (
+                            <>
+                                <div className="flex gap-1 items-center justify-center text-center">
+                                    <MdPregnantWoman color="#88c099" className="text-2xl" />
+                                    <span className="mt-2">pregnancy safe</span>
+                                </div>
+                            </>
+                        ) : null
+                    }
+                    {
+                        product?.fragrance_free ? (
+                            <>
+                                <div className="flex gap-1 items-center justify-center text-center">
+                                    <GiFragrance color="#88c099" className="text-2xl" />
+                                    <span className="mt-2">fragrance free</span>
+                                </div>
+                            </>
+                        ) : null
+                    }
+
                 </div>
                 {/* <div className="flex flex-col items-center text-center text-gray-700">
                     <FaPaw className="text-2xl text-[#88c099]" />
                     <span className="mt-2">Cruelty free</span>
                 </div> */}
+
+                {
+                    product?.concerns ? (
+                        <div className="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9 2xl:grid-cols-10 gap-4 ">
+                            {
+                                product?.concerns.map((concern, index) => (
+                                    <div key={index} className="flex flex-col items-center justify-center text-center text-gray-700
+                                    bg-[#FAFAFA] shadow-sm
+                                    p-1.5 border border-gray-300 rounded-xl
+                                    ">
+                                        <span className="">{concern}</span>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    ) : null
+                }
+
+                {
+                    product?.fragrance_notes ? (
+                        <div className="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9 2xl:grid-cols-10 gap-4 ">
+                            {
+                                product?.fragrance_notes.map((note, index) => (
+                                    <div key={index} className="flex flex-col items-center justify-center text-center text-gray-700
+                                    bg-[#FAFAFA] shadow-sm
+                                    p-1.5 border border-gray-300 rounded-xl
+                                    ">
+                                        <span className="">{note}</span>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    ) : null
+                }
+
+
+
             </div>
 
             {/* Skin Type */}
@@ -116,7 +196,7 @@ export default function ProductDetails() {
                                     <div className="flex items-center justify-between">
                                         <div className="font-medium text-sm text-gray-800">{rev.user || 'Anonymous'}</div>
                                         <div className="flex items-center gap-1">
-                                            {[1,2,3,4,5].map((n) => (
+                                            {[1, 2, 3, 4, 5].map((n) => (
                                                 <span key={n} className="text-sm">
                                                     {n <= (Number(rev.rating) || 0) ? <FaStar className="text-amber-400" /> : <FaRegStar className="text-gray-300" />}
                                                 </span>

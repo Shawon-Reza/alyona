@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdDeleteOutline } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
+import { Sun, Moon } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotifications }) => {
@@ -113,7 +114,7 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
     const displayed = activeTab === 'unread' ? unreadNotifications : notifications;
 
     return (
-        <div className="fixed top-[117px] lg:top-[134px] right-4 lg:right-10 w-80 rounded-2xl bg-white/80 shadow-lg p-4 z-50 ">
+        <div className="fixed top-[117px] lg:top-[134px] right-4 lg:right-10 w-80 rounded-2xl bg-white/95 shadow-xl p-4 z-50 ">
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
                 <h2 className="font-semibold text-lg">Notifications</h2>
@@ -122,7 +123,7 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
                 </button>
             </div>
 
-            <div className='flex items-center  justify-between '>
+            <div className='flex items-center  justify-between  mb-3'>
                 {/* Tabs */}
                 <div className="flex gap-5 ">
                     <NavLink
@@ -156,28 +157,115 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
                     <p className="text-sm text-gray-400 text-center">No notifications</p>
                 )}
 
-                {displayed.map((notification) => (
-                    <div
-                        onClick={() => handleClickOnNotification(notification)}
-                        key={notification?.id}
-                        className={`cursor-pointer flex items-center justify-between p-3 border border-gray-200 rounded-lg ${!notification.is_read ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-50 transition`}
-                    >
-                        <div>
-                            <p className="text-sm font-semibold">{notification?.category}</p>
-                            <p className="text-xs text-gray-500">{notification.text}</p>
+                {displayed.map((notification) => {
+                    // map categories to light background colors
+                    const categoryBgMap = {
+                        Reminder: 'bg-[#fff8ec]',
+                        Routine: 'bg-[#fff8ec]',
+                        Mentor: 'bg-[#f3f0ff]',
+                        Product: 'bg-[#f0fdf4]',
+                        "Level up": 'bg-[#f0f9ff]',
+                        Admin: "bg-[#6366F1]/20",
+
+                    };
+                    const cardBg = categoryBgMap[notification?.category] || 'bg-white';
+
+                    // Try to parse notification.text as JSON payload
+                    let payload = null;
+                    try {
+                        payload = typeof notification.text === 'string' ? JSON.parse(notification.text) : notification.text;
+                    } catch (e) {
+                        payload = { message: notification.text };
+                    }
+
+                    const isRoutine = notification?.category === 'Reminder' || notification?.category === 'Routine';
+
+                    const am = payload?.weekly_streak?.am_usage || [];
+                    const pm = payload?.weekly_streak?.pm_usage || [];
+
+                    const DayBlocks = ({ values, isAM }) => (
+                        <div className="flex items-center gap-2">
+                            {(values || []).map((v, i) => (
+                                <div
+                                    key={i}
+                                    className={`w-5 h-2 rounded-sm ${v ? (isAM ? 'bg-[#BB9777]' : 'bg-[#7271E3]') : 'bg-gray-200'} transition`}
+                                />
+                            ))}
                         </div>
+                    );
 
-                        <MdDeleteOutline
-                            onClick={(e) => {
-                                e.stopPropagation(); // 🛑 Prevent parent click
-                                handleDeleteNotification(notification?.id);
-                            }}
-                            size={20}
-                            className="z-50 hover:scale-115 transform transition-transform duration-700 ease-in-out"
-                        />
+                    // Visual prominence: unread (is_read === false) should appear stronger; read items are muted.
+                    const mutedClass = notification?.is_read ? 'opacity-60' : '';
+                    // Add a subtle ring/border for unread notifications, color depends on category
+                    const categoryRingMap = {
+                        Reminder: 'ring-1 ring-[#B1805A]/20',
+                        Routine: 'ring-1 ring-[#B1805A]/20',
+                        Mentor: 'ring-1 ring-[#7C6DFE]/15',
+                        Product: 'ring-1 ring-[#10B981]/15',
+                        'Level up': 'ring-1 ring-[#06B6D4]/15',
+                        // Admin : 'ring-1 ring-gray-200/20',
+                    };
+                    const ringClass = !notification?.is_read ? (categoryRingMap[notification?.category] || 'ring-1 ring-gray-200/20') : '';
 
-                    </div>
-                ))}
+                    return (
+                        <div
+                            onClick={() => handleClickOnNotification(notification)}
+                            key={notification?.id}
+                            className={`cursor-pointer flex items-center justify-between p-3 border border-gray-200 rounded-lg ${cardBg} ${ringClass} ${mutedClass} hover:brightness-95 transition`}
+                        >
+                            {isRoutine && payload?.weekly_streak ? (
+                                <div
+
+                                    className="flex items-start gap-3 w-full">
+                                    <div
+                                        onClick={() => {
+                                            navigate("/tracker/skincare/day")
+                                        }}
+                                        className="flex-1 ">
+                                        <p className="text-sm font-semibold">{notification?.category}</p>
+                                        <p className="text-xs text-gray-500 mb-2">{payload?.message || ''}</p>
+
+                                        <div className="space-y-2">
+                                            <div className="flex items-center gap-3">
+                                                <Sun color="#BB9777" size={18} />
+                                                <DayBlocks values={am} isAM={true} />
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <Moon color="#7271E3" size={18} />
+                                                <DayBlocks values={pm} isAM={false} />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <MdDeleteOutline
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // 🛑 Prevent parent click
+                                            handleDeleteNotification(notification?.id);
+                                        }}
+                                        size={20}
+                                        className="z-50 hover:scale-115 transform transition-transform duration-700 ease-in-out"
+                                    />
+                                </div>
+                            ) : (
+                                <>
+                                    <div>
+                                        <p className="text-sm font-semibold">{notification?.category}</p>
+                                        <p className="text-xs text-gray-500">{payload?.message ?? notification.text}</p>
+                                    </div>
+
+                                    <MdDeleteOutline
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // 🛑 Prevent parent click
+                                            handleDeleteNotification(notification?.id);
+                                        }}
+                                        size={20}
+                                        className="z-50 hover:scale-115 transform transition-transform duration-700 ease-in-out"
+                                    />
+                                </>
+                            )}
+                        </div>
+                    )
+                })}
             </div>
         </div>
     );

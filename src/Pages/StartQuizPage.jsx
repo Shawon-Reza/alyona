@@ -8,11 +8,12 @@ const StartQuizPage = () => {
     const navigate = useNavigate();
 
     const handleStartQuiz = () => {
-        navigate('/quiz'); // Adjust route if needed
+        // navigate('/quiz'); // Adjust route if needed
+        navigate('/LocationSelector');
     };
 
     const handleSkip = () => {
-        navigate('/LocationSelector'); // Adjust route if needed
+        // navigate('/LocationSelector'); // Adjust route if needed
     };
 
     return (
