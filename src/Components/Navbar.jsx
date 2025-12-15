@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import AuthNavIcon from '../assets/NavbarLogo.png';
+import AuthNavIcon2 from '../assets/NavbarLogo2.png';
 import { IoMenu, IoClose } from "react-icons/io5";
 import useIsMobile from '../hooks/useIsMobile';
 import annaImg from '../assets/annaImg.png';
@@ -152,8 +153,8 @@ const Navbar = () => {
             <div
                 onClick={() => navigate('/maindashboard')}
                 className="flex items-center gap-2 h-16 whitespace-nowrap cursor-pointer">
-                <img src={AuthNavIcon || "/placeholder.svg"} alt="Brand Logo" className="w-14 h-18" />
-                <span className="font-semibold lg:text-xl hidden sm:block">YOURSELF BEAUTY</span>
+                <img src={AuthNavIcon2 || "/placeholder.svg"} alt="Brand Logo" className="w-13 h-14" />
+                <span className="font-semibold lg:text-xl hidden sm:block text-[#090642]">YOURSELF BEAUTY</span>
             </div>
 
             {/* Nav Links (desktop only) */}

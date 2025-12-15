@@ -15,7 +15,7 @@ const PersonalizedSuggestions = ({ data, onShowQuiz }) => {
             {/* Improve your routine */}
             <div className="space-y-4">
                 <h1 className="text-xl font-bold">Improve your routine</h1>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 ">
                     {/* Skincare efficiency */}
                     <div
                     onClick={()=>{
@@ -58,7 +58,7 @@ const PersonalizedSuggestions = ({ data, onShowQuiz }) => {
             {/* For you */}
             <div className="space-y-4">
                 <h1 className="text-xl font-bold -mt-5">For you</h1>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col md:flex-row  gap-4">
                     {/* Mi Daily Routine */}
                    <div 
                    onClick={()=>{

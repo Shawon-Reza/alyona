@@ -215,7 +215,6 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
                         >
                             {isRoutine && payload?.weekly_streak ? (
                                 <div
-
                                     className="flex items-start gap-3 w-full">
                                     <div
                                         onClick={() => {

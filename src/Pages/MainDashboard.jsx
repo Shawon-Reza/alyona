@@ -307,10 +307,10 @@ export default function MainDashboard() {
                         </div>
 
                         <div className="md:w-1/2 w-full bg-[#fff6f6] p-4 rounded-2xl shadow-sm hover:scale-101 transform transition-transform duration-700 ease-in-out">
-                            <h3 className="text-base font-semibold">Your skincare proficiency level</h3>
-                            <p className="text-lg font-medium mt-1"> {dashboardData?.user_level?.current_level}</p>
-                            <div className="w-full h-3 bg-gray-200 rounded-full mt-3 relative overflow-hidden">
-                                <div className="h-3 bg-pink-400 rounded-full w-[70%]"></div>
+                            <h3 className="text-2xl font-semibold">Your skincare proficiency level</h3>
+                            <p className="text-xl font-medium mt-1"> {dashboardData?.user_level?.current_level}</p>
+                            <div className=" w-full h-5 bg-gray-200 rounded-full mt-5 relative overflow-hidden">
+                                <div className="h-5 bg-pink-400 rounded-full w-[70%]"></div>
                             </div>
                             <p className="text-sm text-gray-500 mt-2">{dashboardData?.user_level?.points_to_reach_next_level} points to reach next level</p>
                         </div>

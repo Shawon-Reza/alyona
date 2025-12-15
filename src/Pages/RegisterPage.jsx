@@ -274,6 +274,9 @@ const RegisterPage = () => {
                         >
                             Continue
                         </button>
+                        <span className='opacity-70'>
+                            This app and its recommendations are for informational purposes only and are not intended to diagnose, treat, or cure any medical condition. Please consult a qualified healthcare professional for medical advice.
+                        </span>
                     </form>
                     ) : (
                         <div className="space-y-4 bg-white p-6 rounded-md shadow-sm">

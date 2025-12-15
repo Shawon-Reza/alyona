@@ -43,7 +43,7 @@ export const DidYouDoYourRoutine = ({ data }) => {
                         <div className="flex items-end gap-2 flex-nowrap overflow-x-auto">
                             {am.map((v, i) => (
                                 <div key={i} className="flex flex-col items-center min-w-[20px]">
-                                    <div className={`w-8  sm:w-14 md:w-24 lg:w-7 2xl:w-9 h-2 rounded-sm ${v ? 'bg-violet-500' : 'bg-violet-200'}`} />
+                                    <div className={`w-9  sm:w-15 md:w-10 lg:w-7 2xl:w-9 h-2 rounded-sm ${v ? 'bg-violet-500' : 'bg-violet-200'}`} />
                                 </div>
                             ))}
                         </div>
@@ -58,7 +58,7 @@ export const DidYouDoYourRoutine = ({ data }) => {
                         <div className="flex items-end gap-2 flex-nowrap overflow-x-auto">
                             {pm.map((v, i) => (
                                 <div key={i} className="flex flex-col items-center min-w-[20px]">
-                                    <div className={`w-8  sm:w-14 md:w-24 lg:w-7 2xl:w-9 h-2 rounded-sm ${v ? 'bg-violet-500' : 'bg-violet-200'}`} />
+                                    <div className={`w-9  sm:w-15 md:w-10 lg:w-7 2xl:w-9 h-2 rounded-sm ${v ? 'bg-violet-500' : 'bg-violet-200'}`} />
                                 </div>
                             ))}
                         </div>

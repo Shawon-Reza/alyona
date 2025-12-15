@@ -25,6 +25,8 @@ import axiosApi from '@/api/axiosApi';
 import { toast } from 'react-toastify';
 import MultiPagePDF from '@/Components/PdfGenerate/MultiPagePDF';
 import DownloadPDFButton from '@/Components/PdfReport/DownloadPDFButton';
+import AuthNavIcon2 from '../assets/NavbarLogo2.png';
+
 
 
 const plans = [
@@ -216,7 +218,7 @@ const Dashboard = () => {
                     <div
                         onClick={() => navigate('/maindashboard')}
                         className="flex items-center gap-2 h-16 whitespace-nowrap cursor-pointer">
-                        <img src={AuthNavIcon || "/placeholder.svg"} alt="Brand Logo" className="w-14 h-18" />
+                        <img src={AuthNavIcon2 || "/placeholder.svg"} alt="Brand Logo" className="w-13 h-14" />
                         <span className="font-semibold lg:text-xl hidden sm:block">YOURSELF BEAUTY</span>
                     </div>
 

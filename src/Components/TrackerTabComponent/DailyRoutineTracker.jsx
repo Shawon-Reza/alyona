@@ -62,11 +62,8 @@ const DailyRoutineTracker = () => {
         })
     )
 
-    // selection keyed by product id or fallback key — default selects day/night appropriate products
-    const [selectedProducts, setSelectedProducts] = useState(() => computeInitialSel(
-        defaultRoutine.products.map(p => ({ id: p.key, daily: p.daily || 'Both' })),
-        effectiveMode
-    ))
+    // selection keyed by product id or fallback key — start with nothing selected
+    const [selectedProducts, setSelectedProducts] = useState({})
     const [isSaving, setIsSaving] = useState(false)
     const [feedbackProduct, setFeedbackProduct] = useState(null);
 
@@ -130,7 +127,7 @@ const DailyRoutineTracker = () => {
             queryClient.invalidateQueries(['trackersAllData'])
         } catch (err) {
             console.error('Failed to submit used products', err)
-            toast.error('Failed to submit used products')
+            toast.error('Failed to submit used products', err.errors || 'asd')
         } finally {
             setIsSaving(false)
         }
@@ -177,12 +174,14 @@ const DailyRoutineTracker = () => {
                 daily: p.daily || 'Both',
                 days_used: p.days_used || 0,
                 feedback_given: !!p.feedback_given,
+                // new field: whether the product was used today (API: is_used_today)
+                is_used_today: !!p.is_used_today,
                 compatibility_score: p.compatibility_score,
             }))
             setLocalProducts(mapped)
             // initialize selection: select products that match the current mode (day/night)
-            const initialSel = computeInitialSel(mapped, effectiveMode)
-            setSelectedProducts(initialSel)
+            // start with no product selected; user must manually pick products
+            setSelectedProducts({})
         }
     }, [data, categorySlug])
 
@@ -290,10 +289,18 @@ const DailyRoutineTracker = () => {
                                         className="w-18 h-18 rounded-md object-cover"
                                     />
                                     <div>
-                                        <p className="font-medium text-lg">{product.name}</p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="font-medium text-lg">{product.name}</p>
+
+                                        </div>
                                         <div className="flex gap-5">
                                             <p className="text-sm text-blue-500">{product.percent}</p>
                                             <p className="text-sm text-gray-500">{product.type}</p>
+                                            {product.is_used_today && (
+                                                <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                                                    Used today
+                                                </span>
+                                            )}
                                         </div>
 
                                         {/* Feedback CTA: show when days_used>10 and not yet given */}
@@ -301,9 +308,9 @@ const DailyRoutineTracker = () => {
                                             <div className="mt-3 ">
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); setFeedbackProduct(product); }}
-                                                    className="text-sm bg-[#B78E6D] text-white px-3 py-1 rounded-md"
+                                                    className="text-sm bg-[#B78E6D] text-white px-3 py-1 rounded-md cursor-pointer"
                                                 >
-                                                    Give Feedback
+                                                     Review
                                                 </button>
                                             </div>
                                         )}

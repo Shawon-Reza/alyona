@@ -9,7 +9,7 @@ const useGetTotalUsers = ({ currentPage, sortConfig, searchTerm, filters }) => {
         queryKey: ['userlist', currentPage, sortConfig, searchTerm, filters],
         queryFn: () =>
             axiosApi
-                .get(`/admin_panel/api/v1/user-list?page=${currentPage}&sort_by=${sortConfig?.key || ''}&sort_order=${sortConfig?.direction || ''}&search=${searchTerm || ''}&subscription_plan=${filters?.subscription || ''}&active_status=${filters?.status || ''}`)
+                .get(`/admin_panel/api/v1/user-list?page=${currentPage}&sort_by=${sortConfig?.key || ''}&sort_order=${sortConfig?.direction || ''}&search=${searchTerm || ''}&subscription_plan=${filters?.subscription || ''}&active_status=${filters?.status || ''}&region=${filters?.region || ''}`)
                 .then((res) => res.data),
         keepPreviousData: true,
     });

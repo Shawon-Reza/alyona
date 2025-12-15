@@ -152,7 +152,9 @@ const AIChat = () => {
             } catch (e) { }
             setLastOptimisticId(null);
             setPendingQuestion(null);
-            toast.error('Failed to send images');
+            // toast.error('Failed to send images');
+            toast.error(err?.response?.data?.error || 'Failed to send images');
+            console.log(err)
         }
     });
 

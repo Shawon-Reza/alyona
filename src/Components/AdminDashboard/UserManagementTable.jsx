@@ -15,6 +15,20 @@ const statuses = ["Active", "Inactive"]
 // Subscription types
 const subscriptionTypes = ["Free", "Premium monthly", "Premium Yearly", "Luxury monthly", "Luxury Yearly"]
 
+// Regions with human-friendly labels
+const regionOptions = {
+    europe: "Europe",
+    north_america: "North America",
+    south_america: "South America",
+    africa: "Africa",
+    middle_east: "Middle East",
+    central_asia: "Central Asia",
+    south_asia: "South Asia",
+    east_asia: "East Asia",
+    southeast_asia: "Southeast Asia",
+    oceania: "Oceania",
+}
+
 export default function UserManagementTable() {
     const [currentPage, setCurrentPage] = useState(1)
     const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" })
@@ -23,9 +37,11 @@ export default function UserManagementTable() {
     const [filters, setFilters] = useState({
         subscription: "",
         status: "",
+        region: "",
     })
 
     const { isPending, error, data } = useGetTotalUsers({ currentPage, sortConfig, searchTerm, filters })
+
     if (isPending) {
         return <div className="text-center text-gray-500">Loading...</div>
     }
@@ -67,6 +83,7 @@ export default function UserManagementTable() {
                 mentor: u?.mentor ?? "No assigned",
                 status: u?.is_active ?? "Inactive",
                 country: u?.country ?? '',
+                region: u?.region ?? '',
                 // your payload used subscription_plan in the last message; surface both safely:
                 subscription: u?.subscription ?? u?.subscription_plan ?? "none",
             }))
@@ -116,6 +133,7 @@ export default function UserManagementTable() {
         setFilters({
             subscription: "",
             status: "",
+            region: "",
         })
     }
 
@@ -212,7 +230,7 @@ export default function UserManagementTable() {
                         ref={filterPanelRef}
                         className="absolute right-0 top-full mt-2 p-6 bg-white rounded-xl shadow-lg  z-10 w-[380px] sm:w-[500px]"
                     >
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             <div>
                                 <label className="block text-sm font-medium mb-2">Subscription</label>
                                 <div className="relative">
@@ -243,6 +261,24 @@ export default function UserManagementTable() {
                                         {statuses.map((status) => (
                                             <option key={status} value={status}>
                                                 {status}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none" />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-2">Region</label>
+                                <div className="relative">
+                                    <select
+                                        className="w-full p-2 border rounded-md appearance-none pl-3 pr-10 cursor-pointer"
+                                        value={filters.region}
+                                        onChange={(e) => setFilters({ ...filters, region: e.target.value })}
+                                    >
+                                        <option value="">Select</option>
+                                        {Object.entries(regionOptions).map(([value, label]) => (
+                                            <option key={value} value={value}>
+                                                {label}
                                             </option>
                                         ))}
                                     </select>
@@ -298,7 +334,7 @@ export default function UserManagementTable() {
                                             (sortConfig.direction === "asc" ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />)}
                                     </div>
                                 </th>
-                                <th className="py-3 px-4 text-left cursor-pointer" onClick={() => requestSort("country") }>
+                                <th className="py-3 px-4 text-left cursor-pointer" onClick={() => requestSort("country")}>
                                     <div className="flex items-center">
                                         Country
                                         {sortConfig.key === "country" &&

@@ -75,7 +75,8 @@ const Extraquiz = () => {
             console.log('Submit response:', res.data);
             toast.success('Answers submitted successfully');
             // Navigate back to missed quizzes after successful submit
-            navigate('/missedquiz');
+            // navigate('/missedquiz');
+            window.location.reload();
 
 
         } catch (err) {
@@ -190,9 +191,9 @@ const Extraquiz = () => {
                                         <p className="text-sm font-medium mb-2">Recommended products</p>
                                         <ul className="list-disc list-inside text-sm">
                                             {data.persona.recommended_products.map((rp, i) => (
-                                                <li key={i} className="text-blue-600 hover:underline">
+                                                <li key={i} className=" ">
                                                     {rp.url ? (
-                                                        <a href={rp.url} target="_blank" rel="noreferrer">{rp.name || rp.title || rp.label}</a>
+                                                        <a className='text-blue-600 hover:underline' href={rp.url} target="_blank" rel="noreferrer">{rp.name || rp.title || rp.label}</a>
                                                     ) : (
                                                         <span>{rp.name || rp.title || rp.label}</span>
                                                     )}
