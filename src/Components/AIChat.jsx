@@ -390,7 +390,7 @@ const AIChat = () => {
                             const v = conditions[k];
                             return (
                                 <div key={k} className="p-2 bg-gray-50 rounded">
-                                    <div className="font-semibold">{k}</div>
+                                    <div className="font-semibold">{k.charAt(0).toUpperCase()+ k.slice(1).replace(/_/g, ' ')}</div>
                                     {v.level && <div className="text-xs">Level: {v.level}</div>}
                                     {v.insight && <div className="text-xs text-gray-600">{v.insight}</div>}
                                 </div>

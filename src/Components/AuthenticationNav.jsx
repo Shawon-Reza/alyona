@@ -18,12 +18,12 @@ const AuthenticationNav = () => {
 
             {/* Right: Log in & Join */}
             <div className="flex items-center gap-4">
-                <button className=" font-medium text-[#0c0c36] hover:underline">Log in</button>
+                {/* <button className=" font-medium text-[#0c0c36] hover:underline">Log in</button> */}
                 <button
-                    onClick={() => navigate('/maindashboard')}
+                    onClick={() => navigate('/')}
                     className="flex items-center gap-2 bg-[#0c0c36] text-white  font-medium px-4 py-2 rounded-md hover:bg-[#1c1c4f] cursor-pointer z-100">
                     <User className="w-4 h-4" />
-                    Join
+                    Log in
                 </button>
             </div>
         </div>

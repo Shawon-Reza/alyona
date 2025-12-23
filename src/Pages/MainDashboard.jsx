@@ -76,7 +76,7 @@ export default function MainDashboard() {
         }
     }, []);
 
-    
+
 
 
     // Use React Query + axios to fetch dashboard data from the backend
@@ -85,6 +85,8 @@ export default function MainDashboard() {
         queryFn: () => axiosApi.get("/accounts/api/v1/dashboard").then((res) => res.data),
         staleTime: 1000 * 60, // 1 minute
     });
+
+    const persona_product = dashboardData?.persona_product || [];
 
     // When dashboard data arrives, derive completed / mention dates for the calendar
     useEffect(() => {
@@ -213,6 +215,8 @@ export default function MainDashboard() {
                                 </div>
                             </div>
                         </div>
+
+
                     </div>
 
                     {/* Calendar Popup */}
@@ -295,8 +299,43 @@ export default function MainDashboard() {
 
                     {/* Recommendations */}
                     {/* <RecomendationsForUser data={dashboardData?.extra_quiz_result}  /> */}
-                    <RecomendationsForUser data={dashboardData?.quick_tips}  />
+                    <RecomendationsForUser data={dashboardData?.quick_tips} />
 
+                    {/* Persona_Products.................. */}
+                    {persona_product.length > 0 && (
+                        <div className="space-y-3">
+                            <h3 className="text-lg font-semibold text-gray-800">Recommended For You</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {persona_product.map((product, index) => (
+                                    <div 
+                                        key={index} 
+                                        className="group bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-sm  border border-gray-100 p-4 transition-all "
+                                    >
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex-1 min-w-0">
+                                                {product.url ? (
+                                                    <p
+                                                        
+                                                        className="flex items-center gap-2 group/link"
+                                                    >
+                                                        <h4 className="text-sm font-semibold text-gray-800  transition-colors line-clamp-2">
+                                                            {product.name}
+                                                        </h4>
+                                                        
+                                                    </p>
+                                                ) : (
+                                                    <h4 className="text-sm font-semibold text-gray-800 line-clamp-2">{product.name}</h4>
+                                                )}
+                                                {product.description && (
+                                                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">{product.description}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Right Column */}

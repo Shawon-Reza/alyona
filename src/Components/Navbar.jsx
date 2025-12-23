@@ -236,7 +236,7 @@ const Navbar = () => {
                                     <span
                                         onClick={() => {
 
-                                            localStorage.removeItem("token");
+                                            localStorage.removeItem("accessToken");
                                             console.log('clicked logout');
                                             // Reload the page to reflect the logout
                                             window.location.reload();

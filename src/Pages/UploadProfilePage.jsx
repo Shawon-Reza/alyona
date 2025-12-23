@@ -77,7 +77,8 @@ const UploadProfilePage = () => {
     };
 
     const handleContinue = () => {
-        uploadImage();
+        // uploadImage();
+        navigate('/LocationSelector');
     };
 
     return (

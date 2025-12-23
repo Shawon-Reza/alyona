@@ -1,8 +1,10 @@
+import { baseUrl } from "../config/config";
 import axios from "axios";
+
 
 // Create an instance of axios
 const axiosApi = axios.create({
-    baseURL: "http://10.10.13.80:8005/",
+    baseURL: baseUrl,
     headers: {
         "Content-Type": "application/json",
     },
@@ -15,10 +17,8 @@ axiosApi.interceptors.request.use(
 
         try {
             // Get access token from localStorage
-            token = JSON.parse(localStorage.getItem('token')) 
-                || JSON.parse(localStorage.getItem('adtoken')) 
-                || JSON.parse(localStorage.getItem('mtrtoken'));
-
+            const userinfo = JSON.parse(localStorage.getItem("accessToken"));
+            token = userinfo?.access;
             console.log('Using token:', token); // Debug log to check which token is being used
 
         } catch (error) {

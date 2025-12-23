@@ -9,7 +9,8 @@ const StartQuizPage = () => {
 
     const handleStartQuiz = () => {
         // navigate('/quiz'); // Adjust route if needed
-        navigate('/LocationSelector');
+        // navigate('/LocationSelector');
+        navigate('/dashboard/about-my-skin');
     };
 
     const handleSkip = () => {
@@ -35,10 +36,11 @@ const StartQuizPage = () => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col items-center justify-center text-center max-w-md mx-auto px-2">
                 <h2 className="text-2xl md:text-3xl font-semibold text-gray-800">
-                    Thanks, your account has been created
+                    Thank you for taking care of Yourself!
                 </h2>
+                <h3 className='font-semibold md:text-lg xl:text-xl'>Here are Your skin Beauty quiz results!</h3>
                 <p className="text-lg md:text-xl text-gray-600 mt-3 mb-8">
-                    Give some information and ask for an email to send the full report and skincare tips + bonus week of skincare to fill in.
+                    Get your personalized Yourself Beauty guide with tailored tips, insights, and recommendations to support your skin beauty—plus a small thank-you gift for taking care of yourself.
                 </p>
 
                 {/* Start the Quiz Button (full width on mobile) */}
@@ -46,19 +48,11 @@ const StartQuizPage = () => {
                     onClick={handleStartQuiz}
                     className="w-full max-w-xs cursor-pointer z-10 bg-[#0c0c36] text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-[#1c1c4f] transition-all duration-200 flex  items-center justify-between mx-4 mt-12"
                 >
-                    Start the Quiz
+                    See my results
                     <ChevronRight />
                 </button>
 
-                {/* Skip Button */}
-                <div className="mt-4 w-full max-w-sm z-10">
-                    <button
-                        onClick={handleSkip}
-                        className="w-full text-[16px] cursor-pointer font-semibold text-[#5B5B5B] underline hover:text-gray-800"
-                    >
-                        Skip this step
-                    </button>
-                </div>
+
             </div>
         </div>
     );

@@ -1,0 +1,1 @@
+export const baseUrl = 'http://10.10.13.80:8005/';

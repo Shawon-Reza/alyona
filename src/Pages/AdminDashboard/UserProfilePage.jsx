@@ -102,6 +102,14 @@ export default function ProfileContent() {
                         <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Pregnancy</span>
                         <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{data?.pregnancy || 'Empty'}</span>
                     </div>
+                    {/* <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Next Period </span>
+                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{data?.next_period_date || 'Empty'}</span>
+                    </div> */}
+                    <div className="flex flex-col sm:flex-row sm:justify-between py-3 md:py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-700 text-sm md:text-base mb-1 sm:mb-0 sm:w-1/4">Last Period </span>
+                        <span className="text-[#5B5B5B] text-sm md:text-base sm:w-3/4">{data?.last_period_date || 'Empty'}</span>
+                    </div>
                 </div>
             </div>
 

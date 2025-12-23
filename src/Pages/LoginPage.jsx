@@ -9,6 +9,7 @@ import Magnet from '../CustomComponent/Magnet';
 import { BackgroundBeamsWithCollision } from '@/Components/ui/background-beams-with-collision';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { baseUrl } from '../config/config';
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -29,32 +30,34 @@ const LoginPage = () => {
         console.log("Password:", password);
 
         try {
-            const response = await axios.post('http://10.10.13.80:8005/accounts/api/v1/login', {
+            const response = await axios.post(`${baseUrl}accounts/api/v1/login`, {
                 email,
                 password,
             });
 
-            toast.success("Login Successful");
-            console.log("Login Successful:", response.data.access);
 
+            console.log("Login Successful:", response.data.login_user_info.role);
+
+            if (response?.data.login_user_info.role !== 'customer') {
+                toast.warning('This is not the place for you to login! Redirecting you to admin login page.');
+                navigate('/admindashboardlogin');
+                return;
+            }
+
+            toast.success("Login Successful");
             // Check quiz status
             if (response?.data?.login_user_info?.quiz_status) {
-                setTimeout(() => {
-                    console.log('status:', response?.data?.login_user_info?.quiz_status);
-                    navigate('/maindashboard');
-                }, 2000);
+                console.log('status:', response?.data?.login_user_info?.quiz_status);
+                navigate('/maindashboard');
             } else {
-                setTimeout(() => {
-                    navigate('/SimpleRegisterPage');
-                }, 2000);
+                // Navigate to quiz if not completed.... need to change the flow.
+                navigate('/SimpleRegisterPage');
             }
 
             console.log('first', response?.data)
             // Example: Save access token to localStorage
             localStorage.setItem('accessToken', JSON.stringify(response.data));
-            localStorage.setItem('token', JSON.stringify(response?.data?.access));
-            localStorage.removeItem("adtoken");
-            localStorage.removeItem("mtrtoken");
+
 
         } catch (error) {
             console.error("Login Failed:", error.response?.data?.detail);
@@ -155,7 +158,7 @@ const LoginPage = () => {
                                 Don't have an account?
                                 <span
                                     onClick={() => {
-                                        navigate('/registration_page');
+                                        navigate('/onboarding-lifestyle-quiz');
                                     }}
                                     className="font-bold cursor-pointer"
                                 >

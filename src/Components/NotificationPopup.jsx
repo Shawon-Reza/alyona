@@ -41,6 +41,10 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
                     // For Mentor notifications, open the monthly report dashboard
                     navigate('/dashboard/monthly-report');
                     if (typeof onClose === 'function') onClose();
+                } else if (notification.category === 'Goal') {
+                    // Goal notifications take the user to the skincare tracker
+                    navigate('/tracker/skincare/day');
+                    if (typeof onClose === 'function') onClose();
                 } else if (notification.category === 'Product') {
                     const target = notification.target_url;
                     if (target) {
@@ -242,7 +246,7 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
                                             handleDeleteNotification(notification?.id);
                                         }}
                                         size={20}
-                                        className="z-50 hover:scale-115 transform transition-transform duration-700 ease-in-out"
+                                        className="z-50 shrink-0"
                                     />
                                 </div>
                             ) : (
@@ -258,7 +262,7 @@ const NotificationPopup = ({ isOpen, onClose, notifications = [], setNotificatio
                                             handleDeleteNotification(notification?.id);
                                         }}
                                         size={20}
-                                        className="z-50 hover:scale-115 transform transition-transform duration-700 ease-in-out"
+                                        className="z-50 shrink-0"
                                     />
                                 </>
                             )}

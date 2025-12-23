@@ -70,7 +70,7 @@ const ProductDetailPage = () => {
         },
 
     })
-
+    console.log(data)
     // ✅ Save to Redux when data is available
     useEffect(() => {
         if (data) {
@@ -176,7 +176,7 @@ const ProductDetailPage = () => {
                         <div className="relative w-full">
                             <div className="w-full h-[340px] sm:h-[465px]  rounded-lg overflow-hidden flex items-center justify-center ">
                                 <img
-                                    src={data?.image }
+                                    src={data?.image}
                                     alt="Product image"
                                     className="w-full h-full object-cover cursor-pointer hover:scale-103 rounded-lg transition duration-300"
                                 />
@@ -186,10 +186,12 @@ const ProductDetailPage = () => {
                             </span>
                         </div>
 
+                        {/* Disable the review button if not eligible */}
                         {/* Review Button */}
                         <button
                             onClick={() => setShowReviewForm(!showReviewForm)}
-                            className="w-full bg-[#D2B8A1] hover:bg-[#a87755] transition text-base sm:text-[18px] font-bold text-white py-2 rounded-md cursor-pointer hover:scale-103 "
+                            className={`w-full bg-[#D2B8A1] hover:bg-[#a87755] transition text-base sm:text-[18px] font-bold text-white py-2 rounded-md cursor-pointer hover:scale-103  ${data?.details?.can_review ? "" : "hidden"
+                                }`}
                         >
                             {showReviewForm ? "Cancel" : "Share my review"}
                         </button>

@@ -193,7 +193,7 @@ export default function ProductLibrary() {
                             max={100}
                             value={compatibility}
                             onChange={(e) => setCompatibility(Number(e.target.value))}
-                            className="w-full"
+                            className="w-full    "
                         />
                     </div>
                 </div>

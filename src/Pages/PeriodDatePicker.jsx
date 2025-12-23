@@ -127,7 +127,7 @@ const PeriodDatePicker = () => {
         // dispatch(setField({ field: 'last_period', value: livingArea }));
         // dispatch(setField({ field: 'next_period', value: address.street }));
 
-        navigate('/LifestyleQuiz')
+        navigate('/StartQuizPage');
     }
     // console.log(data)
 

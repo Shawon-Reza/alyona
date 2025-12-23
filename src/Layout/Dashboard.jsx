@@ -300,7 +300,7 @@ const Dashboard = () => {
                                         <li
                                             onClick={() => {
                                                 console.log('clicked logout');
-                                                localStorage.removeItem("token");
+                                                localStorage.removeItem("accessToken");
                                                 // Reload the page to reflect the logout
                                                 window.location.reload();
                                                 setIsProfileMenuOpen(false);

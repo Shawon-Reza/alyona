@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 const useGetTotalUsers = ({ currentPage, sortConfig, searchTerm, filters }) => {
     // console.log('Hook called with:', currentPage, sortConfig, searchTerm);
     // console.log(filters)
-
+console.log("sadasda",sortConfig)
     const { isLoading, error, data } = useQuery({
         queryKey: ['userlist', currentPage, sortConfig, searchTerm, filters],
         queryFn: () =>

@@ -83,29 +83,34 @@ export default function ProductDetails() {
 
                 {
                     product?.concerns ? (
-                        <div className="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9 2xl:grid-cols-10 gap-4 ">
-                            {
-                                product?.concerns.map((concern, index) => (
-                                    <div key={index} className="flex flex-col items-center justify-center text-center text-gray-700
-                                    bg-[#FAFAFA] shadow-sm
-                                    p-1.5 border border-gray-300 rounded-xl
-                                    ">
-                                        <span className="">{concern}</span>
-                                    </div>
-                                ))
-                            }
+                        <div className="flex flex-wrap gap-4">
+                            {product.concerns.map((concern, index) => (
+                                <div
+                                    key={index}
+                                    className="
+            flex items-center justify-center text-center text-gray-700
+            bg-[#FAFAFA] shadow-sm
+            p-1.5 px-2 border border-gray-300 rounded-xl
+            break-words whitespace-normal
+          "
+                                >
+                                    <span>{concern}</span>
+                                </div>
+                            ))}
                         </div>
                     ) : null
                 }
 
+
                 {
                     product?.fragrance_notes ? (
-                        <div className="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9 2xl:grid-cols-10 gap-4 ">
+                        <div className="flex gap-4 ">
                             {
                                 product?.fragrance_notes.map((note, index) => (
-                                    <div key={index} className="flex flex-col items-center justify-center text-center text-gray-700
-                                    bg-[#FAFAFA] shadow-sm
-                                    p-1.5 border border-gray-300 rounded-xl
+                                    <div key={index} className=" flex items-center justify-center text-center text-gray-700
+            bg-[#FAFAFA] shadow-sm
+            p-1.5 px-2 border border-gray-300 rounded-xl
+            break-words whitespace-normal
                                     ">
                                         <span className="">{note}</span>
                                     </div>

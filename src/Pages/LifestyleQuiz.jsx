@@ -7,7 +7,7 @@ import Stepper, { Step } from '../CustomComponent/Stepper'; // Import Stepper
 import LocationSelector from './LocationSelector';
 import { useDispatch, useSelector } from 'react-redux';
 import { setField } from '@/store/formSlice';
-import axios from 'axios';
+import { toast } from 'react-toastify';
 
 // Array of lifestyle options with labels and values
 const lifestyleOptions = [
@@ -154,9 +154,43 @@ const LifestyleQuizStepper = () => {
         selectedPregnancyBreastfeeding: '',
     });
 
+    const [currentStep, setCurrentStep] = useState(1);
+
     const handleSave = () => {
 
     }
+
+    // Validate if current step has required fields filled
+    const isCurrentStepValid = () => {
+        switch (currentStep) {
+            case 1:
+                return QuizDetails.name !== '' && QuizDetails.age !== '';
+            case 2:
+                return QuizDetails.selectedLifestyle !== '';
+            case 3:
+                return QuizDetails.selectedEatingHabits.length > 0;
+            case 4:
+                return QuizDetails.selectedMood !== '';
+            case 5:
+                return QuizDetails.selectedWaterIntake !== '';
+            case 6:
+                return QuizDetails.selectedSweetConsumption.length > 0;
+            case 7:
+                return QuizDetails.selectedSkinConcerns.length > 0;
+            case 8:
+                return QuizDetails.selectedSkincareGoals.length > 0;
+            case 9:
+                return QuizDetails.selectedSleepQuality !== '';
+            case 10:
+                return QuizDetails.selectedDailyActivity !== '';
+            case 11:
+                return QuizDetails.selectedSkincareTime.length > 0;
+            case 12:
+                return QuizDetails.selectedSupplement !== '' && QuizDetails.selectedPregnancyBreastfeeding !== '';
+            default:
+                return false;
+        }
+    };
 
 
     const navigate = useNavigate();
@@ -325,19 +359,7 @@ const LifestyleQuizStepper = () => {
     };
 
 
-
-
-
-
-
     // ..............................Toggleing for each quiz....................//END.......
-
-
-
-
-
-
-
     // Handle the continue action
     const handleContinue = () => {
         console.log("Final Quiz Details:", QuizDetails); // Log the entire collected data
@@ -373,6 +395,8 @@ const LifestyleQuizStepper = () => {
         console.log(formData)
 
         const finalQuizeData = {
+            name: formData.name,
+            age: formData.age,
             location_area: formData.location_area,
             area: formData.area,
             country: formData.country,
@@ -396,6 +420,9 @@ const LifestyleQuizStepper = () => {
         };
 
         console.log("This is reva : ", finalQuizeData)
+        localStorage.setItem('onboardingQuiz', JSON.stringify(finalQuizeData));
+        toast.info("Quiz data saved..");
+
 
     }
 
@@ -416,6 +443,7 @@ const LifestyleQuizStepper = () => {
                 <Stepper
                     initialStep={1}
                     onStepChange={(step) => {
+                        setCurrentStep(step);
                         console.log(step);
                     }}
 
@@ -431,10 +459,15 @@ const LifestyleQuizStepper = () => {
                         navigate("/QuizGreetings")
                         console.log("All steps completed!")
                     }}
-
-
-
-
+                    
+                    nextButtonProps={{
+                        disabled: !isCurrentStepValid(),
+                        className: `cursor-pointer z-50 duration-350 flex items-center justify-center rounded-lg ${
+                            !isCurrentStepValid()
+                                ? 'bg-gray-400 cursor-not-allowed opacity-60'
+                                : 'bg-[#090642] hover:bg-[#525294]'
+                        } py-1.5 px-3.5 font-medium tracking-tight text-white transition active:bg-green-700`
+                    }}
 
                     backButtonText="Back"
                     nextButtonText="Continue"

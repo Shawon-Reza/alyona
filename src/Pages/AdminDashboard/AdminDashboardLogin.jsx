@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebookF, FaEye, FaEyeSlash } from 'react-icons/fa';
 import login from '../../assets/loginPageIMG.png';
-import { useNavigate } from 'react-router-dom';
+import { data, useNavigate } from 'react-router-dom';
 import LoginPageOverLap from '../../assets/LoginPageOverLap.png'
-
-import axiosApi from '@/api/axiosApi';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { baseUrl } from '../../config/config';
 
 const AdminDashboardLogin = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -27,31 +26,22 @@ const AdminDashboardLogin = () => {
         // Here you would typically send the email and password to your backend for authentication
 
 
-
-
-
-        axios.post('http://10.10.13.80:8005/accounts/api/v1/login', { email, password })
+        axios.post(`${baseUrl}accounts/api/v1/login`, { email, password })
             .then((response) => {
                 console.log(response?.data.login_user_info.role)
                 if (response?.data.login_user_info.role === 'admin') {
-
                     toast.success('Successfully Logged in as Admin');
+
                     navigate('/admindashboard');
-                    localStorage.setItem("adtoken", JSON.stringify(response.data.access));
-                    console.log('Login successful:', response.data);
-                    // Remove other tokens if any
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("mtrtoken");
+                    console.log(response.data)
+                    localStorage.setItem("accessToken", JSON.stringify(response.data));
+
                 }
+
                 else if (response?.data.login_user_info.role === 'mentor') {
                     toast.success('Successfully Logged in as Mentor');
                     navigate('/mentordashboard');
-                    localStorage.setItem("mtrtoken", JSON.stringify(response.data.access));
-                    console.log('Login successful:', response.data);
-
-                    // Remove other tokens if any
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("adtoken");
+                    localStorage.setItem("accessToken", JSON.stringify(response.data));
                     return;
                 } else {
                     toast.error('You are not an admin. Please use the mentor login page.');

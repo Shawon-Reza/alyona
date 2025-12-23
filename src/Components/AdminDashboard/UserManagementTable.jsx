@@ -31,7 +31,7 @@ const regionOptions = {
 
 export default function UserManagementTable() {
     const [currentPage, setCurrentPage] = useState(1)
-    const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" })
+    const [sortConfig, setSortConfig] = useState({ key: "created_at", direction: "desc" })
     const [searchTerm, setSearchTerm] = useState("")
     const [searchValue, setSearchValue] = useState()
     const [filters, setFilters] = useState({
@@ -376,6 +376,10 @@ export default function UserManagementTable() {
                                         className="py-3 px-4 cursor-pointer"
                                     >
                                         {user?.full_name || 'null'}
+                                        {
+                                            user?.is_new && <span className="ml-2 inline-block bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">New</span>
+
+                                        }
                                     </td>
 
                                     <td className="py-3 px-4">{user?.email}</td>

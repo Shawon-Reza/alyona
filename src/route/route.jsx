@@ -1,7 +1,6 @@
 import {
     createBrowserRouter,
     Navigate,
-    RouterProvider,
 } from "react-router-dom";
 import LoginPage from "../Pages/LoginPage";
 import RegisterPage from "../Pages/RegisterPage";
@@ -61,23 +60,26 @@ import ReportsTable from "../Components/AdminDashboard/ReportsTable";
 import ReportsDashboard from "../Components/AdminDashboard/ReportsDashboard";
 import CreateReport from "../Components/AdminDashboard/CreateReport";
 import MentorInboxComponent from "../Components/AdminDashboard/MentorInboxComponent";
-import MentorChatPanel from "../Components/AdminDashboard/ChatWithUser";
 import ChatWithUser from "../Components/AdminDashboard/ChatWithUser";
 import VideoCallInterface from "../Components/AdminDashboard/VideoCallInterface";
 import MentorHome from "../Components/AdminDashboard/MentorHome";
 import AddProductRequestPage from "../Pages/AdminDashboard/AddProductRequestPage";
-import { version } from "react";
-import PrivateRoute from "./PrivateRoute";
-import PrivetAdminRoute from "./PrivetAdminRoute";
 import DownloadPDFButton from "@/Components/PdfReport/DownloadPDFButton";
 import AIChat from "@/Components/AIChat";
 import MissedQuiz from "@/Pages/MissedQuiz";
 import Extraquiz from "@/Pages/Extraquiz";
 import ProductRecommendation from "@/Components/AdminDashboard/ProductRecommendation";
+import PrivateRoute from "./PrivateRoute";
+
 
 const router = createBrowserRouter([
     {
         path: "/",
+        element: <Navigate to="/login" replace />,
+        // element: <LoginPage></LoginPage>,
+    },
+    {
+        path: "/login",
         element: <LoginPage></LoginPage>,
     },
     {
@@ -101,7 +103,7 @@ const router = createBrowserRouter([
         element: <LocationSelector></LocationSelector>
     },
     {
-        path: "/LifestyleQuiz",
+        path: "/onboarding-lifestyle-quiz",
         element: <LifestyleQuiz></LifestyleQuiz>
     },
     {
@@ -114,32 +116,32 @@ const router = createBrowserRouter([
     },
     {
         path: "/SkinAnalysis",
-        element: <SkinAnalysis></SkinAnalysis>
+        element: <PrivateRoute roles={["customer"]}><SkinAnalysis></SkinAnalysis></PrivateRoute>
     },
     {
         path: "/SubscriptionPlans",
-        element: <SubscriptionPlans></SubscriptionPlans>
+        element: <PrivateRoute roles={["customer"]}><SubscriptionPlans></SubscriptionPlans></PrivateRoute>
     },
     {
         path: "/SubscriptionPlans/CheckoutPage",
-        element: <CheckoutPage></CheckoutPage>
+        element: <PrivateRoute roles={["customer"]}><CheckoutPage></CheckoutPage></PrivateRoute>
     },
     {
         path: "/maindashboard",
-        element: <PrivateRoute><MainDashboard></MainDashboard></PrivateRoute>
+        element: <PrivateRoute roles={["customer"]}><MainDashboard></MainDashboard></PrivateRoute>
     },
     {
         path: "/missedquiz",
-        element: <PrivateRoute><MissedQuiz></MissedQuiz></PrivateRoute>
+        element:<PrivateRoute roles={["customer"]}><MissedQuiz></MissedQuiz></PrivateRoute>
     },
     {
         path: "/extraquiz/:id",
-        element: <PrivateRoute><Extraquiz></Extraquiz></PrivateRoute>
+        element: <PrivateRoute roles={["customer"]}><Extraquiz></Extraquiz></PrivateRoute>
     },
     // Dashboard or Home route
     {
         path: "Dashboard",
-        element: <PrivateRoute><Dashboard></Dashboard></PrivateRoute>,
+        element: <PrivateRoute roles={["customer"]}><Dashboard></Dashboard></PrivateRoute>,
         children: [
             {
                 path: "", // default child route (dashboard/)
@@ -174,11 +176,11 @@ const router = createBrowserRouter([
     },
     {
         path: "/library",
-        element: <PrivateRoute><ProductLibrary></ProductLibrary></PrivateRoute>,
+        element: <PrivateRoute roles={["customer"]}><ProductLibrary></ProductLibrary></PrivateRoute>,
     },
     {
         path: "/library/product-detail/:id",
-        element: <PrivateRoute><ProductDetailPage></ProductDetailPage></PrivateRoute>,
+        element: <PrivateRoute roles={["customer"]}><ProductDetailPage></ProductDetailPage></PrivateRoute>,
         children: [
             {
                 path: "",
@@ -195,8 +197,9 @@ const router = createBrowserRouter([
         ]
     },
     {
+        // Need to adjust permisssion for this route
         path: "/chat",
-        element: <PrivateRoute><ChatPage></ChatPage></PrivateRoute>,
+        element: <ChatPage></ChatPage>,
         children: [
             {
                 path: "",
@@ -226,7 +229,7 @@ const router = createBrowserRouter([
 
     {
         path: "/tracker",
-        element: <PrivateRoute><TrackerLayout></TrackerLayout></PrivateRoute>,
+        element:<PrivateRoute roles={["customer"]}><TrackerLayout></TrackerLayout></PrivateRoute>,
         children: [
             {
                 index: true,
@@ -277,7 +280,7 @@ const router = createBrowserRouter([
 
 
 
-    // Admin Dashboard......................................................
+    //................................... **Admin Dashboard**........................................//
     {
         path: '/admindashboardlogin',
         element: <AdminDashboardLogin></AdminDashboardLogin>
@@ -292,7 +295,7 @@ const router = createBrowserRouter([
 
     {
         path: '/admindashboard',
-        element: <PrivetAdminRoute><AdminDashboard></AdminDashboard></PrivetAdminRoute>,
+        element: <AdminDashboard></AdminDashboard>,
         children: [
             {
                 path: "",
