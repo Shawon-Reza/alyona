@@ -118,6 +118,11 @@ const RegisterPage = () => {
             img: '/path/to/third-image.jpg',
             title: "Join Thousands of Happy Users",
             subtitle: "Skin health powered by smart technology"
+        },
+        {
+            img: '/path/to/third-image.jpg',
+            title: "Join Thousands of Happy Users",
+            subtitle: "Skin health powered by smart technology"
         }
     ];
 

@@ -70,6 +70,7 @@ import MissedQuiz from "@/Pages/MissedQuiz";
 import Extraquiz from "@/Pages/Extraquiz";
 import ProductRecommendation from "@/Components/AdminDashboard/ProductRecommendation";
 import PrivateRoute from "./PrivateRoute";
+import OnboardingCheck from "./OnboardingCheck";
 
 
 const router = createBrowserRouter([
@@ -84,7 +85,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/registration_page",
-        element: <RegisterPage></RegisterPage>,
+        element:<OnboardingCheck><RegisterPage></RegisterPage></OnboardingCheck>,
     },
     {
         path: "/SimpleRegisterPage",
@@ -132,7 +133,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/missedquiz",
-        element:<PrivateRoute roles={["customer"]}><MissedQuiz></MissedQuiz></PrivateRoute>
+        element: <PrivateRoute roles={["customer"]}><MissedQuiz></MissedQuiz></PrivateRoute>
     },
     {
         path: "/extraquiz/:id",
@@ -229,7 +230,7 @@ const router = createBrowserRouter([
 
     {
         path: "/tracker",
-        element:<PrivateRoute roles={["customer"]}><TrackerLayout></TrackerLayout></PrivateRoute>,
+        element: <PrivateRoute roles={["customer"]}><TrackerLayout></TrackerLayout></PrivateRoute>,
         children: [
             {
                 index: true,
@@ -295,7 +296,7 @@ const router = createBrowserRouter([
 
     {
         path: '/admindashboard',
-        element: <AdminDashboard></AdminDashboard>,
+        element: <PrivateRoute roles={["admin"]}><AdminDashboard></AdminDashboard></PrivateRoute>,
         children: [
             {
                 path: "",
@@ -318,31 +319,31 @@ const router = createBrowserRouter([
 
             {
                 path: 'newproduct-requestpage',
-                element: <NewProductRequestPage></NewProductRequestPage> // Content for the Users page
+                element: <PrivateRoute roles={["admin"]}><NewProductRequestPage></NewProductRequestPage></PrivateRoute> // Content for the Users page
             },
             {
                 path: 'admin-notifications',
-                element: <NotificationComposer></NotificationComposer>
+                element: <PrivateRoute roles={["admin"]}><NotificationComposer></NotificationComposer></PrivateRoute>
             },
             {
                 path: 'faq',
-                element: <FAQPage></FAQPage> // Content for the Users page
+                element: <PrivateRoute roles={["admin"]}><FAQPage></FAQPage></PrivateRoute> // Content for the Users page
             },
             {
                 path: 'faq-edit-answare',
-                element: <EditAnswerPage></EditAnswerPage> // Content for the Users page
+                element: <PrivateRoute roles={["admin"]}><EditAnswerPage></EditAnswerPage></PrivateRoute> // Content for the Users page
             },
             {
                 path: "user-management-table",
-                element: <UserManagementTable></UserManagementTable>,
+                element: <PrivateRoute roles={["admin"]}><UserManagementTable></UserManagementTable></PrivateRoute>,
             },
             {
                 path: 'userlist',
-                element: <UserManagementTable></UserManagementTable>,
+                element: <PrivateRoute roles={["admin"]}><UserManagementTable></UserManagementTable></PrivateRoute>,
             },
             {
                 path: 'userlist/user/:id',
-                element: <UserProfileLayout></UserProfileLayout>,
+                element: <PrivateRoute roles={["admin"]}><UserProfileLayout></UserProfileLayout></PrivateRoute>,
                 children: [
                     {
                         path: '',
@@ -369,33 +370,34 @@ const router = createBrowserRouter([
 
             {
                 path: "products",
-                element: <ProductManagementTable></ProductManagementTable>,
+                element: <PrivateRoute roles={["admin"]}><ProductManagementTable></ProductManagementTable></PrivateRoute>,
             },
             {
                 path: "products/addproduct",
-                element: <AddProductRequestPage></AddProductRequestPage>,
+                element: <PrivateRoute roles={["admin"]}><AddProductRequestPage></AddProductRequestPage></PrivateRoute>,
             },
             {
                 path: "products/edit-product/:id",
-                element: <EditProductPage></EditProductPage>,
+                element: <PrivateRoute roles={["admin"]}><EditProductPage></EditProductPage></PrivateRoute>,
             },
             {
                 path: "products/details/:id",
-                element: <AdminProductDetailPage></AdminProductDetailPage>,
+                element: <PrivateRoute roles={["admin"]}><AdminProductDetailPage></AdminProductDetailPage></PrivateRoute>,
             },
             {
                 path: "create-mentor",
-                element: <MentorManagementTable></MentorManagementTable>,
+                element: <PrivateRoute roles={["admin"]}><MentorManagementTable></MentorManagementTable></PrivateRoute>,
             },
             {
                 path: "create-mentor/create-user-mentor",
-                element: <CreateUserMentor></CreateUserMentor>,
+                element: <PrivateRoute roles={["admin"]}><CreateUserMentor></CreateUserMentor></PrivateRoute>,
             },
         ]
     },
+    // .................................... **Mentor Dashboard**........................................//
     {
         path: "/mentordashboard",
-        element: <MentorDashboardLayout></MentorDashboardLayout>,
+        element: <PrivateRoute roles={["mentor"]}><MentorDashboardLayout></MentorDashboardLayout></PrivateRoute>,
         children: [
             {
                 path: '',

@@ -469,6 +469,9 @@ const LifestyleQuizStepper = () => {
                         } py-1.5 px-3.5 font-medium tracking-tight text-white transition active:bg-green-700`
                     }}
 
+                    // Allow clicking back freely; allow forward only to next step when current is valid
+                    canNavigateToStep={(clicked, current) => (clicked < current) || (clicked === current + 1 && isCurrentStepValid())}
+
                     backButtonText="Back"
                     nextButtonText="Continue"
                 >

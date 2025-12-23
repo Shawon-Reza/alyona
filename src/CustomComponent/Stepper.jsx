@@ -16,6 +16,9 @@ export default function Stepper({
     nextButtonText = "Continue",
     disableStepIndicators = false,
     renderStepIndicator,
+    // Control whether clicking on a step indicator is allowed
+    // Default: allow navigation to any step
+    canNavigateToStep = (clicked, current) => true,
     ...rest
 }) {
     const [currentStep, setCurrentStep] = useState(initialStep);
@@ -70,6 +73,7 @@ export default function Stepper({
                                         step: stepNumber,
                                         currentStep,
                                         onStepClick: (clicked) => {
+                                            if (!canNavigateToStep(clicked, currentStep)) return;
                                             setDirection(clicked > currentStep ? 1 : -1);
                                             updateStep(clicked);
                                         },
@@ -80,6 +84,7 @@ export default function Stepper({
                                         disableStepIndicators={disableStepIndicators}
                                         currentStep={currentStep}
                                         onClickStep={(clicked) => {
+                                            if (!canNavigateToStep(clicked, currentStep)) return;
                                             setDirection(clicked > currentStep ? 1 : -1);
                                             updateStep(clicked);
                                         }}
