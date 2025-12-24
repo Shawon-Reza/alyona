@@ -54,7 +54,11 @@ export default function AboutSkin() {
 
   // Handle loading and error states
   if (isLoading) return 'Loading...';
-  if (error) return 'An error has occurred on skinAnalysis Page: ' + error.message;
+  if (error) {
+    console.log("Error: ", error)
+    return 'An error has occurred on skinAnalysis Page: ' + error.response.data.message;
+  }
+
 
   console.log(data)
   // Mock data

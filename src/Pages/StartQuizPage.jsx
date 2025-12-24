@@ -21,7 +21,7 @@ const StartQuizPage = () => {
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-white via-[#f7f1ec] to-white relative px-4 pb-20">
             {/* Top Nav */}
             <div className="pt-5">
-                <AuthenticationNav />
+                {/* <AuthenticationNav /> */}
             </div>
 
             {/* Decorative Background Image */}

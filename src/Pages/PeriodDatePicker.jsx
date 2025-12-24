@@ -132,9 +132,9 @@ const PeriodDatePicker = () => {
     // console.log(data)
 
     return (
-        <div className='min-h-screen p-4 sm:p-6 md:p-8 border-gray-200 bg-white relative'>
+        <div className='min-h-screen p-4 sm:p-6 md:p-8 border-gray-200 bg-white relative flex items-center justify-center'>
             <div>
-                <AuthenticationNav></AuthenticationNav>
+                {/* <AuthenticationNav></AuthenticationNav> */}
             </div>
             <div className="absolute bottom-0 right-0">
                 <img src={LoginPageOverLap || "/placeholder.svg"} alt="OverlapIMG" />
@@ -171,10 +171,18 @@ const PeriodDatePicker = () => {
                 <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-3">
                     <div className=''></div>
                     <div className='w-full'></div>
-                    <button className="lg:col-span-1 cursor-pointer text-sm text-gray-500 underline w-full">
+                    <button
+                        onClick={() => {
+                            navigate('/StartQuizPage');
+                        }}
+                        className="lg:col-span-1 cursor-pointer text-sm text-gray-500 underline w-full">
                         Skip this question
                     </button>
-                    <button className="w-full px-15 lg:col-span-1 xl:px-20 text-sm bg-[#BB9777] text-white py-3 rounded-md cursor-pointer">
+                    <button
+                        onClick={() => {
+                            navigate('/StartQuizPage');
+                        }}
+                        className="w-full px-15 lg:col-span-1 xl:px-20 text-sm bg-[#BB9777] text-white py-3 rounded-md cursor-pointer">
                         I don't remember
                     </button>
                     <button

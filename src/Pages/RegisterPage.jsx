@@ -14,6 +14,8 @@ import SplitText from '../CustomComponent/SplitText';
 import { fadeSlide } from '@/CustomComponent/fadeSlide';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useMutation } from '@tanstack/react-query';
+import { baseUrl } from '../config/config';
 
 
 
@@ -60,10 +62,33 @@ const RegisterPage = () => {
             })
             .finally(() => setIsSubmitting(false));
 
-
-
-
     };
+
+    // 1️⃣ Mutation for onboarding quiz after OTP verification
+    const onboardingMutation = useMutation({
+        mutationFn: async ({ accessToken, onboardingData }) => {
+            const response = await axios.post(`${baseUrl}accounts/api/v1/quiz`,
+                onboardingData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json', // optional but recommended
+                    }
+                }
+            );
+            return response.data;
+        },
+        onSuccess: (data) => {
+            console.log('Onboarding status updated:', data);
+            // toast.success('Onboarding status updated successfully!');
+            localStorage.removeItem('onboardingQuiz'); // Clear onboarding data from localStorage
+        },
+        onError: (error) => {
+            console.error('Failed to update onboarding status:', error);
+            toast.error('Failed to update onboarding status. Please try again.');
+        },
+
+    });
 
     const handleVerifyOtp = async (e) => {
         if (e && e.preventDefault) e.preventDefault();
@@ -71,15 +96,36 @@ const RegisterPage = () => {
         setIsVerifying(true);
 
         try {
+            // 2️⃣ Verify OTP
             // Assumption: backend exposes a verify endpoint at /accounts/api/v1/verify-otp
             const payload = { otp, email: registrationData?.email || registrationData?.username };
             const res = await axios.patch('http://10.10.13.80:8005/accounts/api/v1/verify-otp', payload);
 
             console.log('OTP verified:', res.data);
+
             localStorage.setItem('accessToken', JSON.stringify(res.data));
             toast.success('OTP verified successfully! Please login.');
             // proceed to next step after verification
+
+            // 3️⃣ Save onboarding status
+            const onboardingData = JSON.parse(localStorage.getItem('onboardingQuiz'));
+            // Remove empty fields (empty string, null, undefined, empty array)
+            const newOnboardingData = Object.fromEntries(
+                Object.entries(onboardingData).filter(([key, value]) => {
+                    if (value === "" || value === null || value === undefined) return false;
+                    if (Array.isArray(value) && value.length === 0) return false;
+                    return true;
+                })
+            );
+
+            console.log("Onboarding Data get From Localstorage: ", onboardingData)
+            console.log("NewOnboarding Data get From Localstorage: ", newOnboardingData)
+            //.............**Call mutation to save onboarding status** ...................//
+            onboardingMutation.mutate({ accessToken: res.data.access, onboardingData: newOnboardingData });
+
+            // 4️⃣ Navigate after success
             navigate('/');
+
         } catch (err) {
             console.error('OTP verification failed', err.response || err.message);
             setVerificationError(err.response?.data?.detail || 'OTP verification failed. Please try again.');

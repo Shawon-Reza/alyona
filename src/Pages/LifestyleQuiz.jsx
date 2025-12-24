@@ -439,7 +439,8 @@ const LifestyleQuizStepper = () => {
                 <img src={LoginPageOverLap} alt="OverlapIMG" className='scale-120' />
             </div>
 
-            <div className='mt-2 sm:mt-35 md:mt-40 lg:mt-30 xl:mt-5 2xl:-mt-10'>
+            <div className=' sm:mt-52 md:mt-64 lg:mt-52 xl:mt-28 2xl:mt-1 bg-gradient-to-br from-white via-[#f7f1ec] to-white'>
+
                 <Stepper
                     initialStep={1}
                     onStepChange={(step) => {
@@ -459,14 +460,13 @@ const LifestyleQuizStepper = () => {
                         navigate("/QuizGreetings")
                         console.log("All steps completed!")
                     }}
-                    
+
                     nextButtonProps={{
                         disabled: !isCurrentStepValid(),
-                        className: `cursor-pointer z-50 duration-350 flex items-center justify-center rounded-lg ${
-                            !isCurrentStepValid()
+                        className: `cursor-pointer z-50 duration-350 flex items-center justify-center rounded-lg ${!isCurrentStepValid()
                                 ? 'bg-gray-400 cursor-not-allowed opacity-60'
                                 : 'bg-[#090642] hover:bg-[#525294]'
-                        } py-1.5 px-3.5 font-medium tracking-tight text-white transition active:bg-green-700`
+                            } py-1.5 px-3.5 font-medium tracking-tight text-white transition active:bg-green-700`
                     }}
 
                     // Allow clicking back freely; allow forward only to next step when current is valid

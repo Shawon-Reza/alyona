@@ -35,23 +35,20 @@ const LoginPage = () => {
                 password,
             });
 
-
             console.log("Login Successful:", response.data.login_user_info.role);
-
             if (response?.data.login_user_info.role !== 'customer') {
                 toast.warning('This is not the place for you to login! Redirecting you to admin login page.');
                 navigate('/admindashboardlogin');
                 return;
             }
-
             toast.success("Login Successful");
             // Check quiz status
-            if (response?.data?.login_user_info?.quiz_status) {
+            if (response?.data?.login_user_info?.three_question_not_answered) {
                 console.log('status:', response?.data?.login_user_info?.quiz_status);
                 navigate('/maindashboard');
             } else {
                 // Navigate to quiz if not completed.... need to change the flow.
-                navigate('/SimpleRegisterPage');
+                navigate('/UploadProfilePage', { replace: true });
             }
 
             console.log('first', response?.data)

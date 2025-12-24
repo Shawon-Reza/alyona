@@ -65,7 +65,7 @@ const UploadProfilePage = () => {
             console.log('Image uploaded successfully:', response.data);
             toast.success('Image uploaded successfully!');
             // Redirect to the next page after successful upload
-            setTimeout(() => navigate('/StartQuizPage'), 1000);
+           
         } catch (error) {
             console.error('Error uploading image:', error);
             if (error.response && error.response.data) {
@@ -77,14 +77,14 @@ const UploadProfilePage = () => {
     };
 
     const handleContinue = () => {
-        // uploadImage();
+        uploadImage();
         navigate('/LocationSelector');
     };
 
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-[#f7f1ec] to-white relative px-4 pb-20">
             {/* Top Navigation */}
-            <AuthenticationNav />
+            {/* <AuthenticationNav /> */}
 
             {/* Background Flower (desktop only) */}
             <div className="absolute bottom-11 right-10 hidden sm:block ">
