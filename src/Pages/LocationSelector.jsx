@@ -9,6 +9,9 @@ import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import MapProgressBar from '../Components/MapProgressBar';
 import { useDispatch } from 'react-redux';
 import { setField } from '@/store/formSlice';
+import { useMutation } from '@tanstack/react-query';
+import { baseUrl } from '../config/config';
+import axiosApi from '../api/axiosApi';
 
 // Custom marker icon
 const markerIcon = new L.Icon({
@@ -51,10 +54,6 @@ const LocationSelector = () => {
                 city: data.address.city || data.address.town || data.address.village || '',
                 country: data.address.country || '',
             });
-
-
-
-
         } catch (err) {
             console.error("Error fetching address:", err);
         }
@@ -102,18 +101,57 @@ const LocationSelector = () => {
         console.log("Living area updated:", livingArea);
     }, [livingArea]);
 
-
     const dispatch = useDispatch();
+
+    // Mutation hook at component level
+    const locationMutation = useMutation({
+        mutationFn: async (locationData) => {
+            const response = await axiosApi.post(`${baseUrl}accounts/api/v1/quiz`, locationData);
+            return response.data;
+        },
+        onSuccess: (data) => {
+            console.log('Location data submitted successfully:', data);
+
+        },
+        onError: (error) => {
+            console.error('Error submitting location data:', error);
+        }
+    });
     console.log(address)
+
+    // Check if all required fields are filled
+    const isFormValid = address.street && address.city && address.country && livingArea;
+
+    const check = JSON.parse(localStorage.getItem('accessToken'));
+
     const handleSave = () => {
+        // Log all location-related data on save
+        console.log('Saving location data:', {
+            direccion: address.street,
+            city: address.city,
+            country: address.country,
+            livingArea: livingArea,
+        });
+
+        // Dispatch to Redux store
         dispatch(setField({ field: 'location_area', value: livingArea }));
         dispatch(setField({ field: 'area', value: address.street }));
         dispatch(setField({ field: 'city', value: address.city }));
         dispatch(setField({ field: 'country', value: address.country }));
 
-        navigate('/PeriodDatePicker');
-
         console.log("Save on Redux store")
+
+        // Execute mutation
+        locationMutation.mutate({
+            location_area: livingArea,
+            area: address.street,
+            city: address.city,
+            country: address.country,
+        });
+
+        
+        navigate('/PeriodDatePicker');
+        console.log("Mutarion is called")
     };
 
 
@@ -185,7 +223,7 @@ const LocationSelector = () => {
 
                             {/* Address Display */}
                             <div className="bg-[#efdfcf] p-4 rounded-md mb-6 space-y-1 text-sm">
-                                <p><strong>Dirección:</strong> {address.street || 'Street, 1234'}</p>
+                                <p><strong>Direccion:</strong> {address.street || 'Street, 1234'}</p>
                                 <p><strong>City:</strong> {address.city || 'City'}</p>
                                 <p><strong>Country:</strong> {address.country || 'Country'}</p>
                             </div>
@@ -206,18 +244,21 @@ const LocationSelector = () => {
                                     <option value="">-- Select --</option>
                                     <option value="city">City</option>
                                     <option value="countryside">Countryside</option>
-                                    <option value="half and a half">Half and a half</option>
+                                    <option value="half_and_half">Half and a half</option>
                                 </select>
 
                             </div>
-
+                            ``
                         </div>
 
                         {/* Save Button fixed at bottom */}
                         <button
-
                             onClick={handleSave}
-                            className="bg-[#0c0c36] text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-[#1c1c4f] w-full flex justify-between cursor-pointer "
+                            disabled={!isFormValid}
+                            className={`px-6 py-3 rounded-md text-lg font-semibold w-full flex justify-between cursor-pointer ${isFormValid
+                                ? 'bg-[#0c0c36] text-white hover:bg-[#1c1c4f]'
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                }`}
                         >
                             Save my location
                             <ChevronRight />

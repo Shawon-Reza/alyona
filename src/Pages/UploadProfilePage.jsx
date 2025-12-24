@@ -14,7 +14,7 @@ const UploadProfilePage = () => {
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
-    
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
 
@@ -65,7 +65,7 @@ const UploadProfilePage = () => {
             console.log('Image uploaded successfully:', response.data);
             toast.success('Image uploaded successfully!');
             // Redirect to the next page after successful upload
-           
+
         } catch (error) {
             console.error('Error uploading image:', error);
             if (error.response && error.response.data) {
@@ -75,9 +75,15 @@ const UploadProfilePage = () => {
             }
         }
     };
+    const check = JSON.parse(localStorage.getItem('accessToken'));
 
     const handleContinue = () => {
         uploadImage();
+        if (check?.login_user_info.three_question_not_answered) {
+            navigate('/maindashboard');
+            return;
+        }
+        console.log("after")
         navigate('/LocationSelector');
     };
 

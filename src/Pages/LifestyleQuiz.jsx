@@ -129,7 +129,7 @@ const supplementOptions = [
 const pregnancyBreastfeedingOptions = [
     { value: "Yes, I am expecting", label: "Yes, I am expecting" },
     { value: "Yes, I am on breastfeeding journey", label: "Yes, I am on breastfeeding journey" },
-    { value: "No, neither of two', 'No, neither of two", label: "No, neither of two" }
+    { value: "No, neither of two", label: "No, neither of two" }
 ];
 
 

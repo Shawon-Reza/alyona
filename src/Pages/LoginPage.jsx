@@ -21,8 +21,6 @@ const LoginPage = () => {
         setShowPassword(!showPassword);
     };
 
-
-
     const handleLoginForm = async (e) => {
         e.preventDefault(); // Prevent page reload
 
@@ -36,24 +34,34 @@ const LoginPage = () => {
             });
 
             console.log("Login Successful:", response.data.login_user_info.role);
+            // Example: Save access token to localStorage
+
+            localStorage.setItem('accessToken', JSON.stringify(response.data));
+
+
             if (response?.data.login_user_info.role !== 'customer') {
                 toast.warning('This is not the place for you to login! Redirecting you to admin login page.');
                 navigate('/admindashboardlogin');
                 return;
             }
             toast.success("Login Successful");
-            // Check quiz status
+            // Check quiz status and profile image
+            if (!response?.data?.login_user_info?.image) {
+                navigate('/UploadProfilePage', { replace: true });
+                return;
+            }
+
             if (response?.data?.login_user_info?.three_question_not_answered) {
                 console.log('status:', response?.data?.login_user_info?.quiz_status);
                 navigate('/maindashboard');
+                return;
             } else {
                 // Navigate to quiz if not completed.... need to change the flow.
-                navigate('/UploadProfilePage', { replace: true });
+                navigate('/LocationSelector', { replace: true });
+                return;
             }
 
-            console.log('first', response?.data)
-            // Example: Save access token to localStorage
-            localStorage.setItem('accessToken', JSON.stringify(response.data));
+
 
 
         } catch (error) {

@@ -3,14 +3,45 @@ import { useNavigate } from 'react-router-dom';
 import AuthenticationNav from '../Components/AuthenticationNav';
 import LoginPageOverLap from '../assets/LoginPageOverLap.png';
 import { ChevronRight } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { baseUrl } from '../config/config';
+import { toast } from 'react-toastify';
+import axiosApi from '../api/axiosApi';
 
 const StartQuizPage = () => {
     const navigate = useNavigate();
+    const formData = useSelector((state) => state.form);
+    console.log('Redux data', formData);
+    const payload = {
+        location_area: formData.location_area,
+        area: formData.area,
+        city: formData.city,
+        country: formData.country,
+        last_period: formData['month-1'],
+        next_period: formData['month-2']
+    }
+    console.log(payload)
+    // Mutation hook at component level
+    const quizMutation = useMutation({
+        mutationFn: async () => {
+            const response = await axiosApi.post(`${baseUrl}accounts/api/v1/quiz`, payload);
+            return response.data;
+        },
+        onSuccess: (data) => {
+            console.log('Quiz data submitted successfully:', data);
+            toast.success('Quiz data submitted successfully!');
+            navigate('/dashboard/about-my-skin');
+        },
+        onError: (error) => {
+            console.error('Error submitting quiz data:', error);
+            toast.error('Failed to submit quiz data. Please try again.');
+        }
+    });
 
     const handleStartQuiz = () => {
-        // navigate('/quiz'); // Adjust route if needed
-        // navigate('/LocationSelector');
-        navigate('/dashboard/about-my-skin');
+        quizMutation.mutate();
     };
 
     const handleSkip = () => {
@@ -25,7 +56,7 @@ const StartQuizPage = () => {
             </div>
 
             {/* Decorative Background Image */}
-            <div className="absolute bottom-15 right-20 hidden sm:block ">
+            <div className="absolute bottom-15 right-20 hidden sm:block">
                 <img
                     src={LoginPageOverLap}
                     alt="Decorative Overlap"
@@ -46,13 +77,11 @@ const StartQuizPage = () => {
                 {/* Start the Quiz Button (full width on mobile) */}
                 <button
                     onClick={handleStartQuiz}
-                    className="w-full max-w-xs cursor-pointer z-10 bg-[#0c0c36] text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-[#1c1c4f] transition-all duration-200 flex  items-center justify-between mx-4 mt-12"
+                    className="w-full max-w-xs cursor-pointer z-10 bg-[#0c0c36] text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-[#1c1c4f] transition-all duration-200 flex items-center justify-between mx-4 mt-12"
                 >
                     See my results
                     <ChevronRight />
                 </button>
-
-
             </div>
         </div>
     );

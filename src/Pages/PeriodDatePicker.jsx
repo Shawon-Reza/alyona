@@ -31,6 +31,7 @@ const PeriodDatePicker = () => {
     const months = getMonthData(today);
     const [selectedDates, setSelectedDates] = useState({});
 
+    
     const toggleDate = (monthIndex, date) => {
         setSelectedDates((prev) => {
             const newSelected = { ...prev };
