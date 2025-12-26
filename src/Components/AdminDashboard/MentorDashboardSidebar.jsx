@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'; // Importing NavLink for routing
 import { FaHome, FaComments, FaFileAlt, FaBell, FaSignOutAlt } from 'react-icons/fa'; // Icons for sidebar items
 import logo from '../../assets/logo.png'
 
-const MentorDashboardSidebar = ({handleSidebarItemClick}) => {
+const MentorDashboardSidebar = ({ handleSidebarItemClick }) => {
     return (
         <div className="h-full max-h-[calc(100vh-50px)] w-[calc(100vw-50px)] md:w-72 bg-white shadow-md p-6 rounded-2xl">
             {/* Logo */}
@@ -73,7 +73,10 @@ const MentorDashboardSidebar = ({handleSidebarItemClick}) => {
                 </NavLink>
 
                 <NavLink
-                    to="/logout"
+                    // to="/logout"
+                    onClick={() => {
+                        localStorage.removeItem("accessToken")
+                    }}
                     className={({ isActive }) =>
                         isActive
                             ? "flex items-center space-x-3 py-3 px-4 text-gray-900 bg-[#f7f1ec] rounded-lg"

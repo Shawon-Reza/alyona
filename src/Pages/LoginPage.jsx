@@ -118,11 +118,11 @@ const LoginPage = () => {
                         <div className="space-y-4">
                             <button className="w-full flex items-center justify-center border border-base-200 rounded-xl py-3 lg:py-4 text-base lg:text-lg gap-2 hover:bg-gray-100 bg-white">
                                 <FcGoogle className="text-xl" />
-                                <span>Login with Google</span>
+                                <span className='text-black'>Login with Google</span>
                             </button>
                             <button className="w-full flex items-center justify-center border border-base-100 rounded-xl py-3 lg:py-4 text-base lg:text-lg gap-2 hover:bg-gray-100 bg-white">
                                 <FaFacebookF className="text-blue-600 text-xl" />
-                                <span>Log in with Facebook</span>
+                                <span className='text-black'>Log in with Facebook</span>
                             </button>
                         </div>
 
@@ -135,7 +135,7 @@ const LoginPage = () => {
                                 placeholder="Email"
                                 value={email}  // Bind to email state
                                 onChange={(e) => setEmail(e.target.value)}  // Update email state
-                                className="w-full px-4 lg:px-6 py-3 lg:py-4 text-base lg:text-lg bg-white/50 rounded-xl border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                                className="w-full px-4 lg:px-6 py-3 lg:py-4 text-base lg:text-lg bg-white/50 rounded-xl border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200 text-black"
                             />
                             <div className="relative">
                                 <input
@@ -143,7 +143,7 @@ const LoginPage = () => {
                                     placeholder="Password"
                                     value={password}  // Bind to password state
                                     onChange={(e) => setPassword(e.target.value)}  // Update password state
-                                    className="w-full px-4 lg:px-6 py-3 lg:py-4 pr-10 text-base lg:text-lg rounded-xl bg-white/50 border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                                    className="w-full px-4 lg:px-6 py-3 lg:py-4 pr-10 text-base lg:text-lg rounded-xl bg-white/50 border border-base-200 focus:outline-none focus:ring-2 focus:ring-indigo-200 text-black"
                                 />
                                 <button
                                     type="button"

@@ -19,11 +19,25 @@ const ChatPanel = () => {
   const { id: roomId } = useParams();
   const [userID, setUserID] = useState(null);
 
+  // const token = JSON.parse(localStorage.getItem("accessToken"));
+  // console.log("token :",token)
+
+  // if (token?.access) {
+  //   try {
+  //     const decoded = jwtDecode(token.access);
+  //     console.log("decode token:",decoded)
+  //     setUserID(decoded?.user_id || decoded?.id);
+  //   } catch (err) {
+  //     console.error("Invalid token:", err);
+  //   }
+  // }
+
   useEffect(() => {
-    const token = localStorage.getItem("token") || localStorage.getItem("mtrtoken");
-    if (token) {
+    const token = JSON.parse(localStorage.getItem("accessToken"));
+
+    if (token?.access) {
       try {
-        const decoded = jwtDecode(token);
+        const decoded = jwtDecode(token.access);
         setUserID(decoded?.user_id || decoded?.id);
       } catch (err) {
         console.error("Invalid token:", err);
