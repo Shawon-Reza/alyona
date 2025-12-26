@@ -111,7 +111,7 @@ const LocationSelector = () => {
         },
         onSuccess: (data) => {
             console.log('Location data submitted successfully:', data);
-
+            navigate('/PeriodDatePicker');
         },
         onError: (error) => {
             console.error('Error submitting location data:', error);
@@ -127,11 +127,13 @@ const LocationSelector = () => {
     const handleSave = () => {
         // Log all location-related data on save
         console.log('Saving location data:', {
-            direccion: address.street,
+            area: address.street,
             city: address.city,
             country: address.country,
-            livingArea: livingArea,
+            location_area: livingArea,
         });
+
+
 
         // Dispatch to Redux store
         dispatch(setField({ field: 'location_area', value: livingArea }));
@@ -149,16 +151,14 @@ const LocationSelector = () => {
             country: address.country,
         });
 
-        
-        navigate('/PeriodDatePicker');
-        console.log("Mutarion is called")
+        console.log("Mutation is called")
     };
 
 
     return (
         <div className='min-h-screen bg-gradient-to-b from-white via-[#f3ebe6] to-white relative'>
             <div className='pt-4'>
-                <AuthenticationNav />
+                {/* <AuthenticationNav /> */}
             </div>
             <div className='sm:my-5'>
                 <MapProgressBar progress={30} />

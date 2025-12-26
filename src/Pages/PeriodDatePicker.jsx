@@ -8,6 +8,10 @@ import AuthenticationNav from '../Components/AuthenticationNav';
 import { ChevronRight } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setField } from '@/store/formSlice';
+import { useMutation } from '@tanstack/react-query';
+import axiosApi from '../api/axiosApi';
+import { baseUrl } from '../config/config';
+import { toast } from 'react-toastify';
 
 const getMonthData = (baseDate) => {
     const prevMonth = new Date(baseDate.getFullYear(), baseDate.getMonth() - 1);
@@ -118,17 +122,56 @@ const PeriodDatePicker = () => {
     const data = useSelector((state) => state.form)
     console.log(selectedDates)
     const dispatch = useDispatch()
+    
+    // Mutation: submit last/next period
+    const periodMutation = useMutation({
+        mutationFn: async (body) => {
+            const response = await axiosApi.post(`${baseUrl}accounts/api/v1/quiz`, body);
+            return response.data;
+        },
+        onSuccess: () => {
+            navigate('/StartQuizPage');
+        },
+        onError: (error) => {
+            console.error('Error submitting period data:', error);
+            toast.error('Failed to submit period data. Please try again.');
+        }
+    });
 
     const handleSave = () => {
+        // Derive last & next period
+        const selected = Object.values(selectedDates);
+        let last_period = selectedDates['month-1'] || null;
+        let next_period = selectedDates['month-2'] || null;
 
+        if (selected.length === 2 && (!last_period || !next_period)) {
+            // Fallback: sort chronologically if user picked two dates without specific months
+            const a = new Date(selected[0]);
+            const b = new Date(selected[1]);
+            if (a <= b) {
+                last_period = selected[0];
+                next_period = selected[1];
+            } else {
+                last_period = selected[1];
+                next_period = selected[0];
+            }
+        }
+
+        if (!last_period || !next_period) {
+            toast.error('Please select two dates to continue.');
+            return;
+        }
+
+        // Persist to Redux (both granular and explicit fields)
         Object.entries(selectedDates).forEach(([field, value]) => {
             dispatch(setField({ field, value }));
         });
+        dispatch(setField({ field: 'last_period', value: last_period }));
+        dispatch(setField({ field: 'next_period', value: next_period }));
 
-        // dispatch(setField({ field: 'last_period', value: livingArea }));
-        // dispatch(setField({ field: 'next_period', value: address.street }));
-
-        navigate('/StartQuizPage');
+        // Submit to API
+        console.log(last_period,next_period)
+        periodMutation.mutate({ last_period, next_period });
     }
     // console.log(data)
 

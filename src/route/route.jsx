@@ -71,6 +71,7 @@ import Extraquiz from "@/Pages/Extraquiz";
 import ProductRecommendation from "@/Components/AdminDashboard/ProductRecommendation";
 import PrivateRoute from "./PrivateRoute";
 import OnboardingCheck from "./OnboardingCheck";
+import PeriodCheck from "./PeriodCheck";
 
 
 const router = createBrowserRouter([
@@ -109,7 +110,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/PeriodDatePicker",
-        element: <PeriodDatePicker></PeriodDatePicker>
+        element:  <PeriodCheck><PeriodDatePicker></PeriodDatePicker></PeriodCheck>
     },
     {
         path: "/QuizGreetings",

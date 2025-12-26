@@ -45,21 +45,38 @@ const LoginPage = () => {
                 return;
             }
             toast.success("Login Successful");
+
+
             // Check quiz status and profile image
             if (!response?.data?.login_user_info?.image) {
                 navigate('/UploadProfilePage', { replace: true });
                 return;
             }
-
-            if (response?.data?.login_user_info?.three_question_not_answered) {
-                console.log('status:', response?.data?.login_user_info?.quiz_status);
-                navigate('/maindashboard');
-                return;
-            } else {
-                // Navigate to quiz if not completed.... need to change the flow.
+            // Check location info
+            if (response?.data?.login_user_info?.four_question_not_answered) {
                 navigate('/LocationSelector', { replace: true });
                 return;
             }
+            // Check location info
+            // if (response?.data?.login_user_info?.four_question_not_answered) {
+            //     navigate('/LocationSelector', { replace: true });
+            //     return;
+            // }
+            // Check period date info
+            if (response?.data?.login_user_info?.is_not_pregnant) {
+                navigate('/PeriodDatePicker', { replace: true });
+                return;
+            }
+            navigate('/maindashboard');
+            // if (response?.data?.login_user_info?.three_question_not_answered) {
+            //     console.log('status:', response?.data?.login_user_info?.quiz_status);
+            //     navigate('/maindashboard');
+            //     return;
+            // } else {
+            //     // Navigate to quiz if not completed.... need to change the flow.
+            //     navigate('/LocationSelector', { replace: true });
+            //     return;
+            // }
 
 
 
