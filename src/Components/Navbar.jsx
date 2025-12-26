@@ -6,7 +6,9 @@ import { IoMenu, IoClose } from "react-icons/io5";
 import useIsMobile from '../hooks/useIsMobile';
 import annaImg from '../assets/annaImg.png';
 import { Bell, ChevronRight, Info, LogOut, Pencil, Phone } from 'lucide-react';
+import { CgProfile } from "react-icons/cg";
 import NotificationPopup from './NotificationPopup'; // Import the popup component
+import ProfileUpdateModal from './ProfileUpdateModal';
 import useCurrentUser from '../hooks/useCurrentUser'; // Custom hook to fetch current user info
 import { connectWebSocketForNotifications, getnotifications } from '@/Chat/chatService';
 
@@ -15,6 +17,7 @@ const Navbar = () => {
     const isMobile = useIsMobile();
     const [isPopupOpen, setIsPopupOpen] = useState(false); // State to manage popup visibility
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false); // State to manage profile menu visibility
+    const [isProfileUpdateOpen, setIsProfileUpdateOpen] = useState(false); // State to manage profile update modal
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State to manage mobile menu visibility
     // States for notifications...............................
     const [notifications, setNotifications] = useState([]);
@@ -142,7 +145,7 @@ const Navbar = () => {
 
 
 
-
+    const userInfo = JSON.parse(localStorage.getItem("accessToken"));
 
 
 
@@ -203,7 +206,7 @@ const Navbar = () => {
                             <ul className="text-sm space-y-5">
                                 {/* My Profile */}
                                 <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 cursor-pointer border-b hover:rounded-md">
-                                    <Pencil size={18} />
+                                    <CgProfile size={18} />
                                     <span
                                         onClick={() => {
                                             navigate('/maindashboard');
@@ -216,12 +219,20 @@ const Navbar = () => {
                                     <ChevronRight size={18} />
                                 </li>
 
-                                {/* Support */}
-                                {/* <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
-                                    <Phone size={18} />
-                                    <span className="flex-1">Support</span>
+                                {/* Update Profile */}
+                                <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
+                                    <Pencil size={18} />
+                                    <span
+                                        className="flex-1"
+                                        onClick={() => {
+                                            setIsProfileUpdateOpen(true);
+                                            setIsProfileMenuOpen(false);
+                                        }}
+                                    >
+                                        Update Profile
+                                    </span>
                                     <ChevronRight size={18} />
-                                </li> */}
+                                </li>
 
                                 {/* Privacy Policy */}
                                 {/* <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
@@ -291,6 +302,13 @@ const Navbar = () => {
 
             {/* Notification Popup */}
             <NotificationPopup isOpen={isPopupOpen} onClose={togglePopup} notifications={notifications} setNotifications={setNotifications} />
+
+            {/* Profile Update Modal */}
+            <ProfileUpdateModal
+                isOpen={isProfileUpdateOpen}
+                onClose={() => setIsProfileUpdateOpen(false)}
+                endpoint={"accounts/api/v1/profile-image"}
+            />
         </div>
     );
 };

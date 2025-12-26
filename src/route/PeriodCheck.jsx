@@ -8,6 +8,9 @@ const PeriodCheck = ({ children }) => {
     if (!periodData?.login_user_info.is_not_pregnant) {
         return <Navigate to="/StartQuizPage" replace />
     }
+    if (periodData?.login_user_info.period) {
+        return <Navigate to="/StartQuizPage" replace />
+    }
 
     return children
 }

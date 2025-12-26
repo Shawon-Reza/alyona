@@ -26,6 +26,7 @@ import { toast } from 'react-toastify';
 import MultiPagePDF from '@/Components/PdfGenerate/MultiPagePDF';
 import DownloadPDFButton from '@/Components/PdfReport/DownloadPDFButton';
 import AuthNavIcon2 from '../assets/NavbarLogo2.png';
+import ProfileUpdateModal from '../Components/ProfileUpdateModal';
 
 
 
@@ -79,6 +80,7 @@ const Dashboard = () => {
     const [isNavMenuOpen, setIsNavMenuOpen] = useState(false); // State to manage nav menu popup
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State to manage mobile menu visibility
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false); // State to manage profile menu visibility
+    const [isProfileUpdateOpen, setIsProfileUpdateOpen] = useState(false); // State to manage profile update modal
 
     const navigate = useNavigate();
     const navMenuRef = useRef(null);
@@ -281,6 +283,20 @@ const Dashboard = () => {
                                             </span>
                                             <ChevronRight size={18} />
                                         </li>
+                                        {/* Update Profile */}
+                                        <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
+                                            <Pencil size={18} />
+                                            <span
+                                                className="flex-1"
+                                                onClick={() => {
+                                                    setIsProfileUpdateOpen(true);
+                                                    setIsProfileMenuOpen(false);
+                                                }}
+                                            >
+                                                Update Profile
+                                            </span>
+                                            <ChevronRight size={18} />
+                                        </li>
 
                                         {/* Support */}
                                         {/* <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
@@ -337,6 +353,13 @@ const Dashboard = () => {
 
                     {/* Notification Popup */}
                     <NotificationPopup isOpen={isPopupOpen} onClose={togglePopup} notifications={notifications} setNotifications={setNotifications} />
+                    
+                    {/* Profile Update Modal */}
+                    <ProfileUpdateModal
+                        isOpen={isProfileUpdateOpen}
+                        onClose={() => setIsProfileUpdateOpen(false)}
+                        endpoint={"accounts/api/v1/profile-image"}
+                    />
                 </div>
 
                 {/* Navigation Menu Popup */}
@@ -422,7 +445,7 @@ const Dashboard = () => {
                                         <span className="text-2xl font-light">›</span>
                                     </NavLink>
                                 </li>
-                                
+
                                 <li className="border-t border-gray-300">
                                     <NavLink
                                         to="about-my-skin"
@@ -494,8 +517,8 @@ const Dashboard = () => {
                         </div>
 
                         {/* NOTIFICATIONS */}
-                                            <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Notifications</h2>
-                                            <NotificationSettings />
+                        <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Notifications</h2>
+                        <NotificationSettings />
 
                         {/* HELP */}
                         <h2 className="mt-4 pl-2 text-xs font-semibold text-gray-500 uppercase mb-3">Help & Privacy</h2>

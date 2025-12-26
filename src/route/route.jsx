@@ -72,6 +72,7 @@ import ProductRecommendation from "@/Components/AdminDashboard/ProductRecommenda
 import PrivateRoute from "./PrivateRoute";
 import OnboardingCheck from "./OnboardingCheck";
 import PeriodCheck from "./PeriodCheck";
+import GeatingCheack from "./GeatingCheack";
 
 
 const router = createBrowserRouter([
@@ -98,7 +99,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/StartQuizPage",
-        element: <StartQuizPage></StartQuizPage>
+        element: <GeatingCheack><StartQuizPage></StartQuizPage></GeatingCheack>
     },
     {
         path: "/LocationSelector",

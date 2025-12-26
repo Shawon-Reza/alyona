@@ -48,8 +48,6 @@ const AdminDashboardLogin = () => {
                     return;
                 }
 
-
-
             })
             .catch((error) => {
                 console.error('Login failed:', error);

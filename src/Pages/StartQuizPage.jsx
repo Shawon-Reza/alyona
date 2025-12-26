@@ -41,7 +41,8 @@ const StartQuizPage = () => {
     });
 
     const handleStartQuiz = () => {
-        quizMutation.mutate();
+        // quizMutation.mutate();
+           navigate('/dashboard/about-my-skin');
     };
 
     const handleSkip = () => {
