@@ -417,19 +417,20 @@ const Dashboard = () => {
                                         <span className="text-2xl font-light">›</span>
                                     </NavLink>
                                 </li>
-                                <li className="border-t border-gray-300">
-                                    <NavLink
-                                        to="/maindashboard"
-                                        onClick={handleSidebarItemClick}
-                                        className={({ isActive }) =>
-                                            `flex items-center justify-between px-3 py-2 ${isActive ? 'bg-[#EFEBEB] text-[#0b0544] font-medium' : 'hover:bg-gray-100'}`
-                                        }>
+                                <li 
+                                    className="border-t border-gray-300 cursor-pointer hover:bg-gray-100"
+                                    onClick={() => {
+                                        setIsProfileUpdateOpen(true);
+                                        handleSidebarItemClick();
+                                    }}
+                                >
+                                    <div className="flex items-center justify-between px-3 py-2">
                                         <span className="flex items-center space-x-2">
                                             <MdOutlineModeEdit className="text-lg" />
                                             <span>Edit Profile</span>
                                         </span>
                                         <span className="text-2xl font-light">›</span>
-                                    </NavLink>
+                                    </div>
                                 </li>
                                 <li className="border-t border-gray-300">
                                     <NavLink
