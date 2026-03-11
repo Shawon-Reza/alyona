@@ -99,6 +99,7 @@ const MentorInboxComponent = () => {
                                 <div
                                     key={conversation.id}
                                     onClick={() => {
+                                        console.log(conversation)
                                         navigate(`chatWithUser/${conversation.id}`);
                                     }}
                                     className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white hover:bg-gray-50 cursor-pointer transition-colors duration-200 mb-2 md:mb-3 mx-2 md:mx-0 rounded-xl active:bg-gray-100"

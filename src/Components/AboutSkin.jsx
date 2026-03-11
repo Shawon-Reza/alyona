@@ -4,7 +4,7 @@ import { FaLightbulb } from "react-icons/fa";
 import SkinAnalysisPageIMG from "../assets/SkinAnalysisPageIMG.png";
 import SkinSatisfactionChart from "./SkinSatisfactionChart"; // Keep this as-is if already using Recharts or update separately
 import useQuizResult from "@/hooks/useQuizResult";
-
+import profileIcon from "../assets/profileIcon.svg";
 
 
 // const recommendations = [

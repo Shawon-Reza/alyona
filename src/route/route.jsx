@@ -87,7 +87,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/registration_page",
-        element:<OnboardingCheck><RegisterPage></RegisterPage></OnboardingCheck>,
+        element: <OnboardingCheck><RegisterPage></RegisterPage></OnboardingCheck>,
     },
     {
         path: "/SimpleRegisterPage",
@@ -111,7 +111,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/PeriodDatePicker",
-        element:  <PeriodCheck><PeriodDatePicker></PeriodDatePicker></PeriodCheck>
+        element: <PeriodCheck><PeriodDatePicker></PeriodDatePicker></PeriodCheck>
     },
     {
         path: "/QuizGreetings",
@@ -206,11 +206,11 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "",
-                element: <ChatPanel></ChatPanel>,
+                element: <PrivateRoute roles={["customer", "customer"]}><ChatPanel></ChatPanel></PrivateRoute  >,
             },
             {
                 path: "chat-with-mentor/:id",
-                element: <ChatPanel></ChatPanel>,
+                element: <PrivateRoute roles={["customer", "customer"]}><ChatPanel></ChatPanel></PrivateRoute  >,
             },
             {
                 path: "face-scan",
@@ -405,6 +405,39 @@ const router = createBrowserRouter([
                 path: '',
                 element: <MentorHome></MentorHome>
             },
+            // User Profile Layout Route
+            {
+                path: 'mentor-dashboard-user-profile/:id',
+                element: <UserProfileLayout></UserProfileLayout>,
+            },
+            // ............................................
+            {
+                path: 'mentor-dashboard-user-profile/:id',
+                element: <PrivateRoute roles={["mentor"]}><UserProfileLayout></UserProfileLayout></PrivateRoute>,
+                children: [
+                    {
+                        path: '',
+                        element: <Navigate to="profile" replace />
+                    },
+                    {
+                        path: 'profile',
+                        element: <UserProfilePage></UserProfilePage>
+                    },
+                    {
+                        path: 'products',
+                        element: <UserProductContent></UserProductContent>
+                    },
+                    {
+                        path: 'ai',
+                        element: <UserAIContent></UserAIContent>
+                    },
+                    {
+                        path: 'dashboard',
+                        element: <UserDashboardContent></UserDashboardContent>
+                    },
+                ]
+            },
+            // ............................................
             {
                 path: 'notification-composer',
                 element: <NotificationComposer></NotificationComposer>

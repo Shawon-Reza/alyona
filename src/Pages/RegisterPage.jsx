@@ -44,7 +44,7 @@ const RegisterPage = () => {
 
         // Registration Post Request
         // On success we'll show an OTP input instead of navigating away immediately.
-        axios.post('http://10.10.13.80:8005/accounts/api/v1/register', data)
+        axios.post(`${baseUrl}accounts/api/v1/register`, data)
             .then(res => {
                 console.log('Registered:', res.data);
                 // store registration data so we can resend or verify OTP
@@ -99,7 +99,7 @@ const RegisterPage = () => {
             // 2️⃣ Verify OTP
             // Assumption: backend exposes a verify endpoint at /accounts/api/v1/verify-otp
             const payload = { otp, email: registrationData?.email || registrationData?.username };
-            const res = await axios.patch('http://10.10.13.80:8005/accounts/api/v1/verify-otp', payload);
+            const res = await axios.patch(`${baseUrl}accounts/api/v1/verify-otp`, payload);
 
             console.log('OTP verified:', res.data);
 
@@ -315,7 +315,7 @@ const RegisterPage = () => {
                                     onChange={(e) => setBirthdayValue(e.target.value)}
                                     onFocus={() => setBirthdayFocused(true)}
                                     onBlur={() => setBirthdayFocused(false)}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-md bg-[#f5ece4] border border-[#e8ddd3] text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#BB9777]"
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-md bg-[#f5ece4] border border-[#e8ddd3] text-black focus:outline-none focus:ring-2 focus:ring-[#BB9777]"
                                     style={!birthdayValue ? { color: 'transparent' } : {}}
                                 />
                             </div>

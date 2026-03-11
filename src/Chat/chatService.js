@@ -1,7 +1,7 @@
 // src/chat/chatService.js
 
 import axiosApi from "@/api/axiosApi";
-
+// http://ec2-44-208-10-75.compute-1.amazonaws.com/
 
 export const getOrCreateRoom = async (otherUserId) => {
     const res = await axiosApi.post(`/room/${otherUserId}`);
@@ -21,15 +21,16 @@ export const connectWebSocket = (roomId, onMessage, onSeen) => {
     // const token = JSON.parse(localStorage.getItem("mtrtoken"));
     let token;
     try {
-        token = JSON.parse(localStorage.getItem('token'))
-            || JSON.parse(localStorage.getItem('mtrtoken'));
+        let userDetails = JSON.parse(localStorage.getItem('accessToken'))
+        token = userDetails?.access;
+
     } catch (e) {
         token = null;
     }
     console.log(token);
 
     const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const wsUrl = `${wsProtocol}://10.10.13.80:8005/ws/chat/${roomId}/?token=${token}`;
+    const wsUrl = `${wsProtocol}://ec2-44-208-10-75.compute-1.amazonaws.com/ws/chat/${roomId}/?token=${token}`;
 
     const socket = new WebSocket(wsUrl);
 
@@ -58,21 +59,21 @@ export const getnotifications = async () => {
 }
 
 
-// For notifications
+// ......................**For notifications**...........................//
 export const connectWebSocketForNotifications = (onNotification) => {
     let token;
     try {
-        token = JSON.parse(localStorage.getItem('token'))
-            || JSON.parse(localStorage.getItem('mtrtoken'));
+        let userDetails = JSON.parse(localStorage.getItem('accessToken'))
+        token = userDetails?.access;
     } catch (e) {
         token = null;
     }
     console.log(token);
 
     const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const wsUrl = `${wsProtocol}://10.10.13.80:8005/ws/notifications/?token=${token}`;
+    const wsUrl = `${wsProtocol}://ec2-44-208-10-75.compute-1.amazonaws.com/ws/notifications/?token=${token}`;
 
-    const socket = new WebSocket(wsUrl); "wss://api.alyona.ai/ws/notifications/?token=${token}";
+    const socket = new WebSocket(wsUrl);
 
 
     socket.onopen = () => console.log("✅ Notification WebSocket connected");

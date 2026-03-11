@@ -11,6 +11,7 @@ import NotificationPopup from './NotificationPopup'; // Import the popup compone
 import ProfileUpdateModal from './ProfileUpdateModal';
 import useCurrentUser from '../hooks/useCurrentUser'; // Custom hook to fetch current user info
 import { connectWebSocketForNotifications, getnotifications } from '@/Chat/chatService';
+import horizontalLogo from "../assets/horizontalLogo.svg"
 
 
 const Navbar = () => {
@@ -156,8 +157,9 @@ const Navbar = () => {
             <div
                 onClick={() => navigate('/maindashboard')}
                 className="flex items-center gap-2 h-16 whitespace-nowrap cursor-pointer">
-                <img src={AuthNavIcon2 || "/placeholder.svg"} alt="Brand Logo" className="w-13 h-14" />
-                <span className="font-semibold lg:text-xl hidden sm:block text-[#090642]">YOURSELF BEAUTY</span>
+                <img src={horizontalLogo || "/placeholder.svg"} alt="Brand Logo" className="w-full" />
+
+                {/* <span className="font-semibold lg:text-xl hidden sm:block text-[#090642]">YOURSELF BEAUTY</span> */}
             </div>
 
             {/* Nav Links (desktop only) */}
@@ -195,7 +197,7 @@ const Navbar = () => {
                         className="rounded-full w-10 h-10 overflow-hidden cursor-pointer"
                         onClick={toggleProfileMenu}
                     >
-                        <img src={`http://10.10.13.80:8005${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
+                        <img src={`${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
                     </div>
 
                     {/* Profile Menu Popup */}
@@ -220,14 +222,16 @@ const Navbar = () => {
                                 </li>
 
                                 {/* Update Profile */}
-                                <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
+                                <li
+                                    onClick={() => {
+                                        setIsProfileUpdateOpen(true);
+                                        setIsProfileMenuOpen(false);
+                                    }}
+                                    className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
                                     <Pencil size={18} />
                                     <span
                                         className="flex-1"
-                                        onClick={() => {
-                                            setIsProfileUpdateOpen(true);
-                                            setIsProfileMenuOpen(false);
-                                        }}
+
                                     >
                                         Update Profile
                                     </span>

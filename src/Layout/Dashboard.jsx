@@ -27,6 +27,8 @@ import MultiPagePDF from '@/Components/PdfGenerate/MultiPagePDF';
 import DownloadPDFButton from '@/Components/PdfReport/DownloadPDFButton';
 import AuthNavIcon2 from '../assets/NavbarLogo2.png';
 import ProfileUpdateModal from '../Components/ProfileUpdateModal';
+import { CgProfile } from 'react-icons/cg';
+import horizontalLogo from '../assets/horizontalLogo.svg';
 
 
 
@@ -220,8 +222,9 @@ const Dashboard = () => {
                     <div
                         onClick={() => navigate('/maindashboard')}
                         className="flex items-center gap-2 h-16 whitespace-nowrap cursor-pointer">
-                        <img src={AuthNavIcon2 || "/placeholder.svg"} alt="Brand Logo" className="w-13 h-14" />
-                        <span className="font-semibold lg:text-xl hidden sm:block">YOURSELF BEAUTY</span>
+                        <img src={horizontalLogo || "/placeholder.svg"} alt="Brand Logo" className="w-full" />
+
+                        {/* <span className="font-semibold lg:text-xl hidden sm:block text-[#090642]">YOURSELF BEAUTY</span> */}
                     </div>
 
                     {/* Nav Links (desktop only) */}
@@ -260,7 +263,7 @@ const Dashboard = () => {
                                 className="rounded-full w-10 h-10 overflow-hidden cursor-pointer"
                                 onClick={toggleProfileMenu}
                             >
-                                <img src={`http://10.10.13.80:8005${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
+                                <img src={`${user?.image}` || "/placeholder.svg"} alt="User profile" className="w-full h-full object-cover" />
                             </div>
 
                             {/* Profile Menu Popup */}
@@ -271,7 +274,7 @@ const Dashboard = () => {
                                     <ul className="text-sm space-y-5">
                                         {/* My Profile */}
                                         <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 cursor-pointer border-b hover:rounded-md">
-                                            <Pencil size={18} />
+                                            <CgProfile size={18} />
                                             <span
                                                 onClick={() => {
                                                     navigate('/maindashboard');
@@ -284,14 +287,16 @@ const Dashboard = () => {
                                             <ChevronRight size={18} />
                                         </li>
                                         {/* Update Profile */}
-                                        <li className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
+                                        <li
+                                            onClick={() => {
+                                                setIsProfileUpdateOpen(true);
+                                                setIsProfileMenuOpen(false);
+                                            }}
+                                            className="flex items-center gap-5 py-2 px-3 hover:bg-gray-300 border-b cursor-pointer hover:rounded-md">
                                             <Pencil size={18} />
                                             <span
                                                 className="flex-1"
-                                                onClick={() => {
-                                                    setIsProfileUpdateOpen(true);
-                                                    setIsProfileMenuOpen(false);
-                                                }}
+
                                             >
                                                 Update Profile
                                             </span>
@@ -353,7 +358,7 @@ const Dashboard = () => {
 
                     {/* Notification Popup */}
                     <NotificationPopup isOpen={isPopupOpen} onClose={togglePopup} notifications={notifications} setNotifications={setNotifications} />
-                    
+
                     {/* Profile Update Modal */}
                     <ProfileUpdateModal
                         isOpen={isProfileUpdateOpen}
@@ -417,7 +422,7 @@ const Dashboard = () => {
                                         <span className="text-2xl font-light">›</span>
                                     </NavLink>
                                 </li>
-                                <li 
+                                <li
                                     className="border-t border-gray-300 cursor-pointer hover:bg-gray-100"
                                     onClick={() => {
                                         setIsProfileUpdateOpen(true);

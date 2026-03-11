@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Search, ChevronDown, ChevronUp, Eye, Edit, Bell, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axiosApi from '@/api/axiosApi';
+import { CiChat1 } from "react-icons/ci";
 
 const MentorUsersTable = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -14,7 +15,7 @@ const MentorUsersTable = () => {
         queryKey: ['assigned-users'],
         queryFn: async () => {
             const res = await axiosApi.get('/mentor/api/v1/assigned-users');
-            return res.data ;
+            return res.data;
         },
     });
     console.log(users)
@@ -75,6 +76,11 @@ const MentorUsersTable = () => {
 
     const handleAction = (action, user) => {
         console.log(`${action} action for user:`, user.full_name);
+        console.log('User ID:', user.id);
+
+
+        // mentor-dashboard-user-profile/:id
+        navigate(`/mentordashboard/mentor-dashboard-user-profile/${user.id}`);
     };
 
     return (
@@ -235,13 +241,15 @@ const MentorUsersTable = () => {
                                     {visibleData.map((user) => (
                                         <tr key={user.id} className="hover:bg-gray-50">
                                             <td
-                                                onClick={() => {
-                                                    navigate('notification-composer')
-                                                }}
+
                                                 className="text-gray-800 cursor-pointer"
                                             >
                                                 <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
-                                                    <div className="flex items-center gap-2">
+                                                    <div
+                                                        onClick={() => handleAction('view', user)}
+                                                        title="View user"
+
+                                                        className="flex items-center gap-2">
                                                         <span className="font-medium">{user.full_name}</span>
                                                         {(user.last_contacted === null || user.last_contacted === undefined) && (
                                                             <span className="badge badge-sm bg-amber-100 text-amber-800 border-amber-200">
@@ -290,11 +298,13 @@ const MentorUsersTable = () => {
                                             <td>
                                                 <div className="flex items-center gap-1 md:gap-2">
                                                     <button
+                                                    onClick={()=>{
+                                                        // navigate(`chatWithUser/${conversation.id}`)
+                                                    }}
                                                         className="btn btn-ghost btn-sm p-1 md:p-2"
-                                                        onClick={() => handleAction('view', user)}
-                                                        title="View user"
+
                                                     >
-                                                        <Eye size={14} className="md:w-4 md:h-4 text-gray-500" />
+                                                        <CiChat1 size={14} className="md:w-4 md:h-4 text-gray-500" />
                                                     </button>
                                                     <button
                                                         className="btn btn-ghost btn-sm p-1 md:p-2"
@@ -305,8 +315,9 @@ const MentorUsersTable = () => {
                                                     </button>
                                                     <button
                                                         className="btn btn-ghost btn-sm p-1 md:p-2"
-                                                        onClick={() => handleAction('notify', user)}
-                                                        title="Send notification"
+                                                        onClick={() => {
+                                                            navigate('notification-composer')
+                                                        }}
                                                     >
                                                         <Bell size={14} className="md:w-4 md:h-4 text-gray-500" />
                                                     </button>

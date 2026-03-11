@@ -11,5 +11,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'), // 🔥 This sets '@' to point to your 'src' folder
     },
   },
+  server: {
+    port: 5010, // You can change this to any port you prefer
+  },
 });
 

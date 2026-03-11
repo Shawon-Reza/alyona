@@ -4,12 +4,55 @@ import axiosApi from '../api/axiosApi';
 import { baseUrl } from '../config/config';
 import { toast } from 'react-toastify';
 
+const REGION_JSON = {
+  "europe": [
+    "Albania", "Andorra", "Austria", "Belarus", "Belgium", "Bosnia and Herzegovina", "Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Iceland", "Ireland", "Italy", "Kosovo", "Latvia", "Liechtenstein", "Lithuania", "Luxembourg", "Malta", "Moldova", "Monaco", "Montenegro", "Netherlands", "North Macedonia", "Norway", "Poland", "Portugal", "Romania", "Russia", "San Marino", "Serbia", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "Ukraine", "United Kingdom", "Vatican City"
+  ],
+  "north_america": [
+    "Antigua and Barbuda", "Bahamas", "Barbados", "Belize", "Canada", "Costa Rica", "Cuba", "Dominica", "Dominican Republic", "El Salvador", "Grenada", "Guatemala", "Haiti", "Honduras", "Jamaica", "Mexico", "Nicaragua", "Panama", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Trinidad and Tobago", "United States"
+  ],
+  "south_america": [
+    "Argentina", "Bolivia", "Brazil", "Chile", "Colombia", "Ecuador", "Guyana", "Paraguay", "Peru", "Suriname", "Uruguay", "Venezuela"
+  ],
+  "africa": [
+    "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cape Verde", "Cameroon", "Central African Republic", "Chad", "Comoros", "Democratic Republic of the Congo", "Republic of the Congo", "Djibouti", "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon", "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Ivory Coast", "Kenya", "Lesotho", "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", "Mozambique", "Namibia", "Niger", "Nigeria", "Rwanda", "São Tomé and Príncipe", "Senegal", "Seychelles", "Sierra Leone", "Somalia", "South Africa", "South Sudan", "Sudan", "Tanzania", "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe"
+  ],
+  "middle_east": [
+    "Bahrain", "Iran", "Iraq", "Israel", "Jordan", "Kuwait", "Lebanon", "Oman", "Palestine", "Qatar", "Saudi Arabia", "Syria", "Turkey", "United Arab Emirates", "Yemen"
+  ],
+  "central_asia": [
+    "Kazakhstan", "Kyrgyzstan", "Tajikistan", "Turkmenistan", "Uzbekistan"
+  ],
+  "south_asia": [
+    "Afghanistan", "Bangladesh", "Bhutan", "India", "Maldives", "Nepal", "Pakistan", "Sri Lanka"
+  ],
+  "east_asia": [
+    "China", "Japan", "Mongolia", "North Korea", "South Korea", "Taiwan"
+  ],
+  "southeast_asia": [
+    "Brunei", "Cambodia", "East Timor", "Indonesia", "Laos", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand", "Vietnam"
+  ],
+  "oceania": [
+    "Australia", "Fiji", "Kiribati", "Marshall Islands", "Micronesia", "Nauru", "New Zealand", "Palau", "Papua New Guinea", "Samoa", "Solomon Islands", "Tonga", "Tuvalu", "Vanuatu"
+  ]
+};
+
+// Get all countries from all regions
+const getAllCountries = () => {
+  const allCountries = [];
+  Object.values(REGION_JSON).forEach(countries => {
+    allCountries.push(...countries);
+  });
+  return allCountries.sort();
+};
+
 const ProfileUpdateModal = ({ isOpen, onClose, onSubmit, endpoint = '' }) => {
   const [form, setForm] = useState({
     username: '',
     email: '',
     full_name: '',
     birthday: '',
+    country: '',
     image: null, // File
     imagePreview: '', // preview URL or existing image url
   });
@@ -35,6 +78,7 @@ const ProfileUpdateModal = ({ isOpen, onClose, onSubmit, endpoint = '' }) => {
         email: userData.email || '',
         full_name: userData.full_name || '',
         birthday: userData.birthday || '',
+        country: userData.country || '',
         image: null,
         imagePreview: userData.image,
       };
@@ -92,6 +136,7 @@ const ProfileUpdateModal = ({ isOpen, onClose, onSubmit, endpoint = '' }) => {
     (form.username !== initialForm.username) ||
     (form.full_name !== initialForm.full_name) ||
     (form.birthday !== initialForm.birthday) ||
+    (form.country !== initialForm.country) ||
     isImageDirty;
 
   const handleSubmit = async (e) => {
@@ -111,17 +156,21 @@ const ProfileUpdateModal = ({ isOpen, onClose, onSubmit, endpoint = '' }) => {
         payload.append('username', form.username);
         payload.append('full_name', form.full_name);
         payload.append('birthday', form.birthday);
+        if (form.country) {
+          payload.append('country', form.country);
+        }
         if (form.image instanceof File) {
           payload.append('image', form.image);
         }
         
-        console.log('Profile update payload: [FormData with username, full_name, birthday, image]');
+        console.log('Profile update payload: [FormData with username, full_name, birthday, country, image]');
       } else {
         // Build partial payload with only changed fields
         const partial = {};
         if (form.username !== initialForm.username) partial.username = form.username;
         if (form.full_name !== initialForm.full_name) partial.full_name = form.full_name;
         if (form.birthday !== initialForm.birthday) partial.birthday = form.birthday;
+        if (form.country !== initialForm.country) partial.country = form.country;
         if (form.image instanceof File) partial.image = form.image;
 
         if (Object.keys(partial).length === 0) {
@@ -253,6 +302,30 @@ const ProfileUpdateModal = ({ isOpen, onClose, onSubmit, endpoint = '' }) => {
                 onChange={handleChange}
                 className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-[#0c0c36] focus:ring-2 focus:ring-[#0c0c36]/20 outline-none transition-all"
               />
+            </div>
+
+            {/* Country */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700">
+                Country
+              </label>
+              <select
+                name="country"
+                value={form.country}
+                onChange={handleChange}
+                className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-[#0c0c36] focus:ring-2 focus:ring-[#0c0c36]/20 outline-none transition-all bg-white "
+              >
+                <option value="">Select a country</option>
+                {Object.entries(REGION_JSON).map(([region, countries]) => (
+                  <optgroup key={region} label={region.replace(/_/g, ' ').toUpperCase()}>
+                    {countries.map((country) => (
+                      <option key={country} value={country}>
+                        {country}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
             </div>
           </div>
 

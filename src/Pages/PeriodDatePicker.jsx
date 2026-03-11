@@ -190,7 +190,7 @@ const PeriodDatePicker = () => {
                     </div>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2">
-                    Between which dates do you expect your next period
+                   Select the date of your last period and your next expected period
                 </h1>
                 <p className="text-lg text-center text-gray-600 mb-6">
                     Track period to assess hormonal fluctuation that might affect skin condition and sensitivity

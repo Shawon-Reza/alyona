@@ -77,11 +77,7 @@ const MentorDashboardSidebar = ({ handleSidebarItemClick }) => {
                     onClick={() => {
                         localStorage.removeItem("accessToken")
                     }}
-                    className={({ isActive }) =>
-                        isActive
-                            ? "flex items-center space-x-3 py-3 px-4 text-gray-900 bg-[#f7f1ec] rounded-lg"
-                            : "flex items-center space-x-3 py-3 px-4 text-gray-600 hover:bg-[#f7f1ec] rounded-lg"
-                    }
+                    className="flex items-center space-x-3 py-3 px-4 text-gray-600 hover:bg-[#f7f1ec] rounded-lg"
                 >
                     <FaSignOutAlt className="w-5 h-5" />
                     <span>Log out</span>

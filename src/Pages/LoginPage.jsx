@@ -10,6 +10,8 @@ import { BackgroundBeamsWithCollision } from '@/Components/ui/background-beams-w
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { baseUrl } from '../config/config';
+import AuthNavIcon2 from '../assets/iconAndtext.png';
+
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -110,8 +112,8 @@ const LoginPage = () => {
 
                     <div className="w-full max-w-md space-y-8 z-10 lg:max-w-lg">
                         <div className="flex flex-col justify-center items-center text-center gap-8">
-                            <img src={NavbarLogo} alt="" className="scale-200 object-cover" />
-                            <div className="text-3xl lg:text-4xl font-semibold text-gray-800">YOURSELF BEAUTY</div>
+                            <img src={AuthNavIcon2} alt="" className="scale-80 object-cover" />
+                            {/* <div className="text-3xl lg:text-4xl font-semibold text-gray-800">YOURSELF BEAUTY</div> */}
                         </div>
 
                         {/* Social Login Buttons */}
