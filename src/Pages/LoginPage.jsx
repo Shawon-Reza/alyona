@@ -104,7 +104,7 @@ const LoginPage = () => {
                 </div>
 
                 {/* Right Side Login Form */}
-                <div className="md:w-1/2 w-full relative bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] flex flex-col justify-center items-center px-6 h-screen rounded-3xl sm:rounded-l-none -mt-7.5">
+                <div className="md:w-1/2 w-full relative bg-gradient-to-b from-white via-[#fef7f3] to-[#f8f5f2] flex flex-col justify-center items-center px-6 h-screen rounded-3xl sm:rounded-l-none -mt-7.5 scale-85">
                     {/* Overlap background decoration */}
                     <div className="absolute bottom-0 right-0 opacity-30 pointer-events-none z-0">
                         <img src={LoginPageOverLap} alt="Decor" />
@@ -184,7 +184,7 @@ const LoginPage = () => {
                                     onClick={() => {
                                         navigate('/onboarding-lifestyle-quiz');
                                     }}
-                                    className="font-bold cursor-pointer"
+                                    className="font-bold cursor-pointer hover:underline"
                                 >
                                     {' '}
                                     Sign up
