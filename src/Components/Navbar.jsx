@@ -152,7 +152,7 @@ const Navbar = () => {
 
 
     return (
-        <div className="w-full bg-white shadow-md rounded-xl px-4 sm:px-8 flex justify-between items-center h-[70px] relative z-90">
+        <div className="w-full bg-white shadow-md rounded-xl px-4 sm:px-8 flex justify-between items-center h-[70px] relative z-80">
             {/* Logo */}
             <div
                 onClick={() => navigate('/maindashboard')}

@@ -84,7 +84,7 @@ const DailyQuizPopup = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 bg-opacity-30">
-      <div className="bg-white/95 p-8 rounded-lg w-[90%] sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] shadow-xl transition-all transform duration-300 ease-in-out">
+      <div className="bg-white/95 p-8 rounded-lg w-[90%] sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] shadow-xl transition-all transform duration-300 ease-in-out z-90">
 
         <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">Daily Skin Quiz</h2>
 
